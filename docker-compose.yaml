@@ -1,8 +1,14 @@
+volumes:
+    postgres-data:
+        external: true
+    # other volumes...
+
 # volumes:
 services:
   fastapi:
     environment:
       CORS_HOST: http://localhost:3000
+      DATABASE_URL: postgresql://example_user:secret@postgres/example_db
     build:
       context: api
       dockerfile: Dockerfile.dev
@@ -25,3 +31,14 @@ services:
       HOST: "0.0.0.0"
       PUBLIC_URL: http://localhost:3000
       REACT_APP_API_HOST: ${REACT_APP_API_HOST}
+
+  postgres:
+      image: postgres:14.5-bullseye
+      volumes:
+          - postgres-data:/var/lib/postgresql/data
+      environment:
+          POSTGRES_PASSWORD: secret
+          POSTGRES_USER: example_user
+          POSTGRES_DB: example_db
+      ports:
+          - 15432:5432
