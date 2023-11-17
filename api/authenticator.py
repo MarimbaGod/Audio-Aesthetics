@@ -14,7 +14,7 @@ class MyAuthenticator(Authenticator):
 
     def get_account_getter(
         self,
-        users:UserRepository = Depends(),
+        users: UserRepository = Depends(),
     ):
         return users
 
@@ -24,7 +24,8 @@ class MyAuthenticator(Authenticator):
 
     def get_account_data_for_cookie(self, user: UserIn):
         # Return the username for the data for the cookie
-        #Return TWO values from this method
+        # Return TWO values from this method
         return user.username, UserOut(**user.dict())
+
 
 authenticator = MyAuthenticator(os.environ["SIGNING_KEY"])

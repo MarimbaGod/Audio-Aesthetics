@@ -26,6 +26,7 @@ class UserOut(BaseModel):
 class UserOutWithPassword(UserOut):
     hashed_password: str
 
+
 class DuplicateUserError(ValueError):
     pass
 
@@ -57,12 +58,12 @@ class UserRepository:
             print(e)
             return {"message:" "Couldnot get all users"}
 
-
-
-    def create(self, user: UserIn, hashed_password: str) -> UserOutWithPassword:
+    def create(
+        self, user: UserIn, hashed_password: str
+    ) -> UserOutWithPassword:
         try:
-            print("USER",user)
-            print("HASHED",hashed_password)
+            print("USER", user)
+            print("HASHED", hashed_password)
             with pool.connection() as conn:
                 with conn.cursor() as db:
                     result = db.execute(
@@ -82,8 +83,8 @@ class UserRepository:
                             hashed_password,
                             user.first_name,
                             user.last_name,
-                            user.email
-                        ]
+                            user.email,
+                        ],
                     )
                     print("insert worked?")
                     id = result.fetchone()[0]
@@ -94,11 +95,10 @@ class UserRepository:
                         hashed_password=hashed_password,
                         first_name=user.first_name,
                         last_name=user.last_name,
-                        email=user.email
+                        email=user.email,
                     )
         except Exception:
             return {"message": "Could not create a user"}
-
 
     def get_user(self, username: str) -> UserOutWithPassword:
         with pool.connection() as conn:
@@ -111,7 +111,7 @@ class UserRepository:
                     """,
                     [
                         username,
-                    ]
+                    ],
                 )
                 user = result.fetchone()
 
@@ -119,6 +119,29 @@ class UserRepository:
                     id=user[0],
                     username=user[1],
                     hashed_password=user[2],
+                    first_name=user[3],
+                    last_name=user[4],
+                    email=user[5],
+                )
+
+    def get_one(self, user_id: int) -> UserOut:
+        with pool.connection() as conn:
+            with conn.cursor() as db:
+                result = db.execute(
+                    """
+                    SELECT *
+                    FROM users
+                    WHERE id = %s
+                    """,
+                    [
+                        user_id,
+                    ],
+                )
+                user = result.fetchone()
+
+                return UserOut(
+                    id=user[0],
+                    username=user[1],
                     first_name=user[3],
                     last_name=user[4],
                     email=user[5],

@@ -1,9 +1,17 @@
-from fastapi import APIRouter, Depends, Response, Request, status, HTTPException
+from fastapi import (
+    APIRouter,
+    Depends,
+    Response,
+    Request,
+    status,
+    HTTPException,
+)
 from queries.users import (
     UserIn,
     UserOut,
     UserRepository,
     Error,
+    DuplicateUserError
     # UserQueries,
 )
 from jwtdown_fastapi.authentication import Token
@@ -14,12 +22,15 @@ from typing import Union, List
 
 # from db import BookQueries as BookQ # our database queries
 
+
 class UserForm(BaseModel):
     username: str
     password: str
 
+
 class UserToken(Token):
     account: UserOut
+
 
 class HttpError(BaseModel):
     detail: str
@@ -38,7 +49,7 @@ def user_details(repo: UserRepository = Depends()):
 @router.get("/token", response_model=UserToken | None)
 async def get_token(
     request: Request,
-    account: UserOut = Depends(authenticator.try_get_current_account_data)
+    account: UserOut = Depends(authenticator.try_get_current_account_data),
 ) -> UserToken | None:
     if account and authenticator.cookie_name in request.cookies:
         return {
@@ -66,3 +77,16 @@ async def create_user(
     form = UserForm(username=info.username, password=info.password)
     token = await authenticator.login(response, request, form, repo)
     return UserToken(account=account, **token.dict())
+
+
+@router.get("/api/users/{user_id}", response_model=UserOut | HttpError)
+async def get_one_user(
+    user_id: int,
+    response: Response,
+    repo: UserRepository = Depends(),
+) -> UserOut:
+    user = repo.get_one(user_id)
+    if user is None:
+        response.status_code = 404
+        return {"detail": "404 USER NOT FOUND"}
+    return user
