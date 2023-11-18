@@ -146,3 +146,18 @@ class UserRepository:
                     last_name=user[4],
                     email=user[5],
                 )
+
+    def delete(self, user_id: int) -> bool:
+        with pool.connection() as conn:
+            with conn.cursor() as db:
+                db.execute(
+                    """
+                    DELETE
+                    FROM users
+                    WHERE id = %s
+                    """,
+                    [
+                        user_id,
+                    ],
+                )
+                return True

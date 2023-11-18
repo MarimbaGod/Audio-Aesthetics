@@ -90,3 +90,11 @@ async def get_one_user(
         response.status_code = 404
         return {"detail": "404 USER NOT FOUND"}
     return user
+
+
+@router.delete("/api/users/{user_id}", response_model=bool)
+async def delete(
+    user_id: int,
+    repo: UserRepository = Depends(),
+) -> bool:
+    return repo.delete(user_id)
