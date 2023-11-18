@@ -11,7 +11,7 @@ from queries.users import (
     UserOut,
     UserRepository,
     Error,
-    DuplicateUserError
+    DuplicateUserError,
     # UserQueries,
 )
 from jwtdown_fastapi.authentication import Token
@@ -98,3 +98,13 @@ async def delete(
     repo: UserRepository = Depends(),
 ) -> bool:
     return repo.delete(user_id)
+
+
+@router.put("/api/users/{user_id}", response_model=UserOut | HttpError)
+async def update_user(
+    user_id: int,
+    user_edit: UserIn,
+    repo: UserRepository = Depends(),
+) -> UserOut:
+    hashed_password = authenticator.hash_password(user_edit.password)
+    return repo.update(user_edit, user_id, hashed_password)

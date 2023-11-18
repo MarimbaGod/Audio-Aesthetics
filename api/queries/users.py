@@ -161,3 +161,44 @@ class UserRepository:
                     ],
                 )
                 return True
+
+    def update(
+        self, user_edit: UserIn, user_id: int, hashed_password: str
+    ) -> UserOut:
+        try:
+            # print("USER", user)
+            # print("HASHED", hashed_password)
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                            UPDATE users
+                            SET username = %s
+                                , hashed_password = %s
+                                , first_name = %s
+                                , last_name = %s
+                                , email = %s
+                            WHERE id = %s
+                            RETURNING *;
+                            """,
+                        [
+                            user_edit.username,
+                            hashed_password,
+                            user_edit.first_name,
+                            user_edit.last_name,
+                            user_edit.email,
+                            user_id,
+                        ],
+                    )
+                    # print("insert worked?")
+                    updated = db.fetchone()
+                    # print("ID GOTTEN", id)
+                    return UserOut(
+                        id=updated[0],
+                        username=updated[1],
+                        first_name=updated[3],
+                        last_name=updated[4],
+                        email=updated[5],
+                    )
+        except Exception:
+            return {"message": "Could not update"}
