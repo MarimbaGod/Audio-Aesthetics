@@ -56,7 +56,7 @@ class UserRepository:
                     return result
         except Exception as e:
             print(e)
-            return {"message:" "Couldnot get all users"}
+            return {"message:" "Could not get all users"}
 
     def create(
         self, user: UserIn, hashed_password: str
@@ -100,6 +100,22 @@ class UserRepository:
         except Exception:
             return {"message": "Could not create a user"}
 
+    def get_user_id_by_username(self, username: str) -> int:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """SELECT id
+                        FROM users
+                        WHERE username = %s""",
+                        (username,),
+                    )
+                    user = db.fetchone()
+                    return user[0] if user else None
+        except Exception as e:
+            print(e)
+            return None
+
     def get_user(self, username: str) -> UserOutWithPassword:
         with pool.connection() as conn:
             with conn.cursor() as db:
@@ -123,6 +139,8 @@ class UserRepository:
                     last_name=user[4],
                     email=user[5],
                 )
+
+    # def get_current_user()
 
     def get_one(self, user_id: int) -> UserOut:
         with pool.connection() as conn:
