@@ -42,7 +42,7 @@ router = APIRouter()
 
 
 @router.get("/api/users/", response_model=Union[Error, List[UserOut]])
-def user_details(repo: UserRepository = Depends()):
+def get_all_users(repo: UserRepository = Depends()):
     return repo.get_all()
 
 
@@ -79,17 +79,36 @@ async def create_user(
     return UserToken(account=account, **token.dict())
 
 
-@router.get("/api/users/{user_id}", response_model=UserOut | HttpError)
-async def get_one_user(
+# @router.get("/api/users/{user_id}", response_model=UserOut | HttpError)
+# async def get_one_user(
+#     user_id: int,
+#     response: Response,
+#     repo: UserRepository = Depends(),
+# ) -> UserOut:
+#     user = repo.get_one(user_id)
+#     if user is None:
+#         response.status_code = 404
+#         return {"detail": "404 USER NOT FOUND"}
+#     return user
+
+
+@router.get(
+    "/api/users/{user_id}", response_model=UserOut | HttpError
+)
+async def get_user_data(
     user_id: int,
-    response: Response,
     repo: UserRepository = Depends(),
-) -> UserOut:
-    user = repo.get_one(user_id)
-    if user is None:
-        response.status_code = 404
-        return {"detail": "404 USER NOT FOUND"}
-    return user
+    user_data: dict = Depends(authenticator.get_current_account_data),
+):
+    if user_id == user_data["id"]:
+        user = repo.get_one(user_id)
+        if user:
+            return user
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized Access",
+        )
 
 
 @router.delete("/api/users/{user_id}", response_model=bool)
