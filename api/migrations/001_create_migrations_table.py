@@ -14,7 +14,7 @@ steps = [
         # "Down" SQL statement
         """
         DROP TABLE users;
-        """
+        """,
     ],
     [
         # "Up" SQL statement
@@ -32,7 +32,7 @@ steps = [
         # "Down" SQL statement
         """
         DROP TABLE groups
-        """
+        """,
     ],
     [
         """
@@ -44,11 +44,22 @@ steps = [
             FOREIGN KEY (group_id) REFERENCES groups(id)
         );
         """,
-
         """
         DROP TABLE memberships
-        """
+        """,
     ],
-
-
+    [
+        """
+        CREATE TABLE posts (
+            id SERIAL PRIMARY KEY NOT NULL,
+            created_by_user_id INT NOT NULL,
+            created_datetime TIMESTAMP NOT NULL,
+            caption TEXT,
+            FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+        """,
+        """
+        DROP TABLE posts
+        """,
+    ],
 ]
