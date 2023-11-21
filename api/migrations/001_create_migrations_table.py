@@ -62,4 +62,21 @@ steps = [
         DROP TABLE posts
         """,
     ],
+    [
+        """
+        CREATE TABLE comments (
+            id SERIAL PRIMARY KEY NOT NULL,
+            post_id INT NOT NULL,
+            created_by_user_id INT NOT NULL,
+            created_datetime TIMESTAMP NOT NULL,
+            comment TEXT,
+            comment_replied_to_id INT,
+            FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (comment_replied_to_id) REFERENCES comments(id) ON DELETE CASCADE
+        );
+        """,
+        """
+        DROP TABLE comments
+        """,
+    ],
 ]
