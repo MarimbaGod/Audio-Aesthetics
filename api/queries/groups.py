@@ -111,3 +111,54 @@ class GroupsRepo:
         except Exception as e:
             print(e)
             return Error(message="Failed to create Group")
+
+    def get_group_details(self, group_id: int, user_id: int) -> Union[Error, GroupOut]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        SELECT id,
+                        name,
+                        created_by,
+                        img_url,
+                        is_public
+                        FROM groups
+                        WHERE id = %s
+                        """, (group_id,)
+                    )
+                    group = db.fetchone()
+
+                    if group[4]: # if public
+                        return GroupOut(
+                            id=group[0],
+                            name=group[1],
+                            created_by=group[2],
+                            img_url=group[3],
+                            is_public=group[4]
+                        )
+
+                    db.execute(
+                        """
+                        SELECT *
+                        FROM memberships
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (user_id, group_id)
+                    )
+                    membership = db.fetchone()
+
+                    if membership:
+                        return GroupOut(
+                            id=group[0],
+                            name=group[1],
+                            created_by=group[2],
+                            img_url=group[3],
+                            is_public=group[4]
+                        )
+                    else:
+                        return Error(message="This group is too exclusive for you")
+        except Exception as e:
+            print(e)
+            return Error(message="Error Getting details")
