@@ -92,9 +92,7 @@ async def create_user(
 #     return user
 
 
-@router.get(
-    "/api/users/{user_id}", response_model=UserOut | HttpError
-)
+@router.get("/api/users/{user_id}", response_model=UserOut | HttpError)
 async def get_user_data(
     user_id: int,
     repo: UserRepository = Depends(),
@@ -132,6 +130,13 @@ async def update_user(
     user_id: int,
     user_edit: UserIn,
     repo: UserRepository = Depends(),
+    user_data: dict = Depends(authenticator.get_current_account_data),
 ) -> UserOut:
-    hashed_password = authenticator.hash_password(user_edit.password)
-    return repo.update(user_edit, user_id, hashed_password)
+    if user_id == user_data["id"]:
+        hashed_password = authenticator.hash_password(user_edit.password)
+        return repo.update(user_edit, user_id, hashed_password)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized Access",
+        )
