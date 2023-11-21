@@ -111,12 +111,20 @@ async def get_user_data(
         )
 
 
-@router.delete("/api/users/{user_id}", response_model=bool)
+@router.delete("/api/users/{user_id}", response_model=bool | HttpError)
 async def delete(
     user_id: int,
     repo: UserRepository = Depends(),
-) -> bool:
-    return repo.delete(user_id)
+    user_data: dict = Depends(authenticator.get_current_account_data),
+) -> bool | None:
+    if user_id == user_data["id"]:
+        print("Deleted user")
+        return repo.delete(user_id)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized Access",
+        )
 
 
 @router.put("/api/users/{user_id}", response_model=UserOut | HttpError)
