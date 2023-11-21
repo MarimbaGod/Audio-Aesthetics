@@ -112,7 +112,9 @@ class GroupsRepo:
             print(e)
             return Error(message="Failed to create Group")
 
-    def get_group_details(self, group_id: int, user_id: int) -> Union[Error, GroupOut]:
+    def get_group_details(
+        self, group_id: int, user_id: int
+    ) -> Union[Error, GroupOut]:
         try:
             with pool.connection() as conn:
                 with conn.cursor() as db:
@@ -125,17 +127,18 @@ class GroupsRepo:
                         is_public
                         FROM groups
                         WHERE id = %s
-                        """, (group_id,)
+                        """,
+                        (group_id,),
                     )
                     group = db.fetchone()
 
-                    if group[4]: # if public
+                    if group[4]:
                         return GroupOut(
                             id=group[0],
                             name=group[1],
                             created_by=group[2],
                             img_url=group[3],
-                            is_public=group[4]
+                            is_public=group[4],
                         )
 
                     db.execute(
@@ -145,7 +148,7 @@ class GroupsRepo:
                         WHERE user_id = %s
                         AND group_id = %s
                         """,
-                        (user_id, group_id)
+                        (user_id, group_id),
                     )
                     membership = db.fetchone()
 
@@ -155,10 +158,10 @@ class GroupsRepo:
                             name=group[1],
                             created_by=group[2],
                             img_url=group[3],
-                            is_public=group[4]
+                            is_public=group[4],
                         )
                     else:
-                        return Error(message="This group is too exclusive for you")
+                        return Error(message="This group is too exclusive")
         except Exception as e:
             print(e)
             return Error(message="Error Getting details")
