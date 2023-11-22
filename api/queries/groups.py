@@ -101,6 +101,16 @@ class GroupsRepo:
                     )
 
                     new_group = db.fetchone()
+
+                    db.execute(
+                        """
+                        INSERT INTO memberships
+                        (user_id, group_id)
+                        VALUES (%s, %s);
+                        """,
+                        (user_id, new_group[0])
+                    )
+
                     return GroupOut(
                         id=new_group[0],
                         name=new_group[1],

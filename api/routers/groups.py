@@ -30,14 +30,35 @@ async def create_group(
     if not account_data:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated"
+            detail="Not authenticated",
         )
 
     username = account_data.get("username")
     if not username:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid User Data"
+            detail="Invalid User Data",
         )
 
     return group_repo.create_group(group_data, user_repo)
+
+
+@router.get("/api/groups/{group_id}", response_model=Union[GroupOut, Error])
+async def get_specific_group(
+    group_id: int,
+    account_data: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+    group_repo: GroupsRepo = Depends(),
+):
+    if not account_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
+    user_id = account_data.get("id")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid User"
+        )
+
+    return group_repo.get_group_details(group_id, user_id)
