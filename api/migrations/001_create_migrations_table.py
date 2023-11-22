@@ -93,4 +93,18 @@ steps = [
         DROP TABLE following
         """,
     ],
+    [
+        """
+        CREATE TABLE liked_posts (
+            user_id INT NOT NULL,
+            post_id INT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (post_id) REFERENCES posts(id),
+            UNIQUE (user_id, post_id)
+        );
+        """,
+        """
+        DROP TABLE liked_posts
+        """,
+    ],
 ]
