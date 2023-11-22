@@ -175,3 +175,31 @@ class GroupsRepo:
         except Exception as e:
             print(e)
             return Error(message="Error Getting details")
+
+    def delete(self, group_id: int) -> bool:
+        with pool.connection() as conn:
+            with conn.cursor() as db:
+                db.execute(
+                    """
+                    DELETE
+                    FROM memberships
+                    WHERE group_id = %s
+
+                    """,
+                    [
+                        group_id,
+                    ],
+                )
+
+                db.execute(
+                    """
+                    DELETE
+                    FROM groups
+                    WHERE id = %s
+
+                    """,
+                    [
+                        group_id,
+                    ],
+                )
+                return True

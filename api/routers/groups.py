@@ -62,3 +62,24 @@ async def get_specific_group(
         )
 
     return group_repo.get_group_details(group_id, user_id)
+
+
+@router.delete("/api/groups/{group_id}", response_model=bool | Error)
+async def delete(
+    group_id: int,
+    group_repo: GroupsRepo = Depends(),
+    account_data: dict = Depends(authenticator.get_current_account_data),
+) -> bool | None:
+
+    group = group_repo.get_group_details(group_id, account_data["id"])
+
+    group_dict = group.dict()
+
+    if int(group_dict["created_by"]) == account_data["id"]:
+        print("Deleted group")
+        return group_repo.delete(group_id)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized Access"
+        )
