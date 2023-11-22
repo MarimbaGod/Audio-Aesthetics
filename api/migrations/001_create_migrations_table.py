@@ -79,4 +79,18 @@ steps = [
         DROP TABLE comments
         """,
     ],
+    [
+        """
+        CREATE TABLE following (
+            follower_user_id INT NOT NULL,
+            following_user_id INT NOT NULL,
+            FOREIGN KEY (follower_user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (following_user_id) REFERENCES users(id),
+            UNIQUE (follower_user_id, following_user_id)
+        );
+        """,
+        """
+        DROP TABLE following
+        """,
+    ],
 ]
