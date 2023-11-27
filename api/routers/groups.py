@@ -64,22 +64,37 @@ async def get_specific_group(
     return group_repo.get_group_details(group_id, user_id)
 
 
-@router.delete("/api/groups/{group_id}", response_model=bool | Error)
-async def delete(
+@router.delete("/api/groups/{group_id}", response_model=Union[bool, Error])
+async def delete_group(
     group_id: int,
     group_repo: GroupsRepo = Depends(),
     account_data: dict = Depends(authenticator.get_current_account_data),
-) -> bool | None:
-
-    group = group_repo.get_group_details(group_id, account_data["id"])
-
-    group_dict = group.dict()
-
-    if int(group_dict["created_by"]) == account_data["id"]:
-        print("Deleted group")
-        return group_repo.delete(group_id)
-    else:
+) -> Union[bool, Error]:
+    requestor_id = account_data.get("id")
+    if not requestor_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Unauthorized Access"
+            detail="Invalid User",
         )
+    result = group_repo.delete(group_id, requestor_id)
+    # Will be true or ERROR
+    # if result is an instance of Error, this logs the error
+    if isinstance(result, Error):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=result.message,
+        )
+    return result
+
+    # group = group_repo.get_group_details(group_id, account_data["id"])
+
+    # group_dict = group.dict()
+
+    # if int(group_dict["created_by"]) == account_data["id"]:
+    #     print("Deleted group")
+    #     return group_repo.delete(group_id)
+    # else:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_401_UNAUTHORIZED,
+    #         detail="Unauthorized Access"
+    #     )

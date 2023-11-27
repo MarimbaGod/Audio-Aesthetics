@@ -8,6 +8,17 @@ class Error(BaseModel):
     message: str
 
 
+class MemberIn(BaseModel):
+    user_id: int
+    is_admin: bool
+
+
+class MemberOut(BaseModel):
+    user_id: int
+    username: str
+    is_admin: bool
+
+
 class GroupIn(BaseModel):
     name: str
     created_by: str
@@ -21,6 +32,7 @@ class GroupOut(BaseModel):
     created_by: str
     img_url: Optional[str] = "https://tinyurl.com/Dimg-url"
     is_public: bool
+    members: Optional[List[MemberOut]] = None
 
 
 class DuplicateGroupError(ValueError):
@@ -60,9 +72,10 @@ class GroupsRepo:
                         group_data = GroupOut(
                             id=group[0],
                             name=group[1],
-                            created_by=group[2],
+                            created_by=group[2],  # displays username, not id
                             img_url=group[3],
                             is_public=group[4],
+                            members=[],  # Members not included in g-list
                         )
                         result.append(group_data)
                     return result
@@ -105,10 +118,10 @@ class GroupsRepo:
                     db.execute(
                         """
                         INSERT INTO memberships
-                        (user_id, group_id)
-                        VALUES (%s, %s);
+                        (user_id, group_id, is_admin)
+                        VALUES (%s, %s, TRUE);
                         """,
-                        (user_id, new_group[0])
+                        (user_id, new_group[0]),
                     )
 
                     return GroupOut(
@@ -142,64 +155,113 @@ class GroupsRepo:
                     )
                     group = db.fetchone()
 
-                    if group[4]:
-                        return GroupOut(
-                            id=group[0],
-                            name=group[1],
-                            created_by=group[2],
-                            img_url=group[3],
-                            is_public=group[4],
+                    if not group[4]:  # if group is not public
+                        db.execute(
+                            """
+                            SELECT is_admin
+                            FROM memberships
+                            WHERE user_id = %s
+                            AND group_id = %s
+                            """,
+                            (user_id, group_id),
                         )
+                        membership = db.fetchone()
+                        if not membership:
+                            return Error(message="This group is too exclusive")
+
+                    # fetch member details
+                    db.execute(
+                        """
+                        SELECT users.id, users.username, memberships.is_admin
+                        FROM memberships
+                        JOIN users ON memberships.user_id = users.id
+                        WHERE memberships.group_id = %s
+                        """,
+                        (group_id,),
+                    )
+                    members_list = [
+                        MemberOut(
+                            user_id=data[0], username=data[1], is_admin=data[2]
+                        )
+                        for data in db.fetchall()
+                    ]
+
+                    return GroupOut(
+                        id=group[0],
+                        name=group[1],
+                        created_by=group[2],
+                        img_url=group[3],
+                        is_public=group[4],
+                        members=members_list,
+                    )
+
+        except Exception as e:
+            print(e)
+            return Error(
+                message=f"Error getting group details: {e}"
+            )
+            # print(e)
+            # return Error(message="Error Getting details")
+
+    def delete(self, group_id: int, requestor_id: int) -> Union[Error, bool]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        SELECT created_by
+                        FROM groups
+                        WHERE id = %s
+                        """,
+                        (group_id,),
+                    )
+                    group = db.fetchone()
+
+                    if not group:
+                        return Error(message="Group not found")
+
+                    if group[0] != requestor_id:
+                        # Check if requestor is admin
+                        db.execute(
+                            """
+                            SELECT is_admin
+                            FROM memberships
+                            WHERE user_id = %s
+                            AND group_id = %s
+                            """,
+                            (requestor_id, group_id),
+                        )
+                        membership = db.fetchone()
+
+                        if not membership or not membership[0]:
+                            return Error(
+                                message="Unauthorized to delete group"
+                            )
+
+                    # Delete the thing
+                    db.execute(
+                        """
+                        DELETE
+                        FROM memberships
+                        WHERE group_id = %s
+                        """,
+                        [
+                            group_id,
+                        ],
+                    )
 
                     db.execute(
                         """
-                        SELECT *
-                        FROM memberships
-                        WHERE user_id = %s
-                        AND group_id = %s
+                        DELETE
+                        FROM groups
+                        WHERE id = %s
+
                         """,
-                        (user_id, group_id),
+                        [
+                            group_id,
+                        ],
                     )
-                    membership = db.fetchone()
-
-                    if membership:
-                        return GroupOut(
-                            id=group[0],
-                            name=group[1],
-                            created_by=group[2],
-                            img_url=group[3],
-                            is_public=group[4],
-                        )
-                    else:
-                        return Error(message="This group is too exclusive")
+                    return True
         except Exception as e:
-            print(e)
-            return Error(message="Error Getting details")
-
-    def delete(self, group_id: int) -> bool:
-        with pool.connection() as conn:
-            with conn.cursor() as db:
-                db.execute(
-                    """
-                    DELETE
-                    FROM memberships
-                    WHERE group_id = %s
-
-                    """,
-                    [
-                        group_id,
-                    ],
-                )
-
-                db.execute(
-                    """
-                    DELETE
-                    FROM groups
-                    WHERE id = %s
-
-                    """,
-                    [
-                        group_id,
-                    ],
-                )
-                return True
+            print(f"Error in deleting grou: {e}")
+            return Error(message="Failed to delete group")

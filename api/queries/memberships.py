@@ -31,7 +31,7 @@ class MembershipsRepo:
                 with conn.cursor() as db:
                     db.execute(
                         """
-                        SELECT created_by, is_public
+                        SELECT is_public
                         FROM groups
                         WHERE id = %s
                         """,
@@ -41,9 +41,28 @@ class MembershipsRepo:
                     if group is None:
                         return Error(message="Group not found")
 
-                    if not group[1] and group[0] != requestor_id:
-                        return Error(message="Only Owner can add users")
+                    is_public = group[0]
 
+                    db.execute(
+                        """
+                        SELECT is_admin
+                        FROM memberships
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (requestor_id, group_id),
+                    )
+                    membership = db.fetchone()
+
+                    # Check if the requestor is an Admin
+                    # and if the group is public
+                    if not is_public and (
+                        membership is None or not membership[0]
+                    ):
+                        return Error(message="Only an admin can add users")
+
+                    # Check to see if the user_id to be added
+                    # is already a member of group_id
                     db.execute(
                         """
                         SELECT *
@@ -68,3 +87,38 @@ class MembershipsRepo:
         except Exception as e:
             print(e)
             return Error(message="Failed to join group")
+
+    def remove_member(
+        self, group_id: int, user_id_to_remove: int, requestor_id: int
+    ) -> Union[Error, SuccessMessage]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        SELECT is_admin
+                        FROM memberships
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (requestor_id, group_id),
+                    )
+                    admin_status = db.fetchone()
+                    if not admin_status or not admin_status[0]:
+                        return Error(message="Only admins can remove members")
+
+                    # Delete membership
+                    db.execute(
+                        """
+                        DELETE FROM memberships
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (user_id_to_remove, group_id),
+                    )
+                    return SuccessMessage(
+                        message="Member Banished to Shadow Realm"
+                    )
+        except Exception as e:
+            print(e)
+            return Error(message="Couldn't exorcise curse")

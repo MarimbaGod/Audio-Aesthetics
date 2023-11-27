@@ -39,6 +39,7 @@ steps = [
         CREATE TABLE memberships (
             user_id INT NOT NULL,
             group_id INT NOT NULL,
+            is_admin BOOLEAN NOT NULL DEFAULT FALSE,
             PRIMARY KEY (user_id, group_id),
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
             FOREIGN KEY (group_id) REFERENCES groups(id)
