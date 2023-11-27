@@ -197,9 +197,7 @@ class GroupsRepo:
 
         except Exception as e:
             print(e)
-            return Error(
-                message=f"Error getting group details: {e}"
-            )
+            return Error(message=f"Error getting group details: {e}")
             # print(e)
             # return Error(message="Error Getting details")
 

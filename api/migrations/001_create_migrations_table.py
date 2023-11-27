@@ -51,6 +51,23 @@ steps = [
     ],
     [
         """
+        CREATE TABLE the_blacklist (
+            group_id INT NOT NULL,
+            user_id INT NOT NULL,
+            added_by INT NOT NULL,
+            added_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (group_id, user_id),
+            FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (added_by) REFERENCES users(id) ON DELETE SET NULL
+        );
+        """,
+        """
+        DROP TABLE the_blacklist
+        """,
+    ],
+    [
+        """
         CREATE TABLE posts (
             id SERIAL PRIMARY KEY NOT NULL,
             created_by_user_id INT NOT NULL,

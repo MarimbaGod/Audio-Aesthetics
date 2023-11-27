@@ -77,6 +77,20 @@ class MembershipsRepo:
 
                     db.execute(
                         """
+                        SELECT *
+                        FROM the_blacklist
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (user_id, group_id),
+                    )
+                    if db.fetchone():
+                        return Error(message="User is on the blacklist")
+                    # This will block a user from joining
+                    # if they're on the blacklist
+
+                    db.execute(
+                        """
                         INSERT INTO memberships
                         (user_id, group_id)
                         VALUES (%s, %s)
