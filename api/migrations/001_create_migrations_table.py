@@ -125,4 +125,17 @@ steps = [
         DROP TABLE liked_posts
         """,
     ],
+    [
+        """
+        CREATE TABLE posts_media (
+            id SERIAL PRIMARY KEY NOT NULL,
+            post_id INT NOT NULL,
+            media INT NOT NULL,
+            FOREIGN KEY (post_id) REFERENCES posts(id)
+        );
+        """,
+        """
+        DROP TABLE posts_media
+        """,
+    ],
 ]
