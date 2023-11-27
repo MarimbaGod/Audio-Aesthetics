@@ -263,3 +263,70 @@ class GroupsRepo:
         except Exception as e:
             print(f"Error in deleting grou: {e}")
             return Error(message="Failed to delete group")
+
+    def update(
+            self, group_edit: GroupIn, group_id: int, requester_id: int
+    ) -> GroupOut:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        SELECT created_by
+                        FROM groups
+                        WHERE id = %s
+                        """,
+                        (group_id,),
+                    )
+                    group = db.fetchone()
+
+                    if not group:
+                        return Error(message="Group not found")
+
+                    if group[0] != requester_id:
+
+                        db.execute(
+                            """
+                            SELECT is_admin
+                            FROM memberships
+                            WHERE user_id = %s
+                            AND group_id = %s
+                            """,
+                            (requester_id, group_id),
+                        )
+                        membership = db.fetchone()
+
+                        if not membership or not membership[0]:
+                            return Error(
+                                message=("Unauthorized to update group "
+                                         "must be creator or admin to update")
+                            )
+
+                    db.execute(
+                        """
+                        UPDATE groups
+                        SET name = %s
+                            , img_url = %s
+                            , is_public = %s
+                        WHERE id = %s
+                        RETURNING *;
+                        """,
+                        [
+                            group_edit.name,
+                            group_edit.img_url,
+                            group_edit.is_public,
+                            group_id,
+                        ],
+                    )
+                    updated = db.fetchone()
+
+                    return GroupOut(
+                        id=updated[0],
+                        name=updated[1],
+                        created_by=updated[2],
+                        img_url=updated[3],
+                        is_public=updated[4],
+                    )
+        except Exception as e:
+            print(f"Error in updating group: {e}")
+            return Error(message="Failed to update group")

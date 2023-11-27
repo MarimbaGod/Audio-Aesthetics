@@ -98,3 +98,25 @@ async def delete_group(
     #         status_code=status.HTTP_401_UNAUTHORIZED,
     #         detail="Unauthorized Access"
     #     )
+
+
+@router.put("/api/groups/{group_id}", response_model=GroupOut)
+async def update_group(
+    group_id: int,
+    group_edit: GroupIn,
+    repo: GroupsRepo = Depends(),
+    group_data: dict = Depends(authenticator.get_current_account_data),
+) -> GroupOut:
+    requester_id = group_data.get("id")
+    if not requester_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid User must be creator or admin of group to edit",
+        )
+    result = repo.update(group_edit, group_id, requester_id)
+    if isinstance(result, Error):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=result.message,
+        )
+    return result
