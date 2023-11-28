@@ -136,3 +136,107 @@ class MembershipsRepo:
         except Exception as e:
             print(e)
             return Error(message="Couldn't exorcise curse")
+
+    def make_admin(
+        self, group_id: int, user_id_to_promote: int, requestor_id: int
+    ) -> Union[Error, SuccessMessage]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    # Check if requestor is admin
+                    db.execute(
+                        """
+                        SELECT is_admin
+                        FROM memberships
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (requestor_id, group_id),
+                    )
+                    admin_status = db.fetchone()
+                    if not admin_status or not admin_status[0]:
+                        return Error(
+                            message="Only admins can modify admin status"
+                        )
+
+                    # Check if user is not admin
+                    db.execute(
+                        """
+                        SELECT is_admin
+                        FROM memberships
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (user_id_to_promote, group_id),
+                    )
+                    user_status = db.fetchone()
+                    if not user_status:
+                        return Error(message="User is not a member")
+                    if user_status[0]:
+                        return Error(message="User is already an admin")
+
+                    # Promote user to admin
+                    db.execute(
+                        """
+                        UPDATE memberships
+                        SET is_admin = TRUE
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (user_id_to_promote, group_id),
+                    )
+                    return SuccessMessage(
+                        message="User has Leveled Up to Admin!"
+                    )
+        except Exception as e:
+            print(e)
+            return Error(message="failed to update admin status")
+
+    def remove_admin(
+        self, group_id: int, user_id_to_demote: int, requestor_id: int
+    ) -> Union[Error, SuccessMessage]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        SELECT is_admin
+                        FROM memberships
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (requestor_id, group_id),
+                    )
+                    admin_status = db.fetchone()
+                    if not admin_status or not admin_status[0]:
+                        return Error(
+                            message="Only admins can modify admin status"
+                        )
+
+                    db.execute(
+                        """
+                        SELECT is_admin
+                        FROM memberships
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (user_id_to_demote, group_id),
+                    )
+                    user_status = db.fetchone()
+                    if not user_status or not user_status[0]:
+                        return Error(message="User is not an Admin")
+
+                    # Update user status
+                    db.execute(
+                        """
+                        UPDATE memberships
+                        SET is_admin = FALSE
+                        WHERE user_id = %s
+                        AND group_id = %s
+                        """,
+                        (user_id_to_demote, group_id),
+                    )
+                    return SuccessMessage(message="Admin privileges Revoked")
+        except Exception as e:
+            print(e)
+            return Error(message="Could not update admin status")
