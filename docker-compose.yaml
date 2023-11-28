@@ -10,6 +10,8 @@ services:
       CORS_HOST: http://localhost:3000
       DATABASE_URL: postgresql://example_user:secret@postgres/example_db
       SIGNING_KEY: 49f9c67645245ffe095d58f310a5b73d969b3fb92852f099a52905a731f9a9b2
+      SPOTIFY_CLIENT_ID: 4d6c7eae97cd480fb1088393ebd8f107
+      SPOTIFY_CLIENT_SECRET: 6f54d43f0d354899bb3c6fbfa44982e8
     build:
       context: api
       dockerfile: Dockerfile.dev
