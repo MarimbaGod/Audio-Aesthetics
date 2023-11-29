@@ -72,10 +72,7 @@ async def refresh_spotify_token(
     # FOR TESTING
     user_details = user_repo.get_user_details(current_user["id"])
     if not user_details:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
+        raise HTTPException(status_code=404, detail="User not found")
     print(user_details)
     spotify_refresh_token = user_details.get("spotify_refresh_token")
     print(spotify_refresh_token)
@@ -147,6 +144,85 @@ async def get_spotify_playlists(
         raise HTTPException(
             status_code=response.status_code,
             detail="Error fetching Spotify Playlists",
+        )
+
+    return response.json()
+
+
+@router.get("/spotify/user/profile")
+async def get_spotify_user_profile(
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized >:("
+        )
+
+    spotify_access_token = user_details["spotify_access_token"]
+
+    url = "https://api.spotify.com/v1/me"
+    response = make_spotify_api_request(url, spotify_access_token)
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error fetching Spotify user Profile :(",
+        )
+
+    return response.json()
+
+
+@router.get("/spotify/playlist/{playlist_id}")
+async def get_playlist_details(
+    playlist_id: str,
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Ew, You're not authorized? *Cringes in Python*",
+        )
+
+    spotify_access_token = user_details["spotify_access_token"]
+
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
+    response = make_spotify_api_request(url, spotify_access_token)
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error fetching playlist details from Spotify",
+        )
+
+    return response.json()
+
+
+@router.get("/spotify/search")
+async def search_spotify(
+    query: str,
+    type: str = "track,album,artist,playlist",
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized >:("
+        )
+
+    spotify_access_token = user_details["spotify_access_token"]
+
+    url = f"https://api.spotify.com/v1/search?q={query}&type={type}"
+    response = make_spotify_api_request(url, spotify_access_token)
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error searching on Spotify",
         )
 
     return response.json()
