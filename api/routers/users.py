@@ -140,3 +140,26 @@ async def update_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Unauthorized Access",
         )
+
+
+@router.get("/api/user/details")
+async def get_user_details(
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends()
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+
+    # Directly set token values
+    user_details["spotify_access_token"] = user_details.get(
+        "spotify_access_token", "Token not available"
+    )
+    user_details["spotify_refresh_token"] = user_details.get(
+        "spotify_refresh_token", "Token not available"
+    )
+    # spotify_access_token = user_details.get("spotify_access_token")
+    # if spotify_access_token:
+    #     user_details["spotify_access_token"] = spotify_access_token
+    # else:
+    #     user_details["spotify_access_token"] = "Token not available"
+
+    return user_details

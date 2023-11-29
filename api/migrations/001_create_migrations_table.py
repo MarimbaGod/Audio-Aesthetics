@@ -8,7 +8,9 @@ steps = [
             hashed_password VARCHAR(200) NOT NULL,
             first_name VARCHAR(100) NOT NULL,
             last_name VARCHAR(100) NOT NULL,
-            email VARCHAR(100) NOT NULL UNIQUE
+            email VARCHAR(100) NOT NULL UNIQUE,
+            spotify_access_token VARCHAR(255),
+            spotify_refresh_token VARCHAR(255)
         );
         """,
         # "Down" SQL statement
