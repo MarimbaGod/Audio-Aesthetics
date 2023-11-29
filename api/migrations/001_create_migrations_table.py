@@ -72,10 +72,9 @@ steps = [
         """
         CREATE TABLE posts (
             id SERIAL PRIMARY KEY NOT NULL,
-            created_by_user_id INT NOT NULL,
             created_datetime TIMESTAMP NOT NULL,
             caption TEXT,
-            FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE CASCADE
+            created_by INT REFERENCES users("id")
         );
         """,
         """
