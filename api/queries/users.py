@@ -13,6 +13,7 @@ class UserIn(BaseModel):
     first_name: str
     last_name: str
     email: str
+    img_url: Optional[str] = "https://tinyurl.com/Dimg-url"
 
 
 class UserOut(BaseModel):
@@ -21,6 +22,7 @@ class UserOut(BaseModel):
     first_name: str
     last_name: str
     email: str
+    img_url: Optional[str] = "https://tinyurl.com/Dimg-url"
 
 
 class UserOutWithSpotify(BaseModel):
@@ -29,6 +31,7 @@ class UserOutWithSpotify(BaseModel):
     first_name: str
     last_name: str
     email: str
+    img_url: Optional[str] = "https://tinyurl.com/Dimg-url"
     spotify_access_token: Optional[str]
     spotify_refresh_token: Optional[str]
 
@@ -61,6 +64,7 @@ class UserRepository:
                             first_name=user[3],
                             last_name=user[4],
                             email=user[5],
+                            img_url=user[6],
                         )
                         result.append(user)
                     return result
@@ -83,9 +87,10 @@ class UserRepository:
                             hashed_password,
                             first_name,
                             last_name,
-                            email)
+                            email,
+                            img_url)
                         VALUES
-                            (%s, %s, %s, %s, %s)
+                            (%s, %s, %s, %s, %s, %s)
                         RETURNING *;
                         """,
                         [
@@ -94,9 +99,9 @@ class UserRepository:
                             user.first_name,
                             user.last_name,
                             user.email,
+                            user.img_url
                         ],
                     )
-                    print("insert worked?")
                     id = result.fetchone()[0]
                     print("ID GOTTEN", id)
                     return UserOutWithPassword(
@@ -106,6 +111,7 @@ class UserRepository:
                         first_name=user.first_name,
                         last_name=user.last_name,
                         email=user.email,
+                        img_url=user.img_url
                     )
         except Exception:
             return {"message": "Could not create a user"}
@@ -148,6 +154,7 @@ class UserRepository:
                     first_name=user[3],
                     last_name=user[4],
                     email=user[5],
+                    img_url=user[6]
                 )
 
     def get_user_details(self, user_id: int) -> UserOutWithSpotify:
@@ -157,7 +164,7 @@ class UserRepository:
                     """
                     SELECT id,
                     username, first_name,
-                    last_name, email,
+                    last_name, email, img_url,
                     spotify_access_token,
                     spotify_refresh_token
                     FROM users
@@ -173,8 +180,9 @@ class UserRepository:
                         "first_name": user[2],
                         "last_name": user[3],
                         "email": user[4],
-                        "spotify_access_token": user[5],
-                        "spotify_refresh_token": user[6]
+                        "img_url": user[5],
+                        "spotify_access_token": user[6],
+                        "spotify_refresh_token": user[7]
                     }
                 else:
                     return None
@@ -200,6 +208,7 @@ class UserRepository:
                     first_name=user[3],
                     last_name=user[4],
                     email=user[5],
+                    img_url=user[6]
                 )
 
     def delete(self, user_id: int) -> bool:
@@ -233,6 +242,7 @@ class UserRepository:
                                 , first_name = %s
                                 , last_name = %s
                                 , email = %s
+                                , img_url = %s
                             WHERE id = %s
                             RETURNING *;
                             """,
@@ -242,6 +252,7 @@ class UserRepository:
                             user_edit.first_name,
                             user_edit.last_name,
                             user_edit.email,
+                            user_edit.img_url,
                             user_id,
                         ],
                     )
@@ -254,6 +265,7 @@ class UserRepository:
                         first_name=updated[3],
                         last_name=updated[4],
                         email=updated[5],
+                        img_url=updated[6]
                     )
         except Exception:
             return {"message": "Could not update"}

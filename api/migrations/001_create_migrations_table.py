@@ -9,6 +9,7 @@ steps = [
             first_name VARCHAR(100) NOT NULL,
             last_name VARCHAR(100) NOT NULL,
             email VARCHAR(100) NOT NULL UNIQUE,
+            img_url VARCHAR(255) DEFAULT 'https://tinyurl.com/Dimg-url',
             spotify_access_token VARCHAR(255),
             spotify_refresh_token VARCHAR(255)
         );
