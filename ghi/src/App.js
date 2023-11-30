@@ -1,29 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-// import Construct from "./Construct.js";
-// import ErrorNotification from "./ErrorNotification";
 import "./App.css";
-import Login from "./Login"
 import Homepage from "./Homepage"
-import Dashboard from "./Dashboard"
+import SignIn from "./SignIn";
+import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
 
-const code = new URLSearchParams(window.location.search).get('code')
 
 function App() {
+
+  const baseUrl = "http://localhost:8000";
+
   return (
-    <BrowserRouter>
-    <div className="App">
-      <main>
-        <Homepage />
-        {/* <Login /> */}
-        {/* Other Components */}
-      </main>
-    </div>
-    </BrowserRouter>
+   <BrowserRouter>
+        <AuthProvider baseUrl={baseUrl}>
+          <Routes>
+            <Route exact path="/" element={<Homepage />}></Route>
+            <Route exact path="/signin" element={<SignIn />}></Route>
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+
   );
 }
 
 export default App;
-
-
-  // return code ? <Dashboard code={code} /> : <Login />
