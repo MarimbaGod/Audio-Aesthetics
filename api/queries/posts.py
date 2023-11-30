@@ -1,7 +1,7 @@
 from pydantic import BaseModel
-from typing import Union, List
+from typing import Union, List, Optional
 from queries.pool import pool
-from datetime import datetime
+from datetime import datetime, date
 
 
 class Error(BaseModel):
@@ -16,9 +16,11 @@ class PostIn(BaseModel):
 
 class PostOut(BaseModel):
     id: int
-    created_datetime: datetime
+    created_datetime: date
     caption: str
     created_by: int
+    img_url: Optional[str]
+    song_or_playlist: Optional[str]
 
 
 class PostRepository:
@@ -29,16 +31,22 @@ class PostRepository:
                     db.execute(
                         """
                         SELECT
-                        id,
-                        created_datetime,
-                        caption,
-                        created_by
-                        FROM posts
+                            posts.id AS post_id,
+                            posts.created_datetime,
+                            posts.caption,
+                            posts.created_by,
+                            posts_media.img_url,
+                            posts_media.song_or_playlist
+                        FROM
+                            posts
+                        LEFT JOIN
+                            posts_media ON posts.id = posts_media.post_id;
                         """
                     )
                     result = db.fetchall()
-                    return [self.record_to_post_out(record)
-                            for record in result]
+                    return [
+                        self.record_to_post_out(record) for record in result
+                    ]
         except Exception:
             return {"message": "Error could not get posts"}
 
@@ -56,11 +64,7 @@ class PostRepository:
                             (%s, %s, %s)
                         RETURNING id;
                         """,
-                        [
-                            post.created_datetime,
-                            post.caption,
-                            post.created_by
-                        ]
+                        [post.created_datetime, post.caption, post.created_by],
                     )
                     id = result.fetchone()[0]
                     return self.user_in_to_out(id, post)
@@ -81,7 +85,7 @@ class PostRepository:
                         FROM posts
                         WHERE id = %s
                         """,
-                        [id]
+                        [id],
                     )
                     record = result.fetchone()
                     if record is None:
@@ -99,7 +103,7 @@ class PostRepository:
                         DELETE FROM posts
                         WHERE id = %s
                         """,
-                        [id]
+                        [id],
                     )
                     return True
         except Exception:
@@ -114,5 +118,7 @@ class PostRepository:
             id=record[0],
             created_datetime=record[1],
             caption=record[2],
-            created_by=record[3]
+            created_by=record[3],
+            img_url=record[4],
+            song_or_playlist=record[5],
         )

@@ -17,6 +17,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
+import { useEffect, useState } from 'react';
+
+
+
+
 const defaultTheme = createTheme();
 
 const drawerWidth = 240;
@@ -71,7 +76,53 @@ export default function Homepage() {
     setOpen(!open);
   };
 
+  const [posts, setPosts] = useState([]);
+  const [users, setUsers] = useState([]);
+
+
+  useEffect(() => {
+    // Fetch user data from your backend API
+    const fetchData = async () => {
+      // const userUrl =`${process.env.REACT_APP_API_HOST}/api/users`;
+      const userUrl = "http://localhost:8000/api/users/"
+      const userResponse = await fetch(userUrl);
+      if (userResponse.ok) {
+        const data = await userResponse.json();
+        setUsers(data);
+        console.log(data)
+      }
+      const postsUrl = "http://localhost:8000/api/posts/"
+      const postResponse = await fetch(postsUrl);
+      if (postResponse.ok) {
+        const data = await postResponse.json();
+        setPosts(data);
+        console.log(data)
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const userItems = users.map((user) => (
+    // Render each user as needed
+    <div key={user.id}>
+      <p>{user.username}</p>
+      {/* Add other user information and components as needed */}
+    </div>
+  ));
+
+  const postsItems = posts.map((post) => (
+    // Render each user as needed
+    <div key={post.id}>
+      {post.img_url && <img src={post.img_url} alt="Post Image" />}
+      <p>{post.caption}</p>
+      <p>{users[post.created_by-1].username}</p>
+      {/* Add other user information and components as needed */}
+    </div>
+  ));
+
   return (
+
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
@@ -155,19 +206,16 @@ export default function Homepage() {
           }}
         >
           <Toolbar />
+
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            {/* {userItems} */}
             <Grid container spacing={3}>
-              {/* Chart */}
+              {postsItems}
               <Grid item xs={12} md={8} lg={9}>
-
               </Grid>
-              {/* Recent Deposits */}
               <Grid item xs={12} md={4} lg={3}>
-
               </Grid>
-              {/* Recent Orders */}
               <Grid item xs={12}>
-
               </Grid>
             </Grid>
           </Container>

@@ -132,7 +132,8 @@ steps = [
         CREATE TABLE posts_media (
             id SERIAL PRIMARY KEY NOT NULL,
             post_id INT NOT NULL,
-            media INT NOT NULL,
+            img_url VARCHAR(255),
+            song_or_playlist VARCHAR(255) DEFAULT NULL,
             FOREIGN KEY (post_id) REFERENCES posts(id)
         );
         """,
