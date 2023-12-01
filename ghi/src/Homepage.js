@@ -17,12 +17,27 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
+import Stack from '@mui/material/Stack';
+import Card from '@mui/material/Card';
+import Button from '@mui/material/Button';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import Avatar from '@mui/material/Avatar';
+
 import { useEffect, useState } from 'react';
 
 
-
-
-const defaultTheme = createTheme();
+const defaultTheme = createTheme({
+   palette: {
+    background: {
+      default: '#f0f0f0', // Set your desired background color
+    },
+  },
+});
 
 const drawerWidth = 240;
 
@@ -84,7 +99,7 @@ export default function Homepage() {
     // Fetch user data from your backend API
     const fetchData = async () => {
       // const userUrl =`${process.env.REACT_APP_API_HOST}/api/users`;
-      const userUrl = "http://localhost:8000/api/users/"
+      const userUrl = `http://localhost:8000/api/users/`
       const userResponse = await fetch(userUrl);
       if (userResponse.ok) {
         const data = await userResponse.json();
@@ -103,27 +118,9 @@ export default function Homepage() {
     fetchData();
   }, []);
 
-  const userItems = users.map((user) => (
-    // Render each user as needed
-    <div key={user.id}>
-      <p>{user.username}</p>
-      {/* Add other user information and components as needed */}
-    </div>
-  ));
+return (
 
-  const postsItems = posts.map((post) => (
-    // Render each user as needed
-    <div key={post.id}>
-      {post.img_url && <img src={post.img_url} alt="Post Image" />}
-      <p>{post.caption}</p>
-      <p>{users[post.created_by-1].username}</p>
-      {/* Add other user information and components as needed */}
-    </div>
-  ));
-
-  return (
-
-    <ThemeProvider theme={defaultTheme}>
+<ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
@@ -207,18 +204,68 @@ export default function Homepage() {
         >
           <Toolbar />
 
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            {/* {userItems} */}
-            <Grid container spacing={3}>
-              {postsItems}
-              <Grid item xs={12} md={8} lg={9}>
-              </Grid>
-              <Grid item xs={12} md={4} lg={3}>
-              </Grid>
-              <Grid item xs={12}>
-              </Grid>
+          <Container sx={{ py: 8 }} maxWidth="md">
+          <Grid container spacing={4}>
+            {posts.map((post) => (
+            <Grid item key={post.id} xs={12} sm={12} md={12} lg={12}>
+              <Card
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  maxWidth: '500px',
+                  margin: 'auto',
+                }}
+              >
+                {users.find((user) => user.id === post.created_by) && (
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <Avatar src={users.find((user) => user.id === post.created_by).img_url} alt="Profile" />
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 'bold',
+                        fontSize: '1.2rem',
+                      }}
+                    >
+                      {users.find((user) => user.id === post.created_by).username}
+                    </Typography>
+                  </Stack>
+                )}
+                {post.img_url && (
+                  <CardMedia
+                    component="div"
+                    sx={{
+                      // 16:9
+                      pt: '100%',
+                    }}
+                    image={post.img_url}
+                  />
+                )}
+                <CardActions>
+                  <Button size="small">
+                    <FavoriteBorderIcon />
+                  </Button>
+                  <Button size="small">
+                    <AddCommentIcon />
+                  </Button>
+                </CardActions>
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    {post.caption}
+                  </Typography>
+
+                  {post.created_datetime && (
+                    <Typography>
+                      {new Date(post.created_datetime).toLocaleString('default', { month: 'long' }) + " " + new Date(post.created_datetime).getDate()}
+                    </Typography>
+                  )}
+                </CardContent>
+
+              </Card>
             </Grid>
-          </Container>
+          ))}
+          </Grid>
+        </Container>
         </Box>
       </Box>
     </ThemeProvider>
