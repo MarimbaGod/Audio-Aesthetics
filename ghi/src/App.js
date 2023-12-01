@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Homepage from "./Homepage";
+import ExplorePage from "./ExplorePage";
 import SignIn from "./SignIn";
 import Logout from "./Logout";
 
@@ -19,6 +20,7 @@ function App() {
           <Route exact path="/signin" element={<SignIn />}></Route>
           <Route exact path="/logout" element={<Logout />}></Route>
           <Route exact path="/signup" element={<SignupForm />}></Route>
+          <Route exact path="/explore" element={<ExplorePage />}></Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>

@@ -96,7 +96,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function Homepage() {
+export default function ExplorePage() {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -104,32 +104,6 @@ export default function Homepage() {
 
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
-  const [loggedInUser, setLoggedInUser] = useState(null);
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-          try{
-            const response = await fetch('http://localhost:8000/token/', {
-                credentials: "include",
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Data:", data);
-                setLoggedInUser(data.account);
-                console.log(data)
-            }
-            else {
-              console.error('Failed to fetch user data:', response.statusText);
-              window.location.replace('/explore');
-            }
-          }
-          catch(error){
-            console.error('Error fetching user data:', error);
-            window.location.replace('/explore');
-          }
-        };
-        fetchUserData();
-    }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -147,6 +121,7 @@ export default function Homepage() {
         setPosts(data);
       }
     };
+
     fetchData();
   }, []);
 

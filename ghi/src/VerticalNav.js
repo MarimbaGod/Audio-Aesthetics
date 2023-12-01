@@ -12,9 +12,11 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 import ListSubheader from '@mui/material/ListSubheader';
 
+import { Link } from 'react-router-dom';
+
 export const mainListItems = (
   <React.Fragment>
-    <ListItemButton>
+    <ListItemButton component={Link} to ="/">
       <ListItemIcon>
         <HomeIcon />
       </ListItemIcon>
@@ -26,7 +28,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Search" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to ="/explore">
       <ListItemIcon>
         <PublicIcon />
       </ListItemIcon>
