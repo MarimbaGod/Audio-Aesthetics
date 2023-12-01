@@ -5,6 +5,7 @@ import Homepage from "./Homepage";
 import ExplorePage from "./ExplorePage";
 import SignIn from "./SignIn";
 import Logout from "./Logout";
+import Posts from "./Posts";
 
 import SignupForm from "./SignupForm";
 import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
@@ -19,6 +20,7 @@ function App() {
           <Route exact path="/" element={<Homepage />}></Route>
           <Route exact path="/signin" element={<SignIn />}></Route>
           <Route exact path="/logout" element={<Logout />}></Route>
+            <Route exact path="/posts" element={<Posts />}></Route>
           <Route exact path="/signup" element={<SignupForm />}></Route>
           <Route exact path="/explore" element={<ExplorePage />}></Route>
         </Routes>
