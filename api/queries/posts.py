@@ -111,11 +111,16 @@ class PostRepository:
                             p.created_datetime,
                             p.caption,
                             p.created_by,
+                            pm.img_url,
+                            pm.song_or_playlist
                         FROM
                             posts p
                         INNER JOIN
                             user_follows uf ON
                             p.created_by = uf.following_user_id
+                        LEFT JOIN
+                            posts_media pm ON
+                            p.id = pm.post_id
                         WHERE
                             uf.follower_user_id = %s
                         """,

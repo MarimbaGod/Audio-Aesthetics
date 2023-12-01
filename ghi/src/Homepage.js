@@ -106,49 +106,55 @@ export default function Homepage() {
   const [users, setUsers] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState(null);
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-          try{
-            const response = await fetch('http://localhost:8000/token/', {
-                credentials: "include",
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Data:", data);
-                setLoggedInUser(data.account);
-                console.log(data)
-            }
-            else {
-              console.error('Failed to fetch user data:', response.statusText);
-              window.location.replace('/explore');
-            }
-          }
-          catch(error){
-            console.error('Error fetching user data:', error);
-            window.location.replace('/explore');
-          }
-        };
-        fetchUserData();
-    }, []);
+
 
   useEffect(() => {
-    const fetchData = async () => {
-      // const userUrl =`${process.env.REACT_APP_API_HOST}/api/users`;
-      const userUrl = `http://localhost:8000/api/users/`
-      const userResponse = await fetch(userUrl);
-      if (userResponse.ok) {
-        const data = await userResponse.json();
-        setUsers(data);
-      }
-      const postsUrl = "http://localhost:8000/api/posts/"
-      const postResponse = await fetch(postsUrl);
-      if (postResponse.ok) {
-        const data = await postResponse.json();
-        setPosts(data);
-      }
-    };
-    fetchData();
+      const fetchUserData = async () => {
+
+        try{
+          const response = await fetch('http://localhost:8000/token/', {
+              credentials: "include",
+          });
+          if (response.ok) {
+              const data = await response.json();
+              setLoggedInUser(data.account);
+          }
+          else {
+            console.error('Failed to fetch user data:', response.statusText);
+            window.location.replace('/explore');
+          }
+        }
+        catch(error){
+          console.error('Error fetching user data:', error);
+          window.location.replace('/explore');
+        }
+      };
+      fetchUserData();
+
   }, []);
+
+
+
+  useEffect(() => {
+  const fetchData = async () => {
+    const userUrl = `http://localhost:8000/api/users/`
+    const userResponse = await fetch(userUrl);
+    const homepageResponse = await fetch("http://localhost:8000/api/homepage/",{
+      credentials: "include",
+    });
+    if (homepageResponse.ok) {
+      const data = await homepageResponse.json();
+      setPosts(data);
+    }
+    if (userResponse.ok) {
+      const data = await userResponse.json();
+      setUsers(data);
+    }
+  };
+
+  fetchData();
+}, []);
+
 
 return (
     <ThemeProvider theme={defaultTheme}>
@@ -157,7 +163,7 @@ return (
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: '24px', // keep right padding when drawer closed
+              pr: '24px',
             }}
           >
             <IconButton

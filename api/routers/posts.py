@@ -97,3 +97,17 @@ async def delete_post(
 )
 async def get_user_posts(user_id: int, repo: PostRepository = Depends()):
     return repo.get_posts_by_user(user_id)
+
+
+@router.get("/api/homepage/", response_model=Union[Error, List[PostOut]])
+async def get_homepage_post(
+    repo: PostRepository = Depends(),
+    account_data: dict = Depends(authenticator.get_current_account_data),
+):
+    if not account_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
+    account_id = account_data.get("id")
+    return repo.get_posts_by_following(account_id)
