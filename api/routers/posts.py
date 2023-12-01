@@ -90,3 +90,10 @@ async def delete_post(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authorized to delete this post",
         )
+
+
+@router.get(
+    "/api/users/{user_id}/posts", response_model=Union[Error, List[PostOut]]
+)
+async def get_user_posts(user_id: int, repo: PostRepository = Depends()):
+    return repo.get_posts_by_user(user_id)
