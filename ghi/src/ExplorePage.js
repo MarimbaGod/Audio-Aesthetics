@@ -70,6 +70,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
+
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     '& .MuiDrawer-paper': {
@@ -95,6 +96,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     },
   }),
 );
+
+const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export default function ExplorePage() {
   const [open, setOpen] = React.useState(true);
@@ -126,10 +129,10 @@ export default function ExplorePage() {
   }, []);
 
 return (
-    <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <AppBar position="absolute" open={open}>
+  <ThemeProvider theme={defaultTheme}>
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
               pr: '24px', // keep right padding when drawer closed
@@ -166,7 +169,7 @@ return (
             </IconButton>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open}>
           <Toolbar
             sx={{
               display: 'flex',
@@ -211,11 +214,12 @@ return (
             overflow: 'auto',
           }}
         >
-          <Toolbar />
-          <Container sx={{ py: 8 }} maxWidth="md">
-          <Grid container spacing={4}>
+        <Toolbar />
+        {/* This holds the grid system  */}
+        <Container sx={{ py: 8, mt: 4}} maxWidth="md">
+          <Grid container spacing={3}>
             {posts.map((post) => (
-            <Grid item key={post.id} xs={12} sm={12} md={12} lg={12}>
+            <Grid item key={post.id} xs={12} sm={6} md={4}>
               <Card
                 sx={{
                   height: '100%',
@@ -226,8 +230,11 @@ return (
                 }}
               >
                 {users.find((user) => user.id === post.created_by) && (
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Avatar src={users.find((user) => user.id === post.created_by).img_url} alt="Profile" />
+                  <Stack direction="row" alignItems="center" spacing={1} >
+                    <Avatar
+                      src={users.find((user) => user.id === post.created_by).img_url}
+                      alt="Profile"
+                      />
                     <Typography
                       variant="h6"
                       sx={{
@@ -254,20 +261,9 @@ return (
                     <FavoriteBorderIcon />
                   </Button>
                   <Button size="small">
-                    <AddCommentIcon />
+                    View
                   </Button>
                 </CardActions>
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {post.caption}
-                  </Typography>
-
-                  {post.created_datetime && (
-                    <Typography>
-                      {new Date(post.created_datetime).toLocaleString('default', { month: 'long' }) + " " + new Date(post.created_datetime).getDate()}
-                    </Typography>
-                  )}
-                </CardContent>
               </Card>
             </Grid>
           ))}
