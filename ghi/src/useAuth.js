@@ -1,28 +1,42 @@
-// import {useState, useEffect} from "react"
-// import axios from "axios"
+import {useState, useEffect} from "react"
 
 
-// export default function useAuth(code) {
-//     const [accessToken, setAccessToken] = useState()
-//     const [refreshToken, setRefreshToken] = useState()
-//     const [expiresIn, setExpiresIn] = useState()
+function useAuth(userProfile, setUserProfile) {
+    useEffect(() => {
+        if (!userProfile.spotify_refresh_token) return;
 
-//     useEffect(() => {
-//         axios.post("http://localhost:3001/login", {
-//             code,
-//         }).then(res => {
-//             setAccessToken(res.data.accessToken)
-//             setRefreshToken(res.data.refreshToken)
-//             setExpiresIn(res.data.expiresIn)
-//             window.history.pushState({}, null, "/")
-//         }).catch(() => {
-//             window.location = '/'
-//         })
-//     }, [code])
+        const refreshInterval = 55 * 60 * 1000;
 
-//     useEffect(() => {
+        const interval = setInterval(() => {
+            fetch('http://localhost:8000/spotify/refresh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ refreshToken: userProfile.spotify_refresh_token }),
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Failed to refresh access token');
+                }
+                return res.json();
+            })
+            .then(data => {
+                setUserProfile(prevState => ({
+                    ...prevState,
+                    spotify_access_token: data.access_token,
+                }));
+            })
+            .catch(error => {
+                console.error('Error refreshing access token:', error);
+            });
+        }, refreshInterval);
 
-//     }, [refreshToken, expiresIn])
+        return () => clearInterval(interval);
+    }, [userProfile.spotify_refresh_token, setUserProfile]);
 
-//     return accessToken
-// }
+    // Returns the current access token
+    return userProfile.spotify_access_token;
+}
+
+export default useAuth;
