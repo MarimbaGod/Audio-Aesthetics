@@ -166,7 +166,7 @@ return (
                 <LogoutIcon />
             </IconButton>
           </Toolbar>
-        </AppBar>
+      </AppBar>
       <Drawer variant="permanent" open={open}>
           <Toolbar
             sx={{
@@ -199,76 +199,76 @@ return (
             <Divider sx={{ my: 1 }} />
             {secondaryListItems}
           </List>
-        </Drawer>
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === 'light'
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-        <Toolbar />
-        {/* This holds the grid system  */}
-        <Container sx={{ py: 8, mt: 4}} maxWidth="md">
-          <Grid container spacing={3}>
-            {posts.map((post) => (
-            <Grid item key={post.id} xs={12} sm={6} md={4}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  maxWidth: '500px',
-                  margin: 'auto',
-                }}
-              >
-                {users.find((user) => user.id === post.created_by) && (
-                  <Stack direction="row" alignItems="center" spacing={1} >
-                    <Avatar
-                      src={users.find((user) => user.id === post.created_by).img_url}
-                      alt="Profile"
-                      />
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 'bold',
-                        fontSize: '1.2rem',
-                      }}
-                    >
-                      {users.find((user) => user.id === post.created_by).username}
-                    </Typography>
-                  </Stack>
-                )}
-                {post.img_url && (
-                  <CardMedia
-                    component="div"
+      </Drawer>
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'light'
+              ? theme.palette.grey[100]
+              : theme.palette.grey[900],
+          flexGrow: 1,
+          height: '100vh',
+          overflow: 'auto',
+        }}
+      >
+      <Toolbar />
+      {/* This holds the grid system  */}
+      <Container sx={{ py: 8, mt: 4}} maxWidth="md">
+        <Grid container spacing={3}>
+          {posts.map((post) => (
+          <Grid item key={post.id} xs={12} sm={6} md={4}>
+            <Card
+              sx={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                maxWidth: '500px',
+                margin: 'auto',
+              }}
+            >
+              {users.find((user) => user.id === post.created_by) && (
+                <Stack direction="row" alignItems="center" spacing={1} >
+                  <Avatar
+                    src={users.find((user) => user.id === post.created_by).img_url}
+                    alt="Profile"
+                    />
+                  <Typography
+                    variant="h6"
                     sx={{
-                      // 16:9
-                      pt: '100%',
+                      fontWeight: 'bold',
+                      fontSize: '1.2rem',
                     }}
-                    image={post.img_url}
-                  />
-                )}
-                <CardActions>
-                  <Button size="small">
-                    <FavoriteBorderIcon />
-                  </Button>
-                  <Button size="small">
-                    View
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
+                  >
+                    {users.find((user) => user.id === post.created_by).username}
+                  </Typography>
+                </Stack>
+              )}
+              {post.img_url && (
+                <CardMedia
+                  component="div"
+                  sx={{
+                    // 16:9
+                    pt: '100%',
+                  }}
+                  image={post.img_url}
+                />
+              )}
+              <CardActions>
+                <Button size="small">
+                  <FavoriteBorderIcon />
+                </Button>
+                <Button size="small">
+                  View
+                </Button>
+              </CardActions>
+            </Card>
           </Grid>
-        </Container>
-        </Box>
+        ))}
+        </Grid>
+      </Container>
       </Box>
-    </ThemeProvider>
+    </Box>
+  </ThemeProvider>
   );
 }
