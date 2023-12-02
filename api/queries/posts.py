@@ -124,7 +124,7 @@ class PostRepository:
                         WHERE
                             uf.follower_user_id = %s
                         """,
-                        [user_id]
+                        [user_id],
                     )
                     result = db.fetchall()
                     print(result)
@@ -153,12 +153,11 @@ class PostRepository:
                             p.id = pm.post_id
                         WHERE p.created_by = %s;
                         """,
-                        (user_id,)
+                        (user_id,),
                     )
                     results = db.fetchall()
                     return [
-                        self.record_to_post_out(record)
-                        for record in results
+                        self.record_to_post_out(record) for record in results
                     ]
         except Exception as e:
             print(e)
@@ -178,6 +177,57 @@ class PostRepository:
                     return True
         except Exception:
             return False
+
+    def like_post(
+        self, user_id: int, post_id: int
+    ) -> Union[Error, List[PostOut]]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        SELECT 1
+                        FROM liked_posts
+                        WHERE user_id = %s
+                        AND post_id = %s
+                        """,
+                        [user_id, post_id],
+                    )
+                    if db.fetchone():
+                        return {"message": "Sorry SuperFan, can't double like"}
+                    db.execute(
+                        """
+                        INSERT INTO liked_posts(user_id, post_id, active)
+                        VALUES (%s, %s, TRUE)
+                        ON CONFLICT (user_id, post_id)
+                        DO UPDATE SET active = TRUE;
+                        """,
+                        [user_id, post_id],
+                    )
+                    return {"message": "Liked :D"}
+
+        except Exception:
+            return {"message": "Error could not like post"}
+
+    def unlike_post(
+        self, user_id: int, post_id: int
+    ) -> Union[Error, List[PostOut]]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        UPDATE liked_posts
+                        SET active = FALSE
+                        WHERE user_id = %s
+                        AND post_id = %s
+                        """,
+                        [user_id, post_id],
+                    )
+                    return {"message": "Unliked the lame post >:D"}
+
+        except Exception:
+            return {"message": "SOL"}
 
     def user_in_to_out(self, id: int, post: PostIn):
         old_data = post.dict()

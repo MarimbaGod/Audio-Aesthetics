@@ -119,9 +119,10 @@ steps = [
         CREATE TABLE liked_posts (
             user_id INT NOT NULL,
             post_id INT NOT NULL,
+            active BOOLEAN DEFAULT TRUE,
+            PRIMARY KEY (user_id, post_id),
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-            FOREIGN KEY (post_id) REFERENCES posts(id),
-            UNIQUE (user_id, post_id)
+            FOREIGN KEY (post_id) REFERENCES posts(id)
         );
         """,
         """

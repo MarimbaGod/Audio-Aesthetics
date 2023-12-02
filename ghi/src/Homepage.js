@@ -155,6 +155,27 @@ export default function Homepage() {
   fetchData();
 }, []);
 
+  const handleLike = async (postId) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/posts/${postId}/like`, {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);  // Log the response (you can handle it as needed)
+        // Add logic to update the UI or perform any other actions
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to like the post:', errorData.message);
+        // Handle the error, display a message, etc.
+      }
+    } catch (error) {
+      console.error('Error while liking the post:', error);
+      // Handle the error, display a message, etc.
+    }
+  };
+
 
 return (
     <ThemeProvider theme={defaultTheme}>
@@ -282,7 +303,7 @@ return (
                 )}
                 <CardActions>
                   <Button size="small">
-                    <FavoriteBorderIcon />
+                    <FavoriteBorderIcon onClick={() => handleLike(post.id)}/>
                   </Button>
                   <Button size="small">
                     <AddCommentIcon />
