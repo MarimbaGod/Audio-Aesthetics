@@ -6,6 +6,8 @@ import ExplorePage from "./ExplorePage";
 import SignIn from "./SignIn";
 import Logout from "./Logout";
 import Posts from "./Posts";
+import Profile from "./Profile";
+import Search from "./Search";
 // import Profile from "./Profile";
 import UserProfile from "./UserProfile";
 import SignupForm from "./SignupForm";
@@ -24,6 +26,8 @@ function App() {
           <Route exact path="/posts" element={<Posts />}></Route>
           <Route exact path="/signup" element={<SignupForm />}></Route>
           <Route exact path="/explore" element={<ExplorePage />}></Route>
+          <Route exact path="/profile" element={<Profile />}></Route>
+          <Route exact path="/search" element={<Search />}></Route>
           <Route exact path="/profile" element={<UserProfile />}></Route>
         </Routes>
       </AuthProvider>
