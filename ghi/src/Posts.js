@@ -5,6 +5,10 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import CssBaseline from '@mui/material/CssBaseline';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
@@ -12,6 +16,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Chip from '@mui/material/Chip';
+import TextField from '@mui/material/TextField';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 
@@ -42,7 +49,7 @@ function Copyright() {
 const defaultTheme = createTheme({
   palette: {
     background: {
-      default: '#f0f0f0', // Set your desired background color
+      default: '#f0f0f0',
     },
   },
   typography:{
@@ -99,14 +106,61 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function Posts() {
-    const [open, setOpen] = React.useState(true);
-    const toggleDrawer = () => {
-      setOpen(!open);
-    };
-
+    // const [open, setOpen] = React.useState(true);
+    const [openDrawer, setOpenDrawer] = React.useState(true);
+    const [isDialogOpen, setDialogOpen] = React.useState(false);
     const [ posts, setPosts ] = useState([]);
     const [ loggedInUser, setLoggedInUser ] = useState(null);
     const [ username, setUsername ] = useState("");
+    const [ caption, setCaption ] = React.useState("");
+    const [ imgUrl, setImgUrl ] = React.useState("");
+    const [ songOrPlaylist, setSongOrPlaylist ] = React.useState("");
+
+    const toggleDrawer = () => {
+      setOpenDrawer(!openDrawer);
+    };
+
+    const handleClickOpen = () => {
+      setDialogOpen(true);
+    };
+
+    const handleClose = () => {
+      setDialogOpen(false);
+      setCaption("");
+      setImgUrl("");
+      setSongOrPlaylist("");
+    };
+
+
+    const handlePost = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/posts', {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            created_datetime: new Date().toISOString(),
+            caption,
+            created_by: loggedInUser,
+            img_url: imgUrl,
+            song_or_playlist: songOrPlaylist,
+          }),
+        });
+
+        if(response.ok) {
+          const newPost = await response.json();
+          setPosts((prevPosts) => [...prevPosts, newPost]);
+          handleClose();
+        } else {
+          console.error('Error creating post:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error creating post:', error);
+      }
+    };
+
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -134,6 +188,29 @@ export default function Posts() {
         fetchUserData();
     }, []);
 
+  const handleDelete = async (postId) => {
+
+    const isConfirmed = window.confirm('Are you sure you want to delete this post?');
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/posts/${postId}`, {
+        method: 'DELETE',
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+      } else {
+        console.error('Error deleting post');
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  };
 
   const postsItems = posts.map((post) => (
     <Grid item key={post.id} xs={12} sm={6} md={4}>
@@ -153,7 +230,7 @@ export default function Posts() {
         />
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography gutterBottom variant="h5" component="h2">
-            {post.created_datetime}
+            {new Date(post.created_datetime).toLocaleDateString('en-GB')}
           </Typography>
           <Typography>
             {post.caption}
@@ -161,7 +238,15 @@ export default function Posts() {
         </CardContent>
         <CardActions>
           <Button size="small">View</Button>
-          <Button size="small">Delete</Button>
+          <Chip
+            label="Delete"
+            size="small"
+            color="error"
+            onClick={() => handleDelete(post.id)}
+            onDelete={() => handleDelete(post.id)}
+            deleteIcon={<DeleteIcon />}
+            variant="filled"
+          />
         </CardActions>
       </Card>
     </Grid>
@@ -171,7 +256,7 @@ export default function Posts() {
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar position="absolute" open={open}>
+        <AppBar position="absolute" open={openDrawer}>
             <Toolbar
               sx={{
                 pr: '24px',
@@ -184,7 +269,7 @@ export default function Posts() {
                 onClick={toggleDrawer}
                 sx={{
                   marginRight: '36px',
-                  ...(open && { display: 'none' }),
+                  // ...(open && { display: 'none' }),
                 }}
               >
                 <MenuIcon />
@@ -208,7 +293,7 @@ export default function Posts() {
               </IconButton>
             </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant="permanent" open={openDrawer}>
           <Toolbar
             sx={{
               display: 'flex',
@@ -271,7 +356,53 @@ export default function Posts() {
               spacing={2}
               justifyContent="center"
             >
-              <Button variant="contained">Make a new post</Button>
+              <React.Fragment>
+                <Button variant="contained" onClick={handleClickOpen}>
+                  Make a new post
+                </Button>
+                <Dialog open={isDialogOpen} onClose={handleClose}>
+                  <DialogTitle>Create a new post</DialogTitle>
+                  <DialogContent>
+                    <TextField
+                      autoFocus
+                      margin="dense"
+                      id="caption"
+                      label="Write your post here..."
+                      type="text"
+                      fullWidth
+                      variant="standard"
+                      value={caption}
+                      onChange={(e) => setCaption(e.target.value)}
+                    />
+                    <TextField
+                      autoFocus
+                      margin="dense"
+                      id="imgUrl"
+                      label="Image Url"
+                      type="text"
+                      fullWidth
+                      variant="standard"
+                      value={imgUrl}
+                      onChange={(e) => setImgUrl(e.target.value)}
+                    />
+                    <TextField
+                      autoFocus
+                      margin="dense"
+                      id="songOrPlaylist"
+                      label="Song or Playlist"
+                      type="text"
+                      fullWidth
+                      variant="standard"
+                      value={songOrPlaylist}
+                      onChange={(e) => setSongOrPlaylist(e.target.value)}
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button variant="contained" onClick={handlePost}>Post</Button>
+                    <Button variant="contained" color="error" onClick={handleClose}>Cancel</Button>
+                  </DialogActions>
+                </Dialog>
+              </React.Fragment>
             </Stack>
           </Container>
         <Toolbar />

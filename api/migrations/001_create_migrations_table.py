@@ -74,7 +74,7 @@ steps = [
         CREATE TABLE posts (
             id SERIAL PRIMARY KEY NOT NULL,
             created_datetime TIMESTAMP NOT NULL,
-            caption TEXT,
+            caption TEXT NOT NULL,
             created_by INT REFERENCES users(id)
         );
         """,
@@ -136,7 +136,7 @@ steps = [
             post_id INT NOT NULL,
             img_url VARCHAR(255),
             song_or_playlist VARCHAR(255) DEFAULT NULL,
-            FOREIGN KEY (post_id) REFERENCES posts(id)
+            FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
         );
         """,
         """

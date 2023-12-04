@@ -12,6 +12,8 @@ class PostIn(BaseModel):
     created_datetime: datetime
     caption: str
     created_by: int
+    img_url: Optional[str]
+    song_or_playlist: Optional[str]
 
 
 class PostOut(BaseModel):
@@ -56,18 +58,29 @@ class PostRepository:
                 with conn.cursor() as db:
                     result = db.execute(
                         """
-                        INSERT INTO posts
-                            (created_datetime,
-                            caption,
-                            created_by)
+                        WITH inserted_post AS (
+                            INSERT INTO posts
+                                (created_datetime, caption, created_by)
+                            VALUES
+                                (%s, %s, %s)
+                            RETURNING id
+                        )
+                        INSERT INTO posts_media
+                            (post_id, img_url, song_or_playlist)
                         VALUES
-                            (%s, %s, %s)
-                        RETURNING id;
+                            ((SELECT id FROM inserted_post), %s, %s)
+                        RETURNING post_id;
                         """,
-                        [post.created_datetime, post.caption, post.created_by],
+                        [
+                            post.created_datetime,
+                            post.caption,
+                            post.created_by,
+                            post.img_url,
+                            post.song_or_playlist
+                        ],
                     )
-                    id = result.fetchone()[0]
-                    return self.user_in_to_out(id, post)
+                    post_id = result.fetchone()[0]
+                    return self.user_in_to_out(post_id, post)
         except Exception:
             return {"message": "Create did not work try different credentials"}
 
