@@ -14,6 +14,7 @@ const AUTH_URL =
 export default function UserProfile() {
     // const { token } = useToken();
     const [userProfile, setUserProfile] = useState(null);
+    const [playlists, setPlaylists] = useState([]);
     // const [accessToken, setAccessToken] = useState(null);
 
     useEffect(() => {
@@ -24,8 +25,8 @@ export default function UserProfile() {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    const { spotify_access_token, spotify_refresh_token, ...userDetails } = data;
-                    setUserProfile(userDetails);
+                    // const { spotify_access_token, spotify_refresh_token, ...userDetails } = data;
+                    setUserProfile(data); //changed to daata from userDetails
                 } else {
                     console.error('Failed to fetch user profile:', response.statusText);
                 }
@@ -34,6 +35,21 @@ export default function UserProfile() {
             }
         };
 
+        const fetchPlaylists = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/spotify/playlists', {
+                    credentials: "include",
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setPlaylists(data.items);
+                }
+            } catch (error) {
+                console.error('Error fetching playlists:', error);
+            }
+        };
+
+        fetchPlaylists();
         fetchUserProfile();
     }, []);
 
@@ -62,7 +78,29 @@ export default function UserProfile() {
                         </CardContent>
                     </Card>
                 </Grid>
+                {/* Playlist Render*/}
+                {playlists.map((playlist, index) => (
+                    <Grid item xs={12} sm={6} md={4} key={index}>
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h6">{playlist.name}</Typography>
+                                {/* If img array at least 1 img*/}
+                                {playlist.images && playlist.images.length > 0 ? (
+                                    <img src={playlist.images[0].url} alt={playlist.name} style={{ width: '100%' }} />
+                                ) : (
+                                    <div style={{ width: '100%', height: '200px', backgroundColor: '#f0f0f0' }}>No Image</div>
+                                )}
+                                {/* Optional render default img */}
+                                {/* Other playlist details */}
+                                <Typography variant="body2">
+                                    {playlist.tracks.total} Tracks
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
             </Grid>
         </Container>
     );
 }
+{/* <img src="https://tinyurl.com/Dimg-url" alt="Default Playlist" style={{ width: '100%', height: '200px' }} /> */}
