@@ -33,10 +33,9 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 
-//card icons
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import AddCommentIcon from '@mui/icons-material/AddComment';
-import Avatar from '@mui/material/Avatar';
+//icons
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import GroupsIcon from '@mui/icons-material/Groups';
 
 const defaultTheme = createTheme({
   palette: {
@@ -103,23 +102,24 @@ export default function Homepage() {
         setOpen(!open);
     };
 
-    const [posts, setPosts] = useState([]);
     const [users, setUsers] = useState([]);
+    const [groups, setGroups] = useState([]);
     const [loggedInUser, setLoggedInUser] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-
     const [filteredUsers, setFilteredUsers] = useState([]);
+    const [filteredGroups, setFilteredGroups] = useState([]);
     const handleSearch = async (event) => {
             const value = event.target.value;
             setSearchQuery(value)
-            const filtered = value.length > 0 ? users.filter(user => user.username.toLowerCase().includes(value.toLowerCase())) : [];
-            setFilteredUsers(filtered);
+            const filteredUsers = value.length > 0 ? users.filter(user => user.username.toLowerCase().startsWith(value.toLowerCase())) : [];
+            setFilteredUsers(filteredUsers);
+            const filteredGroups = value.length > 0 ? groups.filter(group => group.name.toLowerCase().startsWith(value.toLowerCase()) || group.created_by.toLowerCase().startsWith(value.toLowerCase())) : [];
+            setFilteredGroups(filteredGroups);
         };
 
 
   useEffect(() => {
       const fetchUserData = async () => {
-
         try{
           const response = await fetch('http://localhost:8000/token/', {
               credentials: "include",
@@ -142,23 +142,24 @@ export default function Homepage() {
 
   }, []);
 
-
-
   useEffect(() => {
   const fetchData = async () => {
     const userUrl = `http://localhost:8000/api/users/`
+    const groupUrl = `http://localhost:8000/api/groups/`
     const userResponse = await fetch(userUrl);
+    const groupResponse = await fetch(groupUrl);
     if (userResponse.ok) {
       const data = await userResponse.json();
       setUsers(data);
+    }
+    if (groupResponse.ok) {
+      const data = await groupResponse.json();
+      setGroups(data);
     }
   };
 
   fetchData();
 }, []);
-
-
-
 
 return (
     <ThemeProvider theme={defaultTheme}>
@@ -218,8 +219,8 @@ return (
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  height: '20px', // Adjust the height as needed
-                  fontWeight: 'bold', // You can adjust the styling as needed
+                  height: '20px',
+                  fontWeight: 'bold',
                 }}
               >
                 Audio Aesthetics
@@ -248,26 +249,69 @@ return (
         >
           <Toolbar />
             <Container sx={{ py: 8 }} maxWidth="md">
-                <TextField id="standard-basic" label="Search here" variant="standard" onChange={handleSearch} />
+                <TextField id="standard-basic" label="Search for users, groups, songs" variant="standard" onChange={handleSearch} sx={{ width: '890px' }} />
             <Grid container spacing={4}>
-
-            {filteredUsers.map((user) => (
-              <Grid item key={user.id} xs={12} sm={6} md={4} lg={3}>
-                <Card>
-                  <CardMedia
-                    component="img"
-                    alt={user.username}
-                    height="140"
-                    image={user.img_url} // Assuming you have a profile image URL in your user data
-                  />
-                  <CardContent>
-                    <Typography variant="h6" component="div">
-                      {user.username}
+            <Grid container spacing={4} sx={{py: 10}}>
+            {/* Users code */}
+            {filteredUsers.length > 0 && (
+                <>
+                    <Typography variant="h4" gutterBottom>
+                        Users
                     </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+                    <Grid container spacing={4}>
+                    {filteredUsers.map((user) => (
+                        <Grid item key={user.id} xs={12} sm={6} md={4} lg={3}>
+                            <Card>
+                                <CardMedia
+                                    component="img"
+                                    alt={user.username}
+                                    height="200"
+                                    image={user.img_url}
+                                />
+                                <CardContent>
+                                    <Typography variant="h5" component="div">
+                                        {user.username}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                    </Grid>
+                </>
+            )}
+            </Grid>
+            {/* Groups code */}
+            <Grid container spacing={4} sx={{ py: 8 }}>
+            {filteredGroups.length > 0 &&(
+                <>
+                <Typography variant="h4" gutterBottom>
+                    Groups
+                </Typography>
+                <Grid container spacing={4}>
+                {filteredGroups.map((group) => (
+                    <Grid item key={group.id} xs={12} sm={6} md={4} lg={3}>
+                        <Card>
+                            <CardMedia
+                                component="img"
+                                alt={group.name}
+                                height="200"
+                                image={group.img_url}
+                            />
+                            <CardContent>
+                                    <Typography variant="h5" component="div">
+                                    {group.name}
+                                    </Typography>
+                                <Typography variant="h6" component="div">
+                                Created by: {group.created_by}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    ))}
+                    </Grid>
+                </>
+            )}
+            </Grid>
           </Grid>
         </Container>
         </Box>
