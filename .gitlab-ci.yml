@@ -14,17 +14,20 @@ lint-test-job:
     - pip install flake8
     - flake8 api
 
-# # Run the unit tests
-# api-unit-tests-job:
-#   image: python:3-bullseye
-#   stage: test
-#   needs:
-#     - lint-test-job
-#   script:
-#     - cd api
-#     - pip install -r requirements.txt
-#     - python -m pytest
+# Run the unit tests
+api-unit-tests-job:
+  image: python:3-bullseye
+  stage: test
+  variables:
+    DATABASE_URL: ${DATABASE_URL}
+    SIGNING_KEY: ${SIGNING_KEY}
 
+  needs:
+    - lint-test-job
+  script:
+    - cd api
+    - pip install -r requirements.txt
+    - python -m pytest
 # # Build API Image:
 # build-api-image:
 #   stage: build
@@ -39,7 +42,6 @@ lint-test-job:
 #     - docker push $GITLAB_IMAGE:latest
 #   only:
 #     - main
-
 
 # # Build the React/JavaScript front-end
 # build-front-end-job:
@@ -58,7 +60,7 @@ lint-test-job:
 #     - cd ghi
 #     - npm install
 #     - npm run build
-#     The following line creates a _redirects file to redirect all URLs to index.html 
+#     The following line creates a _redirects file to redirect all URLs to index.html
 #     Documentation: https://docs.gitlab.com/ee/user/project/pages/redirects.html#rewrite-all-requests-to-a-root-indexhtml
 #     - echo "/* /index.html 200" > build/_redirects
 #   artifacts:
