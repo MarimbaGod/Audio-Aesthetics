@@ -34,7 +34,7 @@ const SignupForm = () => {
       img_url: img_url,
     };
     register(userData, `http://localhost:8000/api/users`, e.target.reset());
-    navigate("/");
+    navigate("/explore");
   };
 
   return (
