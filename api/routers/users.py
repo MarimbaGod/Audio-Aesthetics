@@ -94,16 +94,14 @@ async def create_user(
 async def get_user_data(
     user_id: int,
     repo: UserRepository = Depends(),
-    user_data: dict = Depends(authenticator.get_current_account_data),
 ):
-    if user_id == user_data["id"]:
-        user = repo.get_one(user_id)
-        if user:
-            return user
+    user = repo.get_one(user_id)
+    if user:
+        return user
     else:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Unauthorized Access",
+            status_code=status.HTTP_404_UNAUTHORIZED,
+            detail="User not found",
         )
 
 
