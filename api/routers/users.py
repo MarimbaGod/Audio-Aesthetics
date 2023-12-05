@@ -20,8 +20,6 @@ from pydantic import BaseModel
 from authenticator import authenticator
 from typing import Union, List
 
-# from db import BookQueries as BookQ # our database queries
-
 
 class UserForm(BaseModel):
     username: str
@@ -145,7 +143,7 @@ async def update_user(
 @router.get("/api/user/details")
 async def get_user_details(
     current_user: dict = Depends(authenticator.get_current_account_data),
-    user_repo: UserRepository = Depends()
+    user_repo: UserRepository = Depends(),
 ):
     user_details = user_repo.get_user_details(current_user["id"])
 
@@ -163,3 +161,78 @@ async def get_user_details(
     #     user_details["spotify_access_token"] = "Token not available"
 
     return user_details
+
+
+@router.post(
+    "/api/users/follow/{following_id}", response_model=Union[Error, dict]
+)
+async def follow_user(
+    following_id: int,
+    account_data: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    if not account_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
+    follower_id = account_data.get("id")
+    if following_id == follower_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Can't follow yourself lol",
+        )
+
+    return user_repo.follow_user(follower_id, following_id)
+
+
+@router.post(
+    "/api/users/unfollow/{following_id}", response_model=Union[Error, dict]
+)
+async def unfollow_user(
+    following_id: int,
+    account_data: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    if not account_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
+
+    follower_id = account_data.get("id")
+    return user_repo.unfollow_user(follower_id, following_id)
+
+
+@router.get(
+    "/api/users/{user_id}/followers",
+    response_model=Union[Error, List[UserOut]],
+)
+async def get_user_followers(
+    account_data: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    if not account_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
+    user_id = account_data.get("id")
+    return user_repo.get_followers(user_id)
+
+
+@router.get(
+    "/api/users/{user_id}/following",
+    response_model=Union[Error, List[UserOut]],
+)
+async def get_user_following(
+    account_data: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    if not account_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
+    user_id = account_data.get("id")
+    return user_repo.get_following(user_id)

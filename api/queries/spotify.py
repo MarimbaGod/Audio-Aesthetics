@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 import requests
+# from users.queries import UserRepository
 
 
 def make_spotify_api_request(url: str, access_token: str):
@@ -30,3 +31,24 @@ def refresh_spotify_access_token(
 
     new_token_data = response.json()
     return new_token_data["access_token"]
+
+
+# def spotify_api_request_with_refresh(
+#     user_details: dict,
+#     url: str,
+#     user_repo: UserRepository
+# ):
+#     access_token = user_details["spotify_access_token"]
+#     response = make_spotify_api_request(url, access_token)
+
+#     if response.status_code == 401:
+#         new_access_token = refresh_spotify_access_token(
+#             user_details["spotify_refresh_token"],
+#             os.getenv("SPOTIFY_CLIENT_ID"),
+#             os.getenv("SPOTIFY_CLIENT_SECRET")
+#         )
+
+#         user_repo.update_spotify_tokens(
+#             current_user["id"]
+#         )
+#         response =

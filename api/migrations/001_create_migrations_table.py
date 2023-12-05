@@ -74,8 +74,8 @@ steps = [
         CREATE TABLE posts (
             id SERIAL PRIMARY KEY NOT NULL,
             created_datetime TIMESTAMP NOT NULL,
-            caption TEXT,
-            created_by INT REFERENCES users("id")
+            caption TEXT NOT NULL,
+            created_by INT REFERENCES users(id)
         );
         """,
         """
@@ -101,16 +101,17 @@ steps = [
     ],
     [
         """
-        CREATE TABLE following (
+        CREATE TABLE user_follows (
             follower_user_id INT NOT NULL,
             following_user_id INT NOT NULL,
+            active BOOLEAN DEFAULT TRUE,
+            PRIMARY KEY (follower_user_id, following_user_id),
             FOREIGN KEY (follower_user_id) REFERENCES users(id) ON DELETE CASCADE,
-            FOREIGN KEY (following_user_id) REFERENCES users(id),
-            UNIQUE (follower_user_id, following_user_id)
+            FOREIGN KEY (following_user_id) REFERENCES users(id)
         );
         """,
         """
-        DROP TABLE following
+        DROP TABLE user_follows;
         """,
     ],
     [
@@ -118,9 +119,10 @@ steps = [
         CREATE TABLE liked_posts (
             user_id INT NOT NULL,
             post_id INT NOT NULL,
+            active BOOLEAN DEFAULT TRUE,
+            PRIMARY KEY (user_id, post_id),
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-            FOREIGN KEY (post_id) REFERENCES posts(id),
-            UNIQUE (user_id, post_id)
+            FOREIGN KEY (post_id) REFERENCES posts(id)
         );
         """,
         """
@@ -134,7 +136,7 @@ steps = [
             post_id INT NOT NULL,
             img_url VARCHAR(255),
             song_or_playlist VARCHAR(255) DEFAULT NULL,
-            FOREIGN KEY (post_id) REFERENCES posts(id)
+            FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
         );
         """,
         """

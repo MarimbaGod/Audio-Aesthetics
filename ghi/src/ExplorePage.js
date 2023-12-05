@@ -70,6 +70,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
+
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     '& .MuiDrawer-paper': {
@@ -126,10 +127,10 @@ export default function ExplorePage() {
   }, []);
 
 return (
-    <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <AppBar position="absolute" open={open}>
+  <ThemeProvider theme={defaultTheme}>
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
               pr: '24px', // keep right padding when drawer closed
@@ -165,8 +166,8 @@ return (
                 <LogoutIcon />
             </IconButton>
           </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
+      </AppBar>
+      <Drawer variant="permanent" open={open}>
           <Toolbar
             sx={{
               display: 'flex',
@@ -198,83 +199,76 @@ return (
             <Divider sx={{ my: 1 }} />
             {secondaryListItems}
           </List>
-        </Drawer>
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === 'light'
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          <Toolbar />
-          <Container sx={{ py: 8 }} maxWidth="md">
-          <Grid container spacing={4}>
-            {posts.map((post) => (
-            <Grid item key={post.id} xs={12} sm={12} md={12} lg={12}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  maxWidth: '500px',
-                  margin: 'auto',
-                }}
-              >
-                {users.find((user) => user.id === post.created_by) && (
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Avatar src={users.find((user) => user.id === post.created_by).img_url} alt="Profile" />
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 'bold',
-                        fontSize: '1.2rem',
-                      }}
-                    >
-                      {users.find((user) => user.id === post.created_by).username}
-                    </Typography>
-                  </Stack>
-                )}
-                {post.img_url && (
-                  <CardMedia
-                    component="div"
+      </Drawer>
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'light'
+              ? theme.palette.grey[100]
+              : theme.palette.grey[900],
+          flexGrow: 1,
+          height: '100vh',
+          overflow: 'auto',
+        }}
+      >
+      <Toolbar />
+      {/* This holds the grid system  */}
+      <Container sx={{ py: 8, mt: 4}} maxWidth="md">
+        <Grid container spacing={3}>
+          {posts.map((post) => (
+          <Grid item key={post.id} xs={12} sm={6} md={4}>
+            <Card
+              sx={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                maxWidth: '500px',
+                margin: 'auto',
+              }}
+            >
+              {users.find((user) => user.id === post.created_by) && (
+                <Stack direction="row" alignItems="center" spacing={1} >
+                  <Avatar
+                    src={users.find((user) => user.id === post.created_by).img_url}
+                    alt="Profile"
+                    />
+                  <Typography
+                    variant="h6"
                     sx={{
-                      // 16:9
-                      pt: '100%',
+                      fontWeight: 'bold',
+                      fontSize: '1.2rem',
                     }}
-                    image={post.img_url}
-                  />
-                )}
-                <CardActions>
-                  <Button size="small">
-                    <FavoriteBorderIcon />
-                  </Button>
-                  <Button size="small">
-                    <AddCommentIcon />
-                  </Button>
-                </CardActions>
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {post.caption}
+                  >
+                    {users.find((user) => user.id === post.created_by).username}
                   </Typography>
-
-                  {post.created_datetime && (
-                    <Typography>
-                      {new Date(post.created_datetime).toLocaleString('default', { month: 'long' }) + " " + new Date(post.created_datetime).getDate()}
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+                </Stack>
+              )}
+              {post.img_url && (
+                <CardMedia
+                  component="div"
+                  sx={{
+                    // 16:9
+                    pt: '100%',
+                  }}
+                  image={post.img_url}
+                />
+              )}
+              <CardActions>
+                <Button size="small">
+                  <FavoriteBorderIcon />
+                </Button>
+                <Button size="small">
+                  View
+                </Button>
+              </CardActions>
+            </Card>
           </Grid>
-        </Container>
-        </Box>
+        ))}
+        </Grid>
+      </Container>
       </Box>
-    </ThemeProvider>
+    </Box>
+  </ThemeProvider>
   );
 }

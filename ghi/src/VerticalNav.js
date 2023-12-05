@@ -22,7 +22,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Home" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to ="/search">
       <ListItemIcon>
         <SearchIcon />
       </ListItemIcon>
@@ -60,7 +60,7 @@ export const secondaryListItems = (
       </ListItemIcon>
       <ListItemText primary="Settings" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to ="/posts">
       <ListItemIcon>
         <AccountCircleIcon />
       </ListItemIcon>

@@ -73,9 +73,7 @@ async def refresh_spotify_token(
     user_details = user_repo.get_user_details(current_user["id"])
     if not user_details:
         raise HTTPException(status_code=404, detail="User not found")
-    print(user_details)
     spotify_refresh_token = user_details.get("spotify_refresh_token")
-    print(spotify_refresh_token)
     if not spotify_refresh_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -110,11 +108,6 @@ async def get_spotify_playlists(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
         )
-    # if not current_user or 'spotify_access_token' not in current_user:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_401_UNAUTHORIZED,
-    #         detail="Unauthorized"
-    #     )
 
     spotify_access_token = user_details["spotify_access_token"]
 
@@ -165,6 +158,22 @@ async def get_spotify_user_profile(
     url = "https://api.spotify.com/v1/me"
     response = make_spotify_api_request(url, spotify_access_token)
 
+    # Token may be expired
+    if response.status_code == 401:
+        new_access_token = refresh_spotify_access_token(
+            user_details["spotify_refresh_token"],
+            os.getenv("SPOTIFY_CLIENT_ID"),
+            os.getenv("SPOTIFY_CLIENT_SECRET")
+        )
+
+        user_repo.update_spotify_tokens(
+            current_user["id"],
+            new_access_token,
+            user_details["spotify_refresh_token"]
+        )
+
+        response = make_spotify_api_request(url, new_access_token)
+
     if response.status_code != 200:
         raise HTTPException(
             status_code=response.status_code,
@@ -192,6 +201,22 @@ async def get_playlist_details(
     url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
     response = make_spotify_api_request(url, spotify_access_token)
 
+    if response.status_code == 401:
+        new_access_token = refresh_spotify_access_token(
+            user_details["spotify_refresh_token"],
+            os.getenv("SPOTIFY_CLIENT_ID"),
+            os.getenv("SPOTIFY_CLIENT_SECRET")
+        )
+
+        user_repo.update_spotify_tokens(
+            current_user["id"],
+            new_access_token,
+            user_details["spotify_refresh_token"]
+        )
+
+        # Retry call with new token
+        response = make_spotify_api_request(url, new_access_token)
+
     if response.status_code != 200:
         raise HTTPException(
             status_code=response.status_code,
@@ -218,6 +243,22 @@ async def search_spotify(
 
     url = f"https://api.spotify.com/v1/search?q={query}&type={type}"
     response = make_spotify_api_request(url, spotify_access_token)
+
+    if response.status_code == 401:
+        new_access_token = refresh_spotify_access_token(
+            user_details["spotify_refresh_token"],
+            os.getenv("SPOTIFY_CLIENT_ID"),
+            os.getenv("SPOTIFY_CLIENT_SECRET")
+        )
+
+        user_repo.update_spotify_tokens(
+            current_user["id"],
+            new_access_token,
+            user_details["spotify_refresh_token"]
+        )
+
+        # Retry call with new token
+        response = make_spotify_api_request(url, new_access_token)
 
     if response.status_code != 200:
         raise HTTPException(
