@@ -14,7 +14,7 @@ import SignupForm from "./SignupForm";
 import Settings from "./Settings";
 import SpotifyAuthHandler from "./SpotifyAuthHandler";
 import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
-
+import Groups from "./Groups";
 function App() {
   const baseUrl = "http://localhost:8000";
 
@@ -31,8 +31,13 @@ function App() {
           <Route exact path="/profile" element={<Profile />}></Route>
           <Route exact path="/search" element={<Search />}></Route>
           <Route exact path="/profile" element={<UserProfile />}></Route>
-          <Route exact path="/spotify-profile" element={<SpotifyProfile />}></Route>
+          <Route
+            exact
+            path="/spotify-profile"
+            element={<SpotifyProfile />}
+          ></Route>
           <Route exact path="/settings" element={<Settings />}></Route>
+          <Route exact path="/groups" element={<Groups />}></Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
