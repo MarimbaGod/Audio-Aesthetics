@@ -8,7 +8,7 @@ import Logout from "./Logout";
 import Posts from "./Posts";
 import Profile from "./Profile";
 import Search from "./Search";
-// import Profile from "./Profile";
+import SpotifyProfile from "./SpotifyProfile";
 import UserProfile from "./UserProfile";
 import SignupForm from "./SignupForm";
 import Settings from "./Settings";
@@ -31,6 +31,7 @@ function App() {
           <Route exact path="/profile" element={<Profile />}></Route>
           <Route exact path="/search" element={<Search />}></Route>
           <Route exact path="/profile" element={<UserProfile />}></Route>
+          <Route exact path="/spotify-profile" element={<SpotifyProfile />}></Route>
           <Route exact path="/settings" element={<Settings />}></Route>
         </Routes>
       </AuthProvider>

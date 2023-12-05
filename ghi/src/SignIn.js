@@ -42,7 +42,7 @@ export default function SignIn() {
     const handleSubmit = async (event) => {
       event.preventDefault();
       await login(username, password);
-      if (token) navigate("/");
+      if (token) navigate("/explore");
     };
 
 
