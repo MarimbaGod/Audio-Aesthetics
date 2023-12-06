@@ -97,7 +97,6 @@ export default function Posts() {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const [ posts, setPosts ] = useState([]);
     const [ loggedInUser, setLoggedInUser ] = useState(null);
-    const [ username, setUsername ] = useState("");
     const [ caption, setCaption ] = useState("");
     const [ imgUrl, setImgUrl ] = useState("");
     const [ songOrPlaylist, setSongOrPlaylist ] = useState("");
@@ -157,9 +156,6 @@ export default function Posts() {
             if (userResponse.ok) {
                 const userData = await userResponse.json();
                 setLoggedInUser(userData.account.id);
-                setUsername(userData.account.username);
-                username = username
-
                 const postsResponse = await fetch(`http://localhost:8000/api/posts/`, {
                     credentials: "include",
                 });
