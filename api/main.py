@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from routers import users, groups, memberships, blacklist, spotify, posts
+from routers import users, groups, memberships, blacklist, spotify, posts, stablediff
 from authenticator import authenticator
 
 
@@ -42,3 +42,4 @@ app.include_router(memberships.router)
 app.include_router(blacklist.router)
 app.include_router(spotify.router)
 app.include_router(posts.router)
+app.include_router(stablediff.router)

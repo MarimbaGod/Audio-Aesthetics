@@ -17,14 +17,14 @@ import Profile from "./Profile";
 import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
 import Groups from "./Groups";
 function App() {
-  // const baseUrl = "http://localhost:8000";
+  const baseUrl = "http://localhost:8000";
 
-  const domain = /https:\/\/[^/]+/;
-  const basename = process.env.PUBLIC_URL.replace(domain, "");
+  // const domain = /https:\/\/[^/]+/;
+  // const basename = process.env.process.env.PUBLIC_URL.replace(domain, "");
 
   return (
-    <BrowserRouter basename={basename}>
-      <AuthProvider basename={basename}>
+    <BrowserRouter>
+      <AuthProvider baseUrl={baseUrl}>
         <Routes>
           <Route exact path="/" element={<SpotifyAuthHandler />}></Route>
           <Route exact path="/signin" element={<SignIn />}></Route>
