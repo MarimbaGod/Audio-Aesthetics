@@ -13,7 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import useToken from "@galvanize-inc/jwtdown-for-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 
@@ -36,13 +36,21 @@ const defaultTheme = createTheme();
 export default function SignIn() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
     const navigate = useNavigate();
     const { login, token } = useToken();
 
+
+    useEffect(() => {
+      if (token && isLoggingIn) {
+        navigate("/explore");
+      }
+    }, [token, isLoggingIn, navigate]);
+
     const handleSubmit = async (event) => {
       event.preventDefault();
+      setIsLoggingIn(true);
       await login(username, password);
-      if (token) navigate("/explore");
     };
 
 
@@ -122,7 +130,7 @@ export default function SignIn() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="/signup" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
