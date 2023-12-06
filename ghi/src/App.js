@@ -15,12 +15,12 @@ import Settings from "./Settings";
 import SpotifyAuthHandler from "./SpotifyAuthHandler";
 import Profile from "./Profile";
 import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
-
+import Groups from "./Groups";
 function App() {
   // const baseUrl = "http://localhost:8000";
 
   const domain = /https:\/\/[^/]+/;
-  const basename = process.env.process.env.PUBLIC_URL.replace(domain, "");
+  const basename = process.env.PUBLIC_URL.replace(domain, "");
 
   return (
     <BrowserRouter basename={basename}>
@@ -43,6 +43,7 @@ function App() {
             element={<SpotifyProfile />}
           ></Route>
           <Route exact path="/settings" element={<Settings />}></Route>
+          <Route exact path="/groups" element={<Groups />}></Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
