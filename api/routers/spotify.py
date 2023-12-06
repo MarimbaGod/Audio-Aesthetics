@@ -5,8 +5,8 @@ from pydantic import BaseModel
 import os
 from queries.users import UserRepository
 from queries.spotify import (
-    make_spotify_api_request,
     refresh_spotify_access_token,
+    spotify_api_request_with_refresh,
 )
 
 router = APIRouter()
@@ -69,7 +69,6 @@ async def refresh_spotify_token(
     current_user: dict = Depends(authenticator.get_current_account_data),
     user_repo: UserRepository = Depends(),
 ):
-    # FOR TESTING
     user_details = user_repo.get_user_details(current_user["id"])
     if not user_details:
         raise HTTPException(status_code=404, detail="User not found")
@@ -81,7 +80,6 @@ async def refresh_spotify_token(
         )
     # Retrieve Stored refresh token
     stored_refresh_token = user_details["spotify_refresh_token"]
-    # spotify_url = "https://accounts.spotify.com/api/token"
     client_id = os.getenv("SPOTIFY_CLIENT_ID")
     client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
@@ -108,31 +106,10 @@ async def get_spotify_playlists(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
         )
+    # spotify_access_token = user_details["spotify_access_token"]
+    url = "https://api.spotify.com/v1/me/playlists"
 
-    spotify_access_token = user_details["spotify_access_token"]
-
-    response = make_spotify_api_request(
-        "https://api.spotify.com/v1/me/playlists", spotify_access_token
-    )
-
-    if response.status_code == 401:  # Token may be expired
-        client_id = os.getenv("SPOTIFY_CLIENT_ID")
-        client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
-        spotify_refresh_token = user_details["spotify_refresh_token"]
-        # spotify_refresh_token = current_user['spotify_refresh_token']
-
-        new_access_token = refresh_spotify_access_token(
-            spotify_refresh_token, client_id, client_secret
-        )
-
-        user_repo.update_spotify_tokens(
-            current_user["id"], new_access_token, spotify_refresh_token
-        )
-        # Retry with new access token
-        response = make_spotify_api_request(
-            "https://api.spotify.com/v1/me/playlists", new_access_token
-        )
-
+    response = spotify_api_request_with_refresh(user_details, url, user_repo)
     if response.status_code != 200:
         raise HTTPException(
             status_code=response.status_code,
@@ -153,26 +130,10 @@ async def get_spotify_user_profile(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized >:("
         )
 
-    spotify_access_token = user_details["spotify_access_token"]
+    # spotify_access_token = user_details["spotify_access_token"]
 
     url = "https://api.spotify.com/v1/me"
-    response = make_spotify_api_request(url, spotify_access_token)
-
-    # Token may be expired
-    if response.status_code == 401:
-        new_access_token = refresh_spotify_access_token(
-            user_details["spotify_refresh_token"],
-            os.getenv("SPOTIFY_CLIENT_ID"),
-            os.getenv("SPOTIFY_CLIENT_SECRET")
-        )
-
-        user_repo.update_spotify_tokens(
-            current_user["id"],
-            new_access_token,
-            user_details["spotify_refresh_token"]
-        )
-
-        response = make_spotify_api_request(url, new_access_token)
+    response = spotify_api_request_with_refresh(user_details, url, user_repo)
 
     if response.status_code != 200:
         raise HTTPException(
@@ -196,26 +157,11 @@ async def get_playlist_details(
             detail="Ew, You're not authorized? *Cringes in Python*",
         )
 
-    spotify_access_token = user_details["spotify_access_token"]
+    # spotify_access_token = user_details["spotify_access_token"]
 
     url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
-    response = make_spotify_api_request(url, spotify_access_token)
 
-    if response.status_code == 401:
-        new_access_token = refresh_spotify_access_token(
-            user_details["spotify_refresh_token"],
-            os.getenv("SPOTIFY_CLIENT_ID"),
-            os.getenv("SPOTIFY_CLIENT_SECRET")
-        )
-
-        user_repo.update_spotify_tokens(
-            current_user["id"],
-            new_access_token,
-            user_details["spotify_refresh_token"]
-        )
-
-        # Retry call with new token
-        response = make_spotify_api_request(url, new_access_token)
+    response = spotify_api_request_with_refresh(user_details, url, user_repo)
 
     if response.status_code != 200:
         raise HTTPException(
@@ -239,26 +185,8 @@ async def search_spotify(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized >:("
         )
 
-    spotify_access_token = user_details["spotify_access_token"]
-
     url = f"https://api.spotify.com/v1/search?q={query}&type={type}"
-    response = make_spotify_api_request(url, spotify_access_token)
-
-    if response.status_code == 401:
-        new_access_token = refresh_spotify_access_token(
-            user_details["spotify_refresh_token"],
-            os.getenv("SPOTIFY_CLIENT_ID"),
-            os.getenv("SPOTIFY_CLIENT_SECRET")
-        )
-
-        user_repo.update_spotify_tokens(
-            current_user["id"],
-            new_access_token,
-            user_details["spotify_refresh_token"]
-        )
-
-        # Retry call with new token
-        response = make_spotify_api_request(url, new_access_token)
+    response = spotify_api_request_with_refresh(user_details, url, user_repo)
 
     if response.status_code != 200:
         raise HTTPException(
@@ -267,3 +195,73 @@ async def search_spotify(
         )
 
     return response.json()
+
+
+@router.get("/spotify/track/{track_id}/features")
+async def get_track_features(
+    track_id: str,
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorzied Access",
+        )
+
+    url = f"https://api.spotify.com/v1/audio-features/{track_id}"
+
+    response = spotify_api_request_with_refresh(user_details, url, user_repo)
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error Fetching track audio features from Spotify",
+        )
+
+    audio_features = response.json()
+    return {
+        "tempo": audio_features.get("tempo"),
+        "valence": audio_features.get("valence"),
+        "instrumentalness": audio_features.get("instrumentalness"),
+    }
+
+
+@router.get("/spotify/playlist/{playlist_id}/tracks")
+async def get_playlist_tracks(
+    playlist_id: str,
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized access",
+        )
+
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+    response = spotify_api_request_with_refresh(user_details, url, user_repo)
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error fetching playlist tracks from Spotify",
+        )
+
+    tracks_data = response.json()
+    tracks = []
+    for item in tracks_data.get("items", []):
+        track = item.get("track", {})
+        track_info = {
+            "id": track.get("id"),
+            "title": track.get("name"),
+            "artist": ", ".join(
+                artist["name"] for artist in track.get("artists", [])
+            ),
+            "album": track.get("album", {}).get("name"),
+        }
+        tracks.append(track_info)
+
+    return tracks
