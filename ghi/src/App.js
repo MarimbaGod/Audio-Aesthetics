@@ -20,7 +20,7 @@ function App() {
   // const baseUrl = "http://localhost:8000";
 
   const domain = /https:\/\/[^/]+/;
-  const basename = process.env.process.env.PUBLIC_URL.replace(domain, "");
+  const basename = process.env.PUBLIC_URL.replace(domain, "");
 
   return (
     <BrowserRouter basename={basename}>
