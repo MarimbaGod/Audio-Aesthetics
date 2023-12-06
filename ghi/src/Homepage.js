@@ -118,7 +118,8 @@ export default function Homepage() {
           if (response.ok) {
               const data = await response.json();
               setLoggedInUser(data.account);
-              loggedInUser = loggedInUser
+              loggedInUser = null
+              console.log(loggedInUser)
           }
           else {
             console.error('Failed to fetch user data:', response.statusText);
@@ -164,16 +165,13 @@ export default function Homepage() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);  // Log the response (you can handle it as needed)
-        // Add logic to update the UI or perform any other actions
+        console.log(data);
       } else {
         const errorData = await response.json();
         console.error('Failed to like the post:', errorData.message);
-        // Handle the error, display a message, etc.
       }
     } catch (error) {
       console.error('Error while liking the post:', error);
-      // Handle the error, display a message, etc.
     }
   };
 

@@ -104,7 +104,8 @@ export default function Homepage() {
     const handleSearch = async (event) => {
             const value = event.target.value;
             setSearchQuery(value)
-            searchQuery = searchQuery
+            searchQuery = null
+            console.log(searchQuery)
             const filteredUsers = value.length > 0 ? users.filter(user => user.username.toLowerCase().startsWith(value.toLowerCase())) : [];
             setFilteredUsers(filteredUsers);
             const filteredGroups = value.length > 0 ? groups.filter(group => group.name.toLowerCase().startsWith(value.toLowerCase()) || group.created_by.toLowerCase().startsWith(value.toLowerCase())) : [];
@@ -121,7 +122,8 @@ export default function Homepage() {
           if (response.ok) {
               const data = await response.json();
               setLoggedInUser(data.account);
-              loggedInUser = loggedInUser;
+              loggedInUser = null
+              console.log(loggedInUser)
           }
           else {
             console.error('Failed to fetch user data:', response.statusText);
