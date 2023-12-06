@@ -17,11 +17,14 @@ import Profile from "./Profile";
 import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
 
 function App() {
-  const baseUrl = "http://localhost:8000";
+  // const baseUrl = "http://localhost:8000";
+
+  const domain = /https:\/\/[^/]+/;
+  const basename = process.env.process.env.PUBLIC_URL.replace(domain, "");
 
   return (
-    <BrowserRouter>
-      <AuthProvider baseUrl={baseUrl}>
+    <BrowserRouter basename={basename}>
+      <AuthProvider basename={basename}>
         <Routes>
           <Route exact path="/" element={<SpotifyAuthHandler />}></Route>
           <Route exact path="/signin" element={<SignIn />}></Route>
@@ -34,7 +37,11 @@ function App() {
           <Route exact path="/search" element={<Search />}></Route>
           <Route exact path="/profile" element={<UserProfile />}></Route>
           <Route exact path="/user-profile" element={<Profile />}></Route>
-          <Route exact path="/spotify-profile" element={<SpotifyProfile />}></Route>
+          <Route
+            exact
+            path="/spotify-profile"
+            element={<SpotifyProfile />}
+          ></Route>
           <Route exact path="/settings" element={<Settings />}></Route>
         </Routes>
       </AuthProvider>
