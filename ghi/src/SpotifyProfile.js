@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import useSpotifyAuth from './useSpotifyAuth'
+// import useSpotifyAuth from './useSpotifyAuth'
 
 const SpotifyProfile = () => {
     const [spotifyProfile, setSpotifyProfile] = useState(null);
