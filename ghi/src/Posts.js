@@ -21,7 +21,6 @@ import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
-
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -32,19 +31,6 @@ import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import IconButton from '@mui/material/IconButton';
 
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="/">
-        Audio Aesthetics
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const defaultTheme = createTheme({
   palette: {
@@ -61,6 +47,7 @@ const defaultTheme = createTheme({
 
 const drawerWidth = 240;
 
+// Left nav bar
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
@@ -106,15 +93,13 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function Posts() {
-    // const [open, setOpen] = React.useState(true);
-    const [openDrawer, setOpenDrawer] = React.useState(true);
-    const [isDialogOpen, setDialogOpen] = React.useState(false);
+    const [openDrawer, setOpenDrawer] = useState(true);
+    const [isDialogOpen, setDialogOpen] = useState(false);
     const [ posts, setPosts ] = useState([]);
     const [ loggedInUser, setLoggedInUser ] = useState(null);
-    const [ username, setUsername ] = useState("");
-    const [ caption, setCaption ] = React.useState("");
-    const [ imgUrl, setImgUrl ] = React.useState("");
-    const [ songOrPlaylist, setSongOrPlaylist ] = React.useState("");
+    const [ caption, setCaption ] = useState("");
+    const [ imgUrl, setImgUrl ] = useState("");
+    const [ songOrPlaylist, setSongOrPlaylist ] = useState("");
 
     const toggleDrawer = () => {
       setOpenDrawer(!openDrawer);
@@ -131,7 +116,7 @@ export default function Posts() {
       setSongOrPlaylist("");
     };
 
-
+    // Create a new Post logic
     const handlePost = async () => {
       try {
         const response = await fetch('http://localhost:8000/api/posts', {
@@ -161,7 +146,7 @@ export default function Posts() {
       }
     };
 
-
+    // Get Posts by signed in user only
     useEffect(() => {
         const fetchUserData = async () => {
             const userResponse = await fetch('http://localhost:8000/token', {
@@ -170,10 +155,7 @@ export default function Posts() {
 
             if (userResponse.ok) {
                 const userData = await userResponse.json();
-                console.log(userData)
                 setLoggedInUser(userData.account.id);
-                setUsername(userData.account.username);
-
                 const postsResponse = await fetch(`http://localhost:8000/api/posts/`, {
                     credentials: "include",
                 });
@@ -188,6 +170,7 @@ export default function Posts() {
         fetchUserData();
     }, []);
 
+  // Delete Post logic
   const handleDelete = async (postId) => {
 
     const isConfirmed = window.confirm('Are you sure you want to delete this post?');
@@ -212,6 +195,7 @@ export default function Posts() {
     }
   };
 
+  // Display Posts card format
   const postsItems = posts.map((post) => (
     <Grid item key={post.id} xs={12} sm={6} md={4}>
       <Card
@@ -269,7 +253,6 @@ export default function Posts() {
                 onClick={toggleDrawer}
                 sx={{
                   marginRight: '36px',
-                  // ...(open && { display: 'none' }),
                 }}
               >
                 <MenuIcon />
@@ -310,8 +293,8 @@ export default function Posts() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  height: '20px', // Adjust the height as needed
-                  fontWeight: 'bold', // You can adjust the styling as needed
+                  height: '20px',
+                  fontWeight: 'bold',
                 }}
               >
                 Audio Aesthetics
@@ -378,7 +361,7 @@ export default function Posts() {
                       autoFocus
                       margin="dense"
                       id="imgUrl"
-                      label="Image Url"
+                      label="Image Url (Optional)"
                       type="text"
                       fullWidth
                       variant="standard"
@@ -389,7 +372,7 @@ export default function Posts() {
                       autoFocus
                       margin="dense"
                       id="songOrPlaylist"
-                      label="Song or Playlist"
+                      label="Song or Playlist (Optional)"
                       type="text"
                       fullWidth
                       variant="standard"
@@ -416,18 +399,3 @@ export default function Posts() {
     </ThemeProvider>
   );
 }
-
-{/* <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
-          <Typography variant="h6" align="center" gutterBottom>
-            Footer
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            align="center"
-            color="text.secondary"
-            component="p"
-          >
-            Something here to give the footer a purpose!
-          </Typography>
-          <Copyright />
-        </Box> */}

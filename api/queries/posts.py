@@ -199,14 +199,15 @@ class PostRepository:
                 with conn.cursor() as db:
                     db.execute(
                         """
-                        SELECT 1
+                        SELECT active
                         FROM liked_posts
                         WHERE user_id = %s
                         AND post_id = %s
                         """,
                         [user_id, post_id],
                     )
-                    if db.fetchone():
+                    result = db.fetchone()
+                    if result and result[0]:
                         return {"message": "Sorry SuperFan, can't double like"}
                     db.execute(
                         """
@@ -241,6 +242,33 @@ class PostRepository:
 
         except Exception:
             return {"message": "SOL"}
+
+    def check_like(
+        self, user_id: int, post_id: int
+    ) -> Union[Error, List[PostOut]]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        SELECT EXISTS (
+                        SELECT 1
+                        FROM liked_posts
+                        WHERE user_id = %s
+                        AND post_id = %s
+                        AND active = true
+                        ) AS has_liked;
+                        """,
+                        [user_id, post_id],
+                    )
+                    result = db.fetchone()
+                    if result:
+                        return result[0]
+                    return False
+
+        except Exception as e:
+            print(f"Error checking if the post is liked: {e}")
+            return False
 
     def user_in_to_out(self, id: int, post: PostIn):
         old_data = post.dict()

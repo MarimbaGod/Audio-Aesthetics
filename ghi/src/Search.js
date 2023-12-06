@@ -19,8 +19,6 @@ import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
@@ -29,13 +27,8 @@ import { TextField } from '@mui/material';
 
 //card
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-
-//icons
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import GroupsIcon from '@mui/icons-material/Groups';
 
 const defaultTheme = createTheme({
   palette: {
@@ -111,6 +104,7 @@ export default function Homepage() {
     const handleSearch = async (event) => {
             const value = event.target.value;
             setSearchQuery(value)
+            console.log(searchQuery)
             const filteredUsers = value.length > 0 ? users.filter(user => user.username.toLowerCase().startsWith(value.toLowerCase())) : [];
             setFilteredUsers(filteredUsers);
             const filteredGroups = value.length > 0 ? groups.filter(group => group.name.toLowerCase().startsWith(value.toLowerCase()) || group.created_by.toLowerCase().startsWith(value.toLowerCase())) : [];
@@ -127,6 +121,7 @@ export default function Homepage() {
           if (response.ok) {
               const data = await response.json();
               setLoggedInUser(data.account);
+              console.log(loggedInUser)
           }
           else {
             console.error('Failed to fetch user data:', response.statusText);
@@ -140,7 +135,7 @@ export default function Homepage() {
       };
       fetchUserData();
 
-  }, []);
+  }, [loggedInUser]);
 
   useEffect(() => {
   const fetchData = async () => {
