@@ -143,3 +143,21 @@ async def unlike_post(
         )
     account_id = account_data.get("id")
     return post_repo.unlike_post(account_id, post_id)
+
+
+@router.get(
+    "/api/posts/{post_id}/check_like", response_model=Union[bool, Error]
+)
+async def check_like(
+    post_id: int,
+    post_repo: PostRepository = Depends(),
+    account_data: dict = Depends(authenticator.get_current_account_data),
+) -> Union[bool, Error]:
+    account_id = account_data.get("id")
+    if not account_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid User",
+        )
+    account_id = account_data.get("id")
+    return post_repo.check_like(account_id, post_id)

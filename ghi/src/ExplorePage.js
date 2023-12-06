@@ -38,7 +38,9 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import Avatar from '@mui/material/Avatar';
 
+//other js imports
 import PostDetails from './PostDetails';
+import {handleLike, handleUnlike} from './likeFunction';
 
 const defaultTheme = createTheme({
   palette: {
@@ -129,23 +131,30 @@ export default function ExplorePage() {
     fetchData();
   }, []);
 
-    const handleLike = async (postId) => {
-    try {
-      const response = await fetch(`http://localhost:8000/api/posts/${postId}/like`, {
-        credentials: 'include',
-      });
-
+    const handleLikePost = async (postId) => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/posts/${postId}/check_like`, {
+          credentials: 'include',
+        });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);  // Log the response (you can handle it as needed)
-        // Add logic to update the UI or perform any other actions
-      } else {
+        console.log(data)
+        if (!data) {
+          handleLike(postId);
+        }
+        else {
+          handleUnlike(postId);
+        }
+      }
+      else {
         const errorData = await response.json();
-        console.error('Failed to like the post:', errorData.message);
+        console.error('Failed to check if the post is liked:', errorData.message);
         // Handle the error, display a message, etc.
       }
-    } catch (error) {
-      console.error('Error while liking the post:', error);
+
+    }
+    catch (error) {
+      console.error('Error while checking if the post is liked:', error);
       // Handle the error, display a message, etc.
     }
   };
@@ -289,7 +298,7 @@ export default function ExplorePage() {
                 )}
                 <CardActions>
                   <Button size="small">
-                    <FavoriteBorderIcon onClick={() => handleLike(post.id)}/>
+                    <FavoriteBorderIcon onClick={() => handleLikePost(post.id)}/>
                   </Button>
                   <Button size="small" onClick={() => handleView(post)}>
                     View
