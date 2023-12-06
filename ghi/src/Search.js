@@ -104,7 +104,6 @@ export default function Homepage() {
     const handleSearch = async (event) => {
             const value = event.target.value;
             setSearchQuery(value)
-            searchQuery = null
             console.log(searchQuery)
             const filteredUsers = value.length > 0 ? users.filter(user => user.username.toLowerCase().startsWith(value.toLowerCase())) : [];
             setFilteredUsers(filteredUsers);
@@ -122,7 +121,6 @@ export default function Homepage() {
           if (response.ok) {
               const data = await response.json();
               setLoggedInUser(data.account);
-              loggedInUser = null
               console.log(loggedInUser)
           }
           else {
@@ -137,7 +135,7 @@ export default function Homepage() {
       };
       fetchUserData();
 
-  }, []);
+  }, [loggedInUser]);
 
   useEffect(() => {
   const fetchData = async () => {

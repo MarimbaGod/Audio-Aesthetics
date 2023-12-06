@@ -118,7 +118,6 @@ export default function Homepage() {
           if (response.ok) {
               const data = await response.json();
               setLoggedInUser(data.account);
-              loggedInUser = null
               console.log(loggedInUser)
           }
           else {
@@ -133,7 +132,7 @@ export default function Homepage() {
       };
       fetchUserData();
 
-  }, []);
+  }, [loggedInUser]);
 
 
 
