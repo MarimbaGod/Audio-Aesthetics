@@ -3,7 +3,6 @@ import React from 'react';
 //actually useful react imports
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
 
 //navbar buttons
 import MenuIcon from '@mui/icons-material/Menu';
@@ -30,12 +29,10 @@ import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 //card
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 
 //card icons
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import AddCommentIcon from '@mui/icons-material/AddComment';
 import Avatar from '@mui/material/Avatar';
 
 //other js imports

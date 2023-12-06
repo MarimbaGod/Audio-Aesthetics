@@ -1,16 +1,25 @@
 import React from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import Card from '@mui/material/Card';
+
+//page organizers
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+
+//card
+import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+
+//card icons
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import Avatar from '@mui/material/Avatar';
+
+//pop up post
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+
 const PostDetails = ({ post, users, open, onClose }) => {
   return (
     <Dialog open={open} onClose={onClose}>

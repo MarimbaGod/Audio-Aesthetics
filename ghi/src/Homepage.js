@@ -118,6 +118,7 @@ export default function Homepage() {
           if (response.ok) {
               const data = await response.json();
               setLoggedInUser(data.account);
+              loggedInUser = loggedInUser
           }
           else {
             console.error('Failed to fetch user data:', response.statusText);
