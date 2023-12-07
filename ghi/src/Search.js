@@ -29,6 +29,7 @@ import { TextField } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
+import Button from '@mui/material/Button';
 
 const defaultTheme = createTheme({
   palette: {
@@ -115,7 +116,7 @@ export default function Homepage() {
   useEffect(() => {
       const fetchUserData = async () => {
         try{
-          const response = await fetch('http://localhost:8000/token/', {
+          const response = await fetch(`${process.env.REACT_APP_API_HOST}/token/`, {
               credentials: "include",
           });
           if (response.ok) {
@@ -139,8 +140,8 @@ export default function Homepage() {
 
   useEffect(() => {
   const fetchData = async () => {
-    const userUrl = `http://localhost:8000/api/users/`
-    const groupUrl = `http://localhost:8000/api/groups/`
+    const userUrl = `${process.env.REACT_APP_API_HOST}/api/users/`
+    const groupUrl = `${process.env.REACT_APP_API_HOST}/api/groups/`
     const userResponse = await fetch(userUrl);
     const groupResponse = await fetch(groupUrl);
     if (userResponse.ok) {
@@ -155,6 +156,10 @@ export default function Homepage() {
 
   fetchData();
 }, []);
+
+// const handleSearchUser = (user_id) => {
+//     <Link></Link>;
+//   };
 
 return (
     <ThemeProvider theme={defaultTheme}>
@@ -267,6 +272,11 @@ return (
                                     <Typography variant="h5" component="div">
                                         {user.username}
                                     </Typography>
+                                    <Link to={`/user-profile/${user.id}`}>
+                                    <Button size="small">
+                                      View
+                                    </Button>
+                                    </Link>
                                 </CardContent>
                             </Card>
                         </Grid>

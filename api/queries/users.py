@@ -166,13 +166,15 @@ class UserRepository:
                     # Check if following
                     db.execute(
                         """
-                        SELECT 1 FROM user_follows
+                        SELECT active
+                        FROM user_follows
                         WHERE follower_user_id = %s
                         AND following_user_id = %s
                         """,
                         [follower_id, following_id],
                     )
-                    if db.fetchone():
+                    result = db.fetchone()
+                    if result and result[0]:
                         return {
                             "message": "Sorry SuperFan, can't double follow"
                         }
@@ -413,3 +415,28 @@ class UserRepository:
         except Exception as e:
             print(e)
             return {"message": "Failed to get followed users"}
+
+    def check_following(
+        self, follower_user_id: int, following_user_id: int
+    ) -> Union[Error, List[UserOut]]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        SELECT COUNT(*)
+                        FROM user_follows
+                        WHERE follower_user_id = %s
+                        AND following_user_id = %s
+                        AND active = TRUE;
+                        """,
+                        [follower_user_id, following_user_id],
+                    )
+                    result = db.fetchone()
+                    if result and result[0] > 0:
+                        return True
+                    return False
+
+        except Exception as e:
+            print(f"Error checking if the user is following: {e}")
+            return False

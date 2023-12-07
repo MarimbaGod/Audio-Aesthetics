@@ -7,7 +7,7 @@ const SpotifyProfile = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-            fetch('http://localhost:8000/spotify/user/profile', {
+            fetch(`${process.env.REACT_APP_API_HOST}/spotify/user/profile`, {
                 credentials: 'include'
             })
             .then(response => {

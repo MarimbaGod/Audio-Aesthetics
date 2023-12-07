@@ -6,7 +6,7 @@ const UserPosts = ({ userId }) => {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
-        fetch(`http://localhost:8000/api/users/${userId}/posts`)
+        fetch(`${process.env.REACT_APP_API_HOST}/api/users/${userId}/posts`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response failed');
@@ -23,21 +23,20 @@ const UserPosts = ({ userId }) => {
                 {posts.map(post => (
                     <Grid item xs={12} sm={6} md={4} key={post.id}>
                         <Card>
+                            {post.img_url &&(
+                                <CardMedia
+                                    component="img"
+                                    height="200"
+                                    image={post.img_url}
+                                    alt="Post Media"
+                                />
+                            )}
                             <CardContent>
                                 <Typography variant="h6">{post.caption}</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Posted on: {new Date(post.created_datetime).toLocaleString()}
+                                    Posted on: {new Date(post.created_datetime).toLocaleDateString('default', { month: 'long', day: 'numeric', year: 'numeric' })}
                                 </Typography>
                             </CardContent>
-                            {post.media && post.media.map(media => (
-                                <CardMedia
-                                    key={media.id}
-                                    component="img"
-                                    height="140"
-                                    image={media.img_url}
-                                    alt="Post Media"
-                                />
-                            ))}
                         </Card>
                     </Grid>
                 ))}

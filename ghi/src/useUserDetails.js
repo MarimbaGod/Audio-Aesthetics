@@ -7,7 +7,7 @@ const useUserDetails = () => {
     useEffect(() => {
         const fetchUserDetails = async () => {
             try{
-                const response = await fetch('http://localhost:8000/api/user/details', {
+                const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/user/details`, {
                     credentials: "include",
                 });
                 if (response.ok) {

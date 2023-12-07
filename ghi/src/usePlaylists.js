@@ -6,7 +6,7 @@ const usePlaylists = () => {
     useEffect(() => {
         const fetchPlaylists = async () => {
             try {
-                const response = await fetch('http://localhost:8000/spotify/playlists', {
+                const response = await fetch(`${process.env.REACT_APP_API_HOST}/spotify/playlists`, {
                     credentials: "include",
                 });
                 if (response.ok) {

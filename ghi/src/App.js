@@ -21,35 +21,35 @@ import SpotifyPlayer from "./SpotifyPlayer";
 function App() {
   const domain = /https:\/\/[^/]+/;
   const baseUrl = process.env.REACT_APP_API_HOST;
-  const basename = process.env.PUBLIC_URL.replace(domain, "");
+  const basename = process.env.PUBLIC_URL.replace(domain, "")+"/audio-aesthetics";
 
   return (
     <BrowserRouter basename={basename}>
       <AuthProvider baseUrl={baseUrl}>
         <Routes>
-          <Route exact path="/" element={<SpotifyAuthHandler />}></Route>
-          <Route exact path="/signin" element={<SignIn />}></Route>
-          <Route exact path="/logout" element={<Logout />}></Route>
-          <Route exact path="/posts" element={<Posts />}></Route>
+          <Route exact path="/" element={<SpotifyAuthHandler baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/signin" element={<SignIn baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/logout" element={<Logout baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/posts" element={<Posts baseUrl={baseUrl}/>}></Route>
           <Route
             exact
             path="/signup"
             element={<SignupForm baseUrl={baseUrl} />}
           />
-          <Route exact path="/explore" element={<ExplorePage />}></Route>
-          <Route exact path="/home" element={<Homepage />}></Route>
+          <Route exact path="/explore" element={<ExplorePage baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/home" element={<Homepage baseUrl={baseUrl}/>}></Route>
           {/* <Route exact path="/profile" element={<Profile />}></Route> */}
-          <Route exact path="/search" element={<Search />}></Route>
-          <Route exact path="/profile" element={<UserProfile />}></Route>
-          <Route exact path="/user-profile" element={<Profile />}></Route>
+          <Route exact path="/search" element={<Search baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/profile" element={<UserProfile baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/user-profile/:user_id" element={<Profile baseUrl={baseUrl}/>}></Route>
           <Route
             exact
             path="/spotify-profile"
-            element={<SpotifyProfile />}
+            element={<SpotifyProfile baseUrl={baseUrl}/>}
           ></Route>
-          <Route exact path="/settings" element={<Settings />}></Route>
-          <Route exact path="/player" element={<SpotifyPlayer />}></Route>
-          <Route exact path="/groups" element={<Groups />}></Route>
+          <Route exact path="/settings" element={<Settings baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/player" element={<SpotifyPlayer baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/groups" element={<Groups baseUrl={baseUrl}/>}></Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>

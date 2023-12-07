@@ -20,7 +20,7 @@ export default function UserProfile() {
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/user/details', {
+                const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/user/details`, {
                     credentials: "include",
                 });
                 if (response.ok) {
@@ -37,7 +37,7 @@ export default function UserProfile() {
 
         const fetchPlaylists = async () => {
             try {
-                const response = await fetch('http://localhost:8000/spotify/playlists', {
+                const response = await fetch(`${process.env.REACT_APP_API_HOST}/spotify/playlists`, {
                     credentials: "include",
                 });
                 if (response.ok) {

@@ -9,7 +9,7 @@ const SongSelector = () => {
 
     useEffect(() => {
         // fetch songs
-        fetch('http://localhost:8000/spotify/playlist/{playlist_id}/tracks')
+        fetch(`${process.env.REACT_APP_API_HOST}/spotify/playlist/{playlist_id}/tracks`)
             .then(response => response.json())
             .then(data => {
                 // Assuming data is an array of song titles

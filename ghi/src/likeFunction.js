@@ -1,6 +1,6 @@
 export const handleLike = async (postId) => {
   try {
-    const response = await fetch(`http://localhost:8000/api/posts/${postId}/like`, {
+    const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}/like`, {
       credentials: 'include',
     });
 
@@ -18,7 +18,7 @@ export const handleLike = async (postId) => {
 
 export const handleUnlike = async (postId) => {
   try {
-    const response = await fetch(`http://localhost:8000/api/posts/${postId}/unlike`, {
+    const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}/unlike`, {
       credentials: 'include',
     });
 

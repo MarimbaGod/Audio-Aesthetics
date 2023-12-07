@@ -16,7 +16,7 @@ const ImageGeneratorForm = () => {
             model: selectedModel,
             upscale: upscale
         };
-        const url = 'http://localhost:8000/generate-image';
+        const url = `${process.env.REACT_APP_API_HOST}/generate-image`;
 
         try {
             const response = await fetch(url, {

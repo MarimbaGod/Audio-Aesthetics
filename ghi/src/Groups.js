@@ -9,7 +9,7 @@ const Groups = () => {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/groups/");
+        const response = await axios.get(`${process.env.REACT_APP_API_HOST}/api/groups/`);
         setGroups(response.data);
         setLoading(false);
       } catch (error) {

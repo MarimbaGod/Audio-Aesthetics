@@ -119,13 +119,13 @@ export default function ExplorePage() {
   useEffect(() => {
     const fetchData = async () => {
       // const userUrl =`${process.env.REACT_APP_API_HOST}/api/users`;
-      const userUrl = `http://localhost:8000/api/users/`
+      const userUrl = `${process.env.REACT_APP_API_HOST}/api/users/`
       const userResponse = await fetch(userUrl);
       if (userResponse.ok) {
         const data = await userResponse.json();
         setUsers(data);
       }
-      const postsUrl = "http://localhost:8000/api/posts/"
+      const postsUrl = `${process.env.REACT_APP_API_HOST}/api/posts/`
       const postResponse = await fetch(postsUrl);
       if (postResponse.ok) {
         const data = await postResponse.json();
@@ -141,7 +141,7 @@ export default function ExplorePage() {
 
     const handleLikePost = async (postId) => {
       try {
-        const response = await fetch(`http://localhost:8000/api/posts/${postId}/check_like`, {
+        const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}/check_like`, {
           credentials: 'include',
         });
       if (response.ok) {

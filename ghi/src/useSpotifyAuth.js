@@ -8,7 +8,7 @@ const useSpotifyAuth = () => {
     useEffect(() => {
         const code = new URLSearchParams(window.location.search).get('code');
         if (code) {
-            fetch('http://localhost:8000/spotify/token', {
+            fetch(`${process.env.REACT_APP_API_HOST}/spotify/token`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

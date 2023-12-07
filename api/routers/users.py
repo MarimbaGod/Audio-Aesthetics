@@ -207,6 +207,7 @@ async def unfollow_user(
     response_model=Union[Error, List[UserOut]],
 )
 async def get_user_followers(
+    user_id: int,
     account_data: dict = Depends(authenticator.get_current_account_data),
     user_repo: UserRepository = Depends(),
 ):
@@ -215,7 +216,6 @@ async def get_user_followers(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated",
         )
-    user_id = account_data.get("id")
     return user_repo.get_followers(user_id)
 
 
@@ -224,6 +224,7 @@ async def get_user_followers(
     response_model=Union[Error, List[UserOut]],
 )
 async def get_user_following(
+    user_id: int,
     account_data: dict = Depends(authenticator.get_current_account_data),
     user_repo: UserRepository = Depends(),
 ):
@@ -232,5 +233,25 @@ async def get_user_following(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated",
         )
-    user_id = account_data.get("id")
     return user_repo.get_following(user_id)
+
+
+@router.get(
+    "/api/users/following/{following_id}",
+    response_model=Union[Error, bool],
+)
+async def check_following(
+    following_id: int,
+    user_repo: UserRepository = Depends(),
+    account_data: dict = Depends(authenticator.get_current_account_data),
+):
+    try:
+        account_id = account_data.get("id")
+        is_following = user_repo.check_following(account_id, following_id)
+        return is_following
+    except Exception as e:
+        print(f"Error checking if the user is following: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal Server Error",
+        )

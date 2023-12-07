@@ -8,7 +8,7 @@ function useAuth(userProfile, setUserProfile) {
         const refreshInterval = 55 * 60 * 1000;
 
         const interval = setInterval(() => {
-            fetch('http://localhost:8000/spotify/refresh', {
+            fetch(`${process.env.REACT_APP_API_HOST}/spotify/refresh`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

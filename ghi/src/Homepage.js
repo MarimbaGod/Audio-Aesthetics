@@ -112,7 +112,7 @@ export default function Homepage() {
       const fetchUserData = async () => {
 
         try{
-          const response = await fetch('http://localhost:8000/token/', {
+          const response = await fetch(`${process.env.REACT_APP_API_HOST}/token/`, {
               credentials: "include",
           });
           if (response.ok) {
@@ -122,12 +122,12 @@ export default function Homepage() {
           }
           else {
             console.error('Failed to fetch user data:', response.statusText);
-            window.location.replace('/explore');
+            window.location.replace('/audio-aesthetics/explore');
           }
         }
         catch(error){
           console.error('Error fetching user data:', error);
-          window.location.replace('/explore');
+          window.location.replace('/audio-aesthetics/explore');
         }
       };
       fetchUserData();
@@ -138,9 +138,9 @@ export default function Homepage() {
 
   useEffect(() => {
   const fetchData = async () => {
-    const userUrl = `http://localhost:8000/api/users/`
+    const userUrl = `${process.env.REACT_APP_API_HOST}/api/users/`
     const userResponse = await fetch(userUrl);
-    const homepageResponse = await fetch("http://localhost:8000/api/homepage/",{
+    const homepageResponse = await fetch(`${process.env.REACT_APP_API_HOST}/api/homepage/`,{
       credentials: "include",
     });
     if (homepageResponse.ok) {
@@ -158,7 +158,7 @@ export default function Homepage() {
 
   const handleLike = async (postId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/posts/${postId}/like`, {
+      const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}/like`, {
         credentials: 'include',
       });
 

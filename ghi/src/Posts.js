@@ -119,7 +119,7 @@ export default function Posts() {
     // Create a new Post logic
     const handlePost = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/posts', {
+        const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts`, {
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
@@ -149,14 +149,14 @@ export default function Posts() {
     // Get Posts by signed in user only
     useEffect(() => {
         const fetchUserData = async () => {
-            const userResponse = await fetch('http://localhost:8000/token', {
+            const userResponse = await fetch(`${process.env.REACT_APP_API_HOST}/token`, {
                 credentials: "include",
             });
 
             if (userResponse.ok) {
                 const userData = await userResponse.json();
                 setLoggedInUser(userData.account.id);
-                const postsResponse = await fetch(`http://localhost:8000/api/posts/`, {
+                const postsResponse = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/`, {
                     credentials: "include",
                 });
 
@@ -180,7 +180,7 @@ export default function Posts() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/posts/${postId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}`, {
         method: 'DELETE',
         credentials: "include",
       });
