@@ -56,7 +56,7 @@ const SignupForm = () => {
     };
 
     try {
-      await register(userData, `${REACT_APP_API_HOST}/api/users`);
+      await register(userData, `${process.env.REACT_APP_API_HOST}/api/users`);
       e.target.reset(); // Reset the form only if the registration is successful
       navigate("/explore");
     } catch (error) {
@@ -188,7 +188,7 @@ const SignupForm = () => {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="/signin" variant="body2">
+                <Link to="/signin" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

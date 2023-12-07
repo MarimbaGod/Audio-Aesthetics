@@ -17,6 +17,7 @@ import Profile from "./Profile";
 import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
 import Groups from "./Groups";
 import SpotifyPlayer from "./SpotifyPlayer";
+
 function App() {
   const domain = /https:\/\/[^/]+/;
   const baseUrl = process.env.REACT_APP_API_HOST;
@@ -34,7 +35,6 @@ function App() {
             exact
             path="/signup"
             element={<SignupForm baseUrl={baseUrl} />}
-            flake8
           />
           <Route exact path="/explore" element={<ExplorePage />}></Route>
           <Route exact path="/home" element={<Homepage />}></Route>
