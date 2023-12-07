@@ -20,6 +20,7 @@ export default function Logout() {
     const { logout, token } = useToken();
 
     const logoutUser = () => {
+        localStorage.removeItem('likedPosts');
         logout();
     }
 

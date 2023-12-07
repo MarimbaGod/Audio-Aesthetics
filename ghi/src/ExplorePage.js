@@ -34,6 +34,7 @@ import CardMedia from '@mui/material/CardMedia';
 //card icons
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Avatar from '@mui/material/Avatar';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 //other js imports
 import PostDetails from './PostDetails';
@@ -107,6 +108,13 @@ export default function ExplorePage() {
 
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
+  const [likedPosts, setLikedPosts] = useState(() => {
+    // Initialize likedPosts from local storage or an empty array
+    const storedLikedPosts = localStorage.getItem('likedPosts');
+    return storedLikedPosts ? JSON.parse(storedLikedPosts) : [];
+  });
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -123,6 +131,9 @@ export default function ExplorePage() {
         const data = await postResponse.json();
         setPosts(data);
       }
+      const storedLikedPosts = localStorage.getItem('likedPosts');
+      const initialLikedPosts = storedLikedPosts ? JSON.parse(storedLikedPosts) : [];
+      setLikedPosts(initialLikedPosts);
     };
 
     fetchData();
@@ -134,27 +145,41 @@ export default function ExplorePage() {
           credentials: 'include',
         });
       if (response.ok) {
-        const data = await response.json();
-        console.log(data)
-        if (!data) {
-          handleLike(postId);
-        }
-        else {
-          handleUnlike(postId);
-        }
+      const data = await response.json();
+      if (!data) {
+        handleLike(postId);
+        setLikedPosts((prevLikedPosts) => {
+          const newLikedPosts = [...prevLikedPosts, postId];
+          console.log('Liked Posts:', newLikedPosts); // Add this log
+          localStorage.setItem('likedPosts', JSON.stringify(newLikedPosts));
+          return newLikedPosts;
+        });
+
+      } else {
+        handleUnlike(postId);
+        setLikedPosts((prevLikedPosts) => {
+          const newLikedPosts = prevLikedPosts.filter((id) => id !== postId);
+          console.log('Liked Posts:', newLikedPosts); // Add this log
+          localStorage.setItem('likedPosts', JSON.stringify(newLikedPosts));
+          return newLikedPosts;
+        });
       }
-      else {
+    } else {
         const errorData = await response.json();
         console.error('Failed to check if the post is liked:', errorData.message);
         // Handle the error, display a message, etc.
       }
-
+      localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
     }
     catch (error) {
       console.error('Error while checking if the post is liked:', error);
       // Handle the error, display a message, etc.
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+  }, [likedPosts]);
 
   const [selectedPost, setSelectedPost] = useState(null);
 
@@ -294,8 +319,12 @@ export default function ExplorePage() {
                   />
                 )}
                 <CardActions>
-                  <Button size="small">
-                    <FavoriteBorderIcon onClick={() => handleLikePost(post.id)}/>
+                  <Button size="small" onClick={() => handleLikePost(post.id)}>
+                      {likedPosts.includes(post.id) ? (
+                        <FavoriteIcon color="primary" />
+                      ) : (
+                        <FavoriteBorderIcon />
+                      )}
                   </Button>
                   <Button size="small" onClick={() => handleView(post)}>
                     View
