@@ -16,6 +16,7 @@ import SpotifyAuthHandler from "./SpotifyAuthHandler";
 import Profile from "./Profile";
 import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
 import Groups from "./Groups";
+import SpotifyPlayer from "./SpotifyPlayer";
 function App() {
   const baseUrl = "http://localhost:8000";
 
@@ -43,6 +44,7 @@ function App() {
             element={<SpotifyProfile />}
           ></Route>
           <Route exact path="/settings" element={<Settings />}></Route>
+          <Route exact path="/player" element={<SpotifyPlayer />}></Route>
           <Route exact path="/groups" element={<Groups />}></Route>
         </Routes>
       </AuthProvider>

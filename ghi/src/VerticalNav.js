@@ -54,13 +54,13 @@ export const secondaryListItems = (
     <ListSubheader component="div">
       Accounts and Settings
     </ListSubheader>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/settings">
       <ListItemIcon>
         <TuneIcon />
       </ListItemIcon>
       <ListItemText primary="Settings" />
     </ListItemButton>
-    <ListItemButton component={Link} to ="/posts">
+    <ListItemButton component={Link} to ="/profile">
       <ListItemIcon>
         <AccountCircleIcon />
       </ListItemIcon>
