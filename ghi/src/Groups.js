@@ -44,7 +44,7 @@ const Groups = () => {
 
   return (
     <div>
-      <h1>Groups</h1>
+      <h1>Awesome Groups</h1>
       {renderGroups()}
     </div>
   );

@@ -56,7 +56,7 @@ const SignupForm = () => {
     };
 
     try {
-      await register(userData, `http://localhost:8000/api/users`);
+      await register(userData, `${REACT_APP_API_HOST}/api/users`);
       e.target.reset(); // Reset the form only if the registration is successful
       navigate("/explore");
     } catch (error) {

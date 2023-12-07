@@ -18,20 +18,24 @@ import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
 import Groups from "./Groups";
 import SpotifyPlayer from "./SpotifyPlayer";
 function App() {
-  const baseUrl = "http://localhost:8000";
-
-  // const domain = /https:\/\/[^/]+/;
-  // const basename = process.env.process.env.PUBLIC_URL.replace(domain, "");
+  const domain = /https:\/\/[^/]+/;
+  const baseUrl = process.env.REACT_APP_API_HOST;
+  const basename = process.env.PUBLIC_URL.replace(domain, "");
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <AuthProvider baseUrl={baseUrl}>
         <Routes>
           <Route exact path="/" element={<SpotifyAuthHandler />}></Route>
           <Route exact path="/signin" element={<SignIn />}></Route>
           <Route exact path="/logout" element={<Logout />}></Route>
           <Route exact path="/posts" element={<Posts />}></Route>
-          <Route exact path="/signup" element={<SignupForm />}></Route>
+          <Route
+            exact
+            path="/signup"
+            element={<SignupForm baseUrl={baseUrl} />}
+            flake8
+          />
           <Route exact path="/explore" element={<ExplorePage />}></Route>
           <Route exact path="/home" element={<Homepage />}></Route>
           {/* <Route exact path="/profile" element={<Profile />}></Route> */}
