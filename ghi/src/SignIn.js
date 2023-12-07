@@ -36,23 +36,28 @@ const defaultTheme = createTheme();
 export default function SignIn() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [loginError, setLoginError] = useState("");
     const navigate = useNavigate();
     const { login, token } = useToken();
 
 
-    useEffect(() => {
-      if (token && isLoggingIn) {
-        navigate("/explore");
-      }
-    }, [token, isLoggingIn, navigate]);
-
-    const handleSubmit = async (event) => {
+    const handleSubmit = (event) => {
       event.preventDefault();
-      setIsLoggingIn(true);
-      await login(username, password);
+
+      login(username, password);
+
+      setTimeout(() => {
+        if (!token) {
+          setLoginError(true);
+        }
+      }, 600)
     };
 
+    useEffect(() => {
+      if (token) {
+        navigate("/explore");
+      }
+    }, [token, navigate])
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -115,6 +120,11 @@ export default function SignIn() {
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
+              {loginError && (
+                <Typography variant="body2" color="error" aligin="center">
+                  Username or password incorrect. Try again.
+                </Typography>
+              )}
               <Button
                 type="submit"
                 fullWidth

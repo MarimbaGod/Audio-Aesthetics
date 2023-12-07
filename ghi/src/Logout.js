@@ -10,19 +10,24 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import useToken from "@galvanize-inc/jwtdown-for-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
 
 
 const defaultTheme = createTheme();
 
 export default function Logout() {
     const navigate = useNavigate();
-    const { logout } = useToken();
+    const { logout, token } = useToken();
 
     const logoutUser = () => {
         logout();
-        navigate("/signin");
     }
 
+    useEffect(() => {
+      if (!token) {
+        navigate("/signin")
+      }
+    }, [token, navigate])
 
   return (
     <ThemeProvider theme={defaultTheme}>
