@@ -11,7 +11,8 @@ steps = [
             email VARCHAR(100) NOT NULL UNIQUE,
             img_url VARCHAR(255) DEFAULT 'https://tinyurl.com/Dimg-url',
             spotify_access_token VARCHAR(255),
-            spotify_refresh_token VARCHAR(255)
+            spotify_refresh_token VARCHAR(255),
+            spotify_device_id VARCHAR(255)
         );
         """,
         # "Down" SQL statement

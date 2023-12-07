@@ -1,5 +1,6 @@
 from fastapi import HTTPException, APIRouter, Depends, status
 from authenticator import authenticator
+from typing import Optional, List
 import requests
 from pydantic import BaseModel
 import os
@@ -11,15 +12,33 @@ from queries.spotify import (
 
 router = APIRouter()
 
-# class SpotifyPlaylistOut(BaseModel):
-
 
 class TokenRequest(BaseModel):
     code: str
 
 
-# class RefreshRequest(BaseModel):
-#     refresh_token: str
+class SpotifyDeviceIdUpdate(BaseModel):
+    device_id: str
+
+
+class UpdatePlaylistDetails(BaseModel):
+    name: Optional[str] = None
+    public: Optional[bool] = None
+    description: Optional[str] = None
+
+
+class PlaylistDetails(BaseModel):
+    name: str
+    public: bool
+    description: str
+
+
+class AddTracks(BaseModel):
+    uris: List[str]
+
+
+class RemoveTracks(BaseModel):
+    uris: List[str]
 
 
 @router.post("/spotify/token")
@@ -106,7 +125,6 @@ async def get_spotify_playlists(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
         )
-    # spotify_access_token = user_details["spotify_access_token"]
     url = "https://api.spotify.com/v1/me/playlists"
 
     response = spotify_api_request_with_refresh(user_details, url, user_repo)
@@ -129,8 +147,6 @@ async def get_spotify_user_profile(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized >:("
         )
-
-    # spotify_access_token = user_details["spotify_access_token"]
 
     url = "https://api.spotify.com/v1/me"
     response = spotify_api_request_with_refresh(user_details, url, user_repo)
@@ -157,8 +173,6 @@ async def get_playlist_details(
             detail="Ew, You're not authorized? *Cringes in Python*",
         )
 
-    # spotify_access_token = user_details["spotify_access_token"]
-
     url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
 
     response = spotify_api_request_with_refresh(user_details, url, user_repo)
@@ -170,6 +184,37 @@ async def get_playlist_details(
         )
 
     return response.json()
+
+
+@router.put("/spotify/playlists/{playlist_id}")
+async def update_playlist_details(
+    playlist_id: str,
+    playlist_data: UpdatePlaylistDetails,
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Ew, You're not authorized? *Cringes in Python*",
+        )
+
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
+    response = spotify_api_request_with_refresh(
+        user_details,
+        url,
+        user_repo,
+        method="PUT",
+        data=playlist_data.dict(exclude_none=True),
+    )
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error updating playlist details",
+        )
+    return {"detail": "Playlist details updated successfully"}
 
 
 @router.get("/spotify/search")
@@ -265,3 +310,186 @@ async def get_playlist_tracks(
         tracks.append(track_info)
 
     return tracks
+
+
+@router.get("/spotify/current-playback")
+async def get_current_playback(
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized access",
+        )
+    url = "https://api.spotify.com/v1/me/player"
+    response = spotify_api_request_with_refresh(user_details, url, user_repo)
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error fetching current playback",
+        )
+
+    return response.json()
+
+
+@router.get("/spotify/devices")
+async def get_user_devices(
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized access",
+        )
+    url = "https://api.spotify.com/v1/me/player/devices"
+    response = spotify_api_request_with_refresh(user_details, url, user_repo)
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error fetching devices",
+        )
+
+    return response.json()
+
+
+@router.post("/spotify/update-device")
+async def update_spotify_device(
+    device_data: SpotifyDeviceIdUpdate,
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_id = current_user["id"]
+    user_repo.update_spotify_device_id(user_id, device_data.device_id)
+
+    return {"detail": "Spotify device ID updated successfully"}
+
+
+@router.put("/spotify/play")
+async def start_resume_playback(
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized access",
+        )
+    device_id = user_details.get("spotify_device_id")
+    if not device_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No Device Stored for User",
+        )
+
+    url = f"https://api.spotify.com/v1/me/player/play?device_id={device_id}"
+    response = spotify_api_request_with_refresh(
+        user_details, url, user_repo, method="PUT"
+    )
+    if response.status_code != 204:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error starting/resuming playback",
+        )
+
+    return {"detail": "Playback started/resumed"}
+
+
+@router.put("/spotify/pause")
+async def pause_playback(
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized access",
+        )
+
+    device_id = user_details.get("spotify_device_id")
+    if not device_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No Device Stored for User",
+        )
+
+    url = f"https://api.spotify.com/v1/me/player/pause?device_id={device_id}"
+    response = spotify_api_request_with_refresh(
+        user_details, url, user_repo, method="PUT"
+    )
+    if response.status_code != 204:
+        raise HTTPException(
+            status_code=response.status_code, detail="Error pausing playback"
+        )
+
+    return {"detail": "Playback paused"}
+
+
+@router.post("/spotify/next")
+async def next_track(
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized access",
+        )
+
+    device_id = user_details.get("spotify_device_id")
+    if not device_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No Device Stored for User",
+        )
+    url = f"https://api.spotify.com/v1/me/player/next?device_id={device_id}"
+    response = spotify_api_request_with_refresh(
+        user_details, url, user_repo, method="POST"
+    )
+    if response.status_code != 204:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error skipping to next track",
+        )
+
+    return {"detail": "Skipped to next Track"}
+
+
+@router.post("/spotify/previous")
+async def previous_track(
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized access",
+        )
+
+    device_id = user_details.get("spotify_device_id")
+    if not device_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No Device Stored for User",
+        )
+    url = (
+        f"https://api.spotify.com/v1/me/player/previous?device_id={device_id}"
+    )
+
+    response = spotify_api_request_with_refresh(
+        user_details, url, user_repo, method="POST"
+    )
+    if response.status_code != 204:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error skipping to previous track",
+        )
+
+    return {"detail": "Skipped to previous track"}

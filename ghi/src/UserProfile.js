@@ -4,9 +4,11 @@ import NavBar from './NavBar';
 import useUserDetails from './useUserDetails';
 import usePlaylists from './usePlaylists';
 
+
 export default function UserProfile() {
     const userDetails = useUserDetails();
     const playlists = usePlaylists();
+    // const [searchResults, setSearchResults] = useState([]);
     const [open, setOpen] = useState(true);
 
     const toggleDrawer = () => {

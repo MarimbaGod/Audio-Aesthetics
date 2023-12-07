@@ -1,12 +1,37 @@
 from fastapi import HTTPException
 import requests
 from queries.users import UserRepository
+from typing import Optional, Union
 import os
 
 
-def make_spotify_api_request(url: str, access_token: str):
+def make_spotify_api_request(
+    url: str,
+    access_token: str,
+    method: str = "GET",
+    data: Optional[Union[dict, str, bytes]] = None,
+    extra_headers: Optional[dict] = None,
+):
     headers = {"Authorization": f"Bearer {access_token}"}
-    return requests.get(url, headers=headers)
+    if extra_headers:
+        headers.update(extra_headers)
+
+    if method == "GET":
+        return requests.get(url, headers=headers)
+    elif method == "POST":
+        return requests.post(url, headers=headers, json=data)
+    elif method == "PUT":
+        if isinstance(data, bytes):
+            return requests.put(url, headers=headers, data=data)
+        else:
+            return requests.put(url, headers=headers, json=data)
+    elif method == "DELETE":
+        return requests.delete(
+            url,
+            headers=headers,
+        )
+    else:
+        raise ValueError("Invalid HTTP Method")
 
 
 def refresh_spotify_access_token(
@@ -34,15 +59,18 @@ def refresh_spotify_access_token(
     return new_token_data["access_token"]
 
 
-# def fetch_track_features(access_token: str, track_id: str):
-#     headers = {}
-
-
 def spotify_api_request_with_refresh(
-    user_details: dict, url: str, user_repo: UserRepository
+    user_details: dict,
+    url: str,
+    user_repo: UserRepository,
+    method="GET",
+    data=None,
+    extra_headers=None,
 ):
     access_token = user_details["spotify_access_token"]
-    response = make_spotify_api_request(url, access_token)
+    response = make_spotify_api_request(
+        url, access_token, method, data, extra_headers
+    )
 
     if response.status_code == 401:
         new_access_token = refresh_spotify_access_token(
@@ -57,6 +85,8 @@ def spotify_api_request_with_refresh(
             user_details["spotify_refresh_token"],
         )
 
-        response = make_spotify_api_request(url, access_token)
+        response = make_spotify_api_request(
+            url, new_access_token, method, data, extra_headers
+        )
 
     return response

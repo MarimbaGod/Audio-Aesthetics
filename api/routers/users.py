@@ -152,11 +152,9 @@ async def get_user_details(
     user_details["spotify_refresh_token"] = user_details.get(
         "spotify_refresh_token", "Token not available"
     )
-    # spotify_access_token = user_details.get("spotify_access_token")
-    # if spotify_access_token:
-    #     user_details["spotify_access_token"] = spotify_access_token
-    # else:
-    #     user_details["spotify_access_token"] = "Token not available"
+    user_details["spotify_device_id"] = user_details.get(
+        "spotify_device_id", "Device ID not available"
+    )
 
     return user_details
 

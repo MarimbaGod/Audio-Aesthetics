@@ -34,6 +34,7 @@ class UserOutWithSpotify(BaseModel):
     img_url: Optional[str] = "https://tinyurl.com/Dimg-url"
     spotify_access_token: Optional[str]
     spotify_refresh_token: Optional[str]
+    spotify_device_id: Optional[str] = None
 
 
 class UserOutWithPassword(UserOut):
@@ -221,7 +222,8 @@ class UserRepository:
                     username, first_name,
                     last_name, email, img_url,
                     spotify_access_token,
-                    spotify_refresh_token
+                    spotify_refresh_token,
+                    spotify_device_id
                     FROM users
                     WHERE id = %s
                     """,
@@ -238,6 +240,7 @@ class UserRepository:
                         "img_url": user[5],
                         "spotify_access_token": user[6],
                         "spotify_refresh_token": user[7],
+                        "spotify_device_id": user[8],
                     }
                 else:
                     return None
