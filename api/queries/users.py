@@ -443,3 +443,21 @@ class UserRepository:
         except Exception as e:
             print(f"Error checking if the user is following: {e}")
             return False
+
+    def update_spotify_device_id(
+        self, user_id: int, spotify_device_id: str
+    ):
+        try:
+            with pool.connetion() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        UPDATE users
+                        SET spotify_device_id = %s
+                        WHERE id = %s
+                        """,
+                        [spotify_device_id, user_id]
+                    )
+                    conn.commit()
+        except Exception as e:
+            print("Error updating Spotify Device ID", e)

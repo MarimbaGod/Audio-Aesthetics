@@ -3,19 +3,32 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 
-const SongSelector = () => {
+const SongSelector = ({ playlistId, selectedSongs, setSelectedSongs }) => {
     const [songOptions, setSongOptions] = useState([]);
-    const [selectedSongs, setSelectedSongs] = useState([]);
+    // const [selectedSongs, setSelectedSongs] = useState([]);
 
     useEffect(() => {
+        if (playlistId) {
         // fetch songs
-        fetch(`${process.env.REACT_APP_API_HOST}/spotify/playlist/{playlist_id}/tracks`)
+            fetch(`${process.env.REACT_APP_API_HOST}/spotify/playlist/${playlistId}/tracks`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
             .then(response => response.json())
             .then(data => {
+                console.log("Response Data:", data);
                 // Assuming data is an array of song titles
-                setSongOptions(data);
+                setSongOptions(data.items || data);
+            })
+            .catch(error => {
+                console.error('Error fetching songs:', error);
+                setSongOptions([]);
             });
-    }, []);
+        }
+    }, [playlistId]);
 
     return (
         <Autocomplete

@@ -141,12 +141,7 @@ export default function Posts() {
         } else {
           console.error('Error searching on Spotify:', spotifyResponse.statusText);
         }
-        console.log(songOrPlaylistData)
       }
-
-      else(
-        console.log("NOOOOOO")
-      )
 
       const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts`, {
         method: 'POST',
@@ -177,14 +172,14 @@ export default function Posts() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const userResponse = await fetch('http://localhost:8000/token', {
+      const userResponse = await fetch(`${process.env.REACT_APP_API_HOST}/token`, {
         credentials: 'include',
       });
 
       if (userResponse.ok) {
         const userData = await userResponse.json();
         setLoggedInUser(userData.account.id);
-        const postsResponse = await fetch(`http://localhost:8000/api/posts/`, {
+        const postsResponse = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/`, {
           credentials: 'include',
         });
 
@@ -206,7 +201,7 @@ export default function Posts() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/posts/${postId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
