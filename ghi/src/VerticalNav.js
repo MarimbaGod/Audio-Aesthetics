@@ -34,7 +34,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Explore" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to ="/posts" >
       <ListItemIcon>
         <AddBoxIcon />
       </ListItemIcon>

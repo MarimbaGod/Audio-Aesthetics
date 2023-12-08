@@ -1,8 +1,6 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import CssBaseline from '@mui/material/CssBaseline';
 import Dialog from '@mui/material/Dialog';
@@ -17,20 +15,18 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutIcon from '@mui/icons-material/Logout';
-import {mainListItems, secondaryListItems} from './VerticalNav';
+import { mainListItems, secondaryListItems } from './VerticalNav';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import IconButton from '@mui/material/IconButton';
-
 
 const defaultTheme = createTheme({
   palette: {
@@ -38,16 +34,13 @@ const defaultTheme = createTheme({
       default: '#f0f0f0',
     },
   },
-  typography:{
-    fontFamily: [
-      'Helvetica',
-    ].join(',')
+  typography: {
+    fontFamily: ['Helvetica'].join(','),
   },
 });
 
 const drawerWidth = 240;
 
-// Left nav bar
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
@@ -92,87 +85,99 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+const styles = {
+  popupImage: {
+    maxWidth: '100%',
+    height: 'auto',
+    width: '100%',
+  },
+};
+
 export default function Posts() {
-    const [openDrawer, setOpenDrawer] = useState(true);
-    const [isDialogOpen, setDialogOpen] = useState(false);
-    const [ posts, setPosts ] = useState([]);
-    const [ loggedInUser, setLoggedInUser ] = useState(null);
-    const [ caption, setCaption ] = useState("");
-    const [ imgUrl, setImgUrl ] = useState("");
-    const [ songOrPlaylist, setSongOrPlaylist ] = useState("");
+  const [openDrawer, setOpenDrawer] = useState(true);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [loggedInUser, setLoggedInUser] = useState(null);
+  const [caption, setCaption] = useState('');
+  const [imgUrl, setImgUrl] = useState('');
+  const [songOrPlaylist, setSongOrPlaylist] = useState('');
 
-    const toggleDrawer = () => {
-      setOpenDrawer(!openDrawer);
-    };
+  const toggleDrawer = () => {
+    setOpenDrawer(!openDrawer);
+  };
 
-    const handleClickOpen = () => {
-      setDialogOpen(true);
-    };
+  const handleButtonClick = () => {
+    setDialogOpen(true);
+  };
 
-    const handleClose = () => {
-      setDialogOpen(false);
-      setCaption("");
-      setImgUrl("");
-      setSongOrPlaylist("");
-    };
+  const handleCardClick = (post) => {
+    setSelectedPost(post);
+    if (!post.img_url) {
+      post.img_url = `https://source.unsplash.com/random?music&${post.id}`;
+    }
+  };
 
-    // Create a new Post logic
-    const handlePost = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-          },
+  const handleClose = () => {
+    setDialogOpen(false);
+    setCaption('');
+    setImgUrl('');
+    setSongOrPlaylist('');
+  };
+
+  const handlePost = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          created_datetime: new Date().toISOString(),
+          caption,
+          created_by: loggedInUser,
+          img_url: imgUrl,
+          song_or_playlist: songOrPlaylist,
+        }),
+      });
+
+      if (response.ok) {
+        const newPost = await response.json();
+        setPosts((prevPosts) => [...prevPosts, newPost]);
+        handleClose();
+      } else {
+        console.error('Error creating post:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error creating post:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userResponse = await fetch('http://localhost:8000/token', {
+        credentials: 'include',
+      });
+
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        setLoggedInUser(userData.account.id);
+        const postsResponse = await fetch(`http://localhost:8000/api/posts/`, {
           credentials: 'include',
-          body: JSON.stringify({
-            created_datetime: new Date().toISOString(),
-            caption,
-            created_by: loggedInUser,
-            img_url: imgUrl,
-            song_or_playlist: songOrPlaylist,
-          }),
         });
 
-        if(response.ok) {
-          const newPost = await response.json();
-          setPosts((prevPosts) => [...prevPosts, newPost]);
-          handleClose();
-        } else {
-          console.error('Error creating post:', response.statusText);
+        if (postsResponse.ok) {
+          const postsData = await postsResponse.json();
+          setPosts(postsData.filter((post) => post.created_by === userData.account.id));
         }
-      } catch (error) {
-        console.error('Error creating post:', error);
       }
     };
 
-    // Get Posts by signed in user only
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const userResponse = await fetch(`${process.env.REACT_APP_API_HOST}/token`, {
-                credentials: "include",
-            });
+    fetchUserData();
+  }, []);
 
-            if (userResponse.ok) {
-                const userData = await userResponse.json();
-                setLoggedInUser(userData.account.id);
-                const postsResponse = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/`, {
-                    credentials: "include",
-                });
-
-                if (postsResponse.ok) {
-                    const postsData = await postsResponse.json();
-                    setPosts(postsData.filter(post => post.created_by === userData.account.id));
-                }
-            }
-        };
-
-        fetchUserData();
-    }, []);
-
-  // Delete Post logic
   const handleDelete = async (postId) => {
-
     const isConfirmed = window.confirm('Are you sure you want to delete this post?');
 
     if (!isConfirmed) {
@@ -180,13 +185,15 @@ export default function Posts() {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}`, {
+      const response = await fetch(`http://localhost:8000/api/posts/${postId}`, {
         method: 'DELETE',
-        credentials: "include",
+        credentials: 'include',
       });
 
       if (response.ok) {
-        setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+        setDialogOpen(false);
+        setSelectedPost(null);
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
       } else {
         console.error('Error deleting post');
       }
@@ -195,7 +202,7 @@ export default function Posts() {
     }
   };
 
-  // Display Posts card format
+
   const postsItems = posts.map((post) => (
     <Grid item key={post.id} xs={12} sm={6} md={4}>
       <Card
@@ -203,78 +210,103 @@ export default function Posts() {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
+          cursor: 'pointer',
         }}
+        onClick={() => handleCardClick(post)}
       >
         <CardMedia
           component="div"
           sx={{
-            pt: '56.25%',
+            pt: '100%',
+            position: 'relative',
+            overflow: 'hidden',
+            '& img': {
+              objectFit: 'cover',
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+            },
           }}
-          image={post.img_url || `https://source.unsplash.com/random?music/${post.id}`}
+          image={post.img_url || `https://source.unsplash.com/random?music&${post.id}`}
         />
-        <CardContent sx={{ flexGrow: 1 }}>
-          <Typography gutterBottom variant="h5" component="h2">
-            {new Date(post.created_datetime).toLocaleDateString('en-GB')}
-          </Typography>
-          <Typography>
-            {post.caption}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Button size="small">View</Button>
-          <Chip
-            label="Delete"
-            size="small"
-            color="error"
-            onClick={() => handleDelete(post.id)}
-            onDelete={() => handleDelete(post.id)}
-            deleteIcon={<DeleteIcon />}
-            variant="filled"
-          />
-        </CardActions>
       </Card>
     </Grid>
   ));
+
+  const postDetailsDialog = (
+    <Dialog open={selectedPost !== null} onClose={() => setSelectedPost(null)}>
+      <DialogContent>
+        <Grid item xs={12} sm={6}>
+          <img
+            src={selectedPost?.img_url}
+            alt="Post"
+            style={styles.popupImage}
+          />
+          <Typography gutterBottom variant="subtitle2">
+            {new Date(selectedPost?.created_datetime).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}
+          </Typography>
+          <Typography>{selectedPost?.caption}</Typography>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <DeleteIcon
+          color='error'
+          sx={{
+            '&:hover': {
+              color: 'darkred', // Change color on hover
+              cursor: 'pointer',
+            },
+            '&:active': {
+              transform: 'scale(0.9)', // Add a slight scale down effect on click
+            },
+          }}
+          onClick={() => handleDelete(selectedPost.id)}
+        />
+      </DialogActions>
+    </Dialog>
+  );
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="absolute" open={openDrawer}>
-            <Toolbar
+          <Toolbar
+            sx={{
+              pr: '24px',
+            }}
+          >
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={toggleDrawer}
               sx={{
-                pr: '24px',
+                marginRight: '36px',
               }}
             >
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                onClick={toggleDrawer}
-                sx={{
-                  marginRight: '36px',
-                }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography
-                component="h1"
-                variant="h4"
-                color="inherit"
-                noWrap
-                sx={{
-                  flexGrow: 1,
-                  display: 'flex',
-                  alightItems: 'center',
-                  justifyContent:'center',
-                }}
-              >
-                Audio Aesthetics
-              </Typography>
-              <IconButton color="inherit" component={Link} to="/logout">
-                  <LogoutIcon />
-              </IconButton>
-            </Toolbar>
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              component="h1"
+              variant="h4"
+              color="inherit"
+              noWrap
+              sx={{
+                flexGrow: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              Audio Aesthetics
+            </Typography>
+            <IconButton color="inherit" component={Link} to="/logout">
+              <LogoutIcon />
+            </IconButton>
+          </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={openDrawer}>
           <Toolbar
@@ -299,7 +331,7 @@ export default function Posts() {
               >
                 Audio Aesthetics
               </Typography>
-            <ChevronLeftIcon />
+              <ChevronLeftIcon />
             </IconButton>
           </Toolbar>
           <Divider />
@@ -310,7 +342,6 @@ export default function Posts() {
           </List>
         </Drawer>
         <Box
-
           component="main"
           sx={{
             backgroundColor: (theme) =>
@@ -320,7 +351,7 @@ export default function Posts() {
             flexGrow: 1,
             height: '100vh',
             overflow: 'auto',
-            marginTop: 12
+            marginTop: 12,
           }}
         >
           <Container maxWidth="sm">
@@ -333,14 +364,9 @@ export default function Posts() {
             >
               My Posts
             </Typography>
-            <Stack
-              sx={{ pt: 4 }}
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-            >
+            <Stack sx={{ pt: 4 }} direction="row" spacing={2} justifyContent="center">
               <React.Fragment>
-                <Button variant="contained" onClick={handleClickOpen}>
+                <Button variant="contained" onClick={handleButtonClick}>
                   Make a new post
                 </Button>
                 <Dialog open={isDialogOpen} onClose={handleClose}>
@@ -381,20 +407,25 @@ export default function Posts() {
                     />
                   </DialogContent>
                   <DialogActions>
-                    <Button variant="contained" onClick={handlePost}>Post</Button>
-                    <Button variant="contained" color="error" onClick={handleClose}>Cancel</Button>
+                    <Button variant="contained" onClick={handlePost}>
+                      Post
+                    </Button>
+                    <Button variant="contained" color="error" onClick={handleClose}>
+                      Cancel
+                    </Button>
                   </DialogActions>
                 </Dialog>
               </React.Fragment>
             </Stack>
           </Container>
-        <Toolbar />
-        <Container sx={{ py: 8, mt: 4}} maxWidth="md">
-          <Grid container spacing={3}>
-            {postsItems}
-          </Grid>
-        </Container>
+          <Toolbar />
+          <Container sx={{ py: 8, mt: 4 }} maxWidth="md">
+            <Grid container spacing={3}>
+              {postsItems}
+            </Grid>
+          </Container>
         </Box>
+        {postDetailsDialog}
       </Box>
     </ThemeProvider>
   );
