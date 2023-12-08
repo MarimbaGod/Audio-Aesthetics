@@ -104,35 +104,35 @@ export default function Homepage() {
 
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
-  const [loggedInUser, setLoggedInUser] = useState(null);
+  // const [loggedInUser, setLoggedInUser] = useState(null);
 
 
 
-  useEffect(() => {
-      const fetchUserData = async () => {
+  // useEffect(() => {
+  //     const fetchUserData = async () => {
 
-        try{
-          const response = await fetch(`${process.env.REACT_APP_API_HOST}/token/`, {
-              credentials: "include",
-          });
-          if (response.ok) {
-              const data = await response.json();
-              setLoggedInUser(data.account);
-              console.log(loggedInUser)
-          }
-          else {
-            console.error('Failed to fetch user data:', response.statusText);
-            window.location.replace('/audio-aesthetics/explore');
-          }
-        }
-        catch(error){
-          console.error('Error fetching user data:', error);
-          window.location.replace('/audio-aesthetics/explore');
-        }
-      };
-      fetchUserData();
+  //       try{
+  //         const response = await fetch(`${process.env.REACT_APP_API_HOST}/token/`, {
+  //             credentials: "include",
+  //         });
+  //         if (response.ok) {
+  //             const data = await response.json();
+  //             setLoggedInUser(data.account);
+  //             console.log(loggedInUser)
+  //         }
+  //         else {
+  //           console.error('Failed to fetch user data:', response.statusText);
+  //           window.location.replace('/');
+  //         }
+  //       }
+  //       catch(error){
+  //         console.error('Error fetching user data:', error);
+  //         window.location.replace('/');
+  //       }
+  //     };
+  //     fetchUserData();
 
-  }, [loggedInUser]);
+  // }, [loggedInUser]);
 
 
 

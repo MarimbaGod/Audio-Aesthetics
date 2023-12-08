@@ -12,7 +12,7 @@ import SpotifyProfile from "./SpotifyProfile";
 import UserProfile from "./UserProfile";
 import SignupForm from "./SignupForm";
 import Settings from "./Settings";
-import SpotifyAuthHandler from "./SpotifyAuthHandler";
+// import SpotifyAuthHandler from "./SpotifyAuthHandler";
 import Profile from "./Profile";
 import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
 import Groups from "./Groups";
@@ -27,7 +27,7 @@ function App() {
     <BrowserRouter basename={basename}>
       <AuthProvider baseUrl={baseUrl}>
         <Routes>
-          <Route exact path="/" element={<SpotifyAuthHandler baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/" element={<ExplorePage baseUrl={baseUrl}/>}></Route>
           <Route exact path="/signin" element={<SignIn baseUrl={baseUrl}/>}></Route>
           <Route exact path="/logout" element={<Logout baseUrl={baseUrl}/>}></Route>
           <Route exact path="/posts" element={<Posts baseUrl={baseUrl}/>}></Route>
@@ -36,7 +36,6 @@ function App() {
             path="/signup"
             element={<SignupForm baseUrl={baseUrl} />}
           />
-          <Route exact path="/explore" element={<ExplorePage baseUrl={baseUrl}/>}></Route>
           <Route exact path="/home" element={<Homepage baseUrl={baseUrl}/>}></Route>
           {/* <Route exact path="/profile" element={<Profile />}></Route> */}
           <Route exact path="/search" element={<Search baseUrl={baseUrl}/>}></Route>

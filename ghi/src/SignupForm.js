@@ -8,7 +8,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
+import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -24,7 +24,7 @@ function Copyright(props) {
       {"Copyright © "}
       <Link
         color="inherit"
-        href="https://gitlab.com/team-tunity/audio-aesthetics"
+        to="https://gitlab.com/team-tunity/audio-aesthetics"
       >
         Audio Aesthetics
       </Link>{" "}
@@ -58,7 +58,7 @@ const SignupForm = () => {
     try {
       await register(userData, `${process.env.REACT_APP_API_HOST}/api/users`);
       e.target.reset(); // Reset the form only if the registration is successful
-      navigate("/explore");
+      navigate("/");
     } catch (error) {
       console.error("Registration failed:", error);
       // Handle the error (e.g., display an error message to the user)

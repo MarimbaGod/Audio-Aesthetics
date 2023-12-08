@@ -98,7 +98,6 @@ export default function Homepage() {
 
     const [users, setUsers] = useState([]);
     const [groups, setGroups] = useState([]);
-    const [loggedInUser, setLoggedInUser] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [filteredGroups, setFilteredGroups] = useState([]);
@@ -111,32 +110,6 @@ export default function Homepage() {
             const filteredGroups = value.length > 0 ? groups.filter(group => group.name.toLowerCase().startsWith(value.toLowerCase()) || group.created_by.toLowerCase().startsWith(value.toLowerCase())) : [];
             setFilteredGroups(filteredGroups);
         };
-
-
-  useEffect(() => {
-      const fetchUserData = async () => {
-        try{
-          const response = await fetch(`${process.env.REACT_APP_API_HOST}/token/`, {
-              credentials: "include",
-          });
-          if (response.ok) {
-              const data = await response.json();
-              setLoggedInUser(data.account);
-              console.log(loggedInUser)
-          }
-          else {
-            console.error('Failed to fetch user data:', response.statusText);
-            window.location.replace('/audio-aesthetics/explore');
-          }
-        }
-        catch(error){
-          console.error('Error fetching user data:', error);
-          window.location.replace('/audio-aesthetics/explore');
-        }
-      };
-      fetchUserData();
-
-  }, [loggedInUser]);
 
   useEffect(() => {
   const fetchData = async () => {
