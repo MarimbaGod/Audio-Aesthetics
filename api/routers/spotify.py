@@ -220,7 +220,7 @@ async def update_playlist_details(
 @router.get("/spotify/search")
 async def search_spotify(
     query: str,
-    type: str = "track,album,artist,playlist",
+    type: str = "track",
     current_user: dict = Depends(authenticator.get_current_account_data),
     user_repo: UserRepository = Depends(),
 ):
@@ -238,8 +238,7 @@ async def search_spotify(
             status_code=response.status_code,
             detail="Error searching on Spotify",
         )
-
-    return response.json()
+    return response.json()["tracks"]["items"][0]["uri"]
 
 
 @router.get("/spotify/track/{track_id}/features")

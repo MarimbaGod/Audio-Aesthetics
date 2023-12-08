@@ -127,6 +127,27 @@ export default function Posts() {
 
   const handlePost = async () => {
     try {
+
+      let songOrPlaylistData = "";
+      if (songOrPlaylist) {
+        const spotifyResponse = await fetch(
+          `http://localhost:8000/spotify/search?query=${encodeURIComponent(songOrPlaylist)}`,{
+            credentials: "include",
+          }
+        );
+
+        if (spotifyResponse.ok) {
+          songOrPlaylistData = await spotifyResponse.json();
+        } else {
+          console.error('Error searching on Spotify:', spotifyResponse.statusText);
+        }
+        console.log(songOrPlaylistData)
+      }
+
+      else(
+        console.log("NOOOOOO")
+      )
+
       const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts`, {
         method: 'POST',
         headers: {
@@ -138,7 +159,7 @@ export default function Posts() {
           caption,
           created_by: loggedInUser,
           img_url: imgUrl,
-          song_or_playlist: songOrPlaylist,
+          song_or_playlist: songOrPlaylistData,
         }),
       });
 
@@ -156,14 +177,14 @@ export default function Posts() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const userResponse = await fetch(`${process.env.REACT_APP_API_HOST}/token`, {
+      const userResponse = await fetch('http://localhost:8000/token', {
         credentials: 'include',
       });
 
       if (userResponse.ok) {
         const userData = await userResponse.json();
         setLoggedInUser(userData.account.id);
-        const postsResponse = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/`, {
+        const postsResponse = await fetch(`http://localhost:8000/api/posts/`, {
           credentials: 'include',
         });
 
@@ -185,7 +206,7 @@ export default function Posts() {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}`, {
+      const response = await fetch(`http://localhost:8000/api/posts/${postId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
