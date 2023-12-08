@@ -126,12 +126,12 @@ export default function Homepage() {
           }
           else {
             console.error('Failed to fetch user data:', response.statusText);
-            window.location.replace('/explore');
+            window.location.replace('/audio-aesthetics/explore');
           }
         }
         catch(error){
           console.error('Error fetching user data:', error);
-          window.location.replace('/explore');
+          window.location.replace('/audio-aesthetics/explore');
         }
       };
       fetchUserData();

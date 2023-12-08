@@ -76,7 +76,7 @@ class PostRepository:
                             post.caption,
                             post.created_by,
                             post.img_url,
-                            post.song_or_playlist
+                            post.song_or_playlist,
                         ],
                     )
                     post_id = result.fetchone()[0]
@@ -269,6 +269,47 @@ class PostRepository:
         except Exception as e:
             print(f"Error checking if the post is liked: {e}")
             return False
+
+    def check_all_like(self, user_id: int) -> Union[Error, List[PostOut]]:
+        try:
+            with pool.connection() as conn:
+                with conn.cursor() as db:
+                    db.execute(
+                        """
+                        SELECT
+                            posts.id,
+                            posts.created_datetime,
+                            posts.caption,
+                            posts.created_by,
+                            posts_media.img_url,
+                            posts_media.song_or_playlist
+                        FROM liked_posts
+                        JOIN posts ON liked_posts.post_id = posts.id
+                        LEFT JOIN posts_media ON posts.id = posts_media.post_id
+                        WHERE liked_posts.user_id = %s
+                        AND liked_posts.active = true;
+                        """,
+                        [user_id],
+                    )
+                    liked_posts_data = db.fetchall()
+
+                    liked_posts = [
+                        PostOut(
+                            id=post[0],
+                            created_datetime=post[1],
+                            caption=post[2],
+                            created_by=post[3],
+                            img_url=post[4],
+                            song_or_playlist=post[5],
+                        )
+                        for post in liked_posts_data
+                    ]
+
+                    return liked_posts
+
+        except Exception as e:
+            print(f"Error checking all liked posts: {e}")
+            return Error(message="Error checking all liked posts")
 
     def user_in_to_out(self, id: int, post: PostIn):
         old_data = post.dict()

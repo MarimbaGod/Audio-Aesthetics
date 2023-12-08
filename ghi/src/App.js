@@ -21,7 +21,7 @@ import SpotifyPlayer from "./SpotifyPlayer";
 function App() {
   const domain = /https:\/\/[^/]+/;
   const baseUrl = process.env.REACT_APP_API_HOST;
-  const basename = process.env.PUBLIC_URL.replace(domain, "")+"/audio-aesthetics";
+  const basename = process.env.PUBLIC_URL.replace(domain, "");
 
   return (
     <BrowserRouter basename={basename}>

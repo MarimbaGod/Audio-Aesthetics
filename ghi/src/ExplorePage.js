@@ -108,12 +108,8 @@ export default function ExplorePage() {
 
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
-  const [likedPosts, setLikedPosts] = useState(() => {
-    // Initialize likedPosts from local storage or an empty array
-    const storedLikedPosts = localStorage.getItem('likedPosts');
-    return storedLikedPosts ? JSON.parse(storedLikedPosts) : [];
-  });
-
+  const [likedPosts, setLikedPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
 
 
   useEffect(() => {
@@ -131,9 +127,17 @@ export default function ExplorePage() {
         const data = await postResponse.json();
         setPosts(data);
       }
-      const storedLikedPosts = localStorage.getItem('likedPosts');
-      const initialLikedPosts = storedLikedPosts ? JSON.parse(storedLikedPosts) : [];
-      setLikedPosts(initialLikedPosts);
+      const likedPostsUrl = `${process.env.REACT_APP_API_HOST}/api/post`;
+      const likedPostsResponse = await fetch(likedPostsUrl, {
+        credentials: 'include',
+      });
+
+      if (likedPostsResponse.ok) {
+        const likedPostsData = await likedPostsResponse.json();
+        //this will essentially take likedPostsData and only return the id of the posts that are liked
+        const likedPostIds = likedPostsData.map((post) => post.id);
+        setLikedPosts(likedPostIds);
+      }
     };
 
     fetchData();
@@ -144,44 +148,32 @@ export default function ExplorePage() {
         const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}/check_like`, {
           credentials: 'include',
         });
-      if (response.ok) {
-      const data = await response.json();
-      if (!data) {
-        handleLike(postId);
-        setLikedPosts((prevLikedPosts) => {
-          const newLikedPosts = [...prevLikedPosts, postId];
-          console.log('Liked Posts:', newLikedPosts); // Add this log
-          localStorage.setItem('likedPosts', JSON.stringify(newLikedPosts));
-          return newLikedPosts;
-        });
-
-      } else {
-        handleUnlike(postId);
-        setLikedPosts((prevLikedPosts) => {
-          const newLikedPosts = prevLikedPosts.filter((id) => id !== postId);
-          console.log('Liked Posts:', newLikedPosts); // Add this log
-          localStorage.setItem('likedPosts', JSON.stringify(newLikedPosts));
-          return newLikedPosts;
-        });
+        if (response.ok) {
+          const data = await response.json();
+          if (!data) {
+            handleLike(postId);
+            setLikedPosts((prevLikedPosts) => [...prevLikedPosts, postId]);
+          }
+          else {
+            handleUnlike(postId);
+            setLikedPosts((prevLikedPosts) =>
+              prevLikedPosts.filter((id) => id !== postId)
+            );
+          }
+        }
+        else {
+          const errorData = await response.json();
+          console.error('Failed to check if the post is liked:', errorData.message);
+          }
       }
-    } else {
-        const errorData = await response.json();
-        console.error('Failed to check if the post is liked:', errorData.message);
-        // Handle the error, display a message, etc.
+      catch (error) {
+        console.error('Error while checking if the post is liked:', error);
       }
-      localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
-    }
-    catch (error) {
-      console.error('Error while checking if the post is liked:', error);
-      // Handle the error, display a message, etc.
-    }
-  };
+    };
 
   useEffect(() => {
     localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
   }, [likedPosts]);
-
-  const [selectedPost, setSelectedPost] = useState(null);
 
   const handleView = (post) => {
     setSelectedPost(post);
