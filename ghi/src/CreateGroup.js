@@ -32,14 +32,12 @@ export default function GroupForm({ user }) {
     setImgUrl(e.target.value);
   };
 
-  const handleSubmit = (e) => {
-    // e.preventDefault();
-    // if (!token) {
-    //   // Redirect or show a login modal if user is not logged in
-    //   console.log("Please log in before attempting to create a group.");
-    //   // Optionally, you can redirect the user to the login page or show a login modal.
-    //   return;
-    // }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!token) {
+      return;
+    }
 
     const data = {
       name,
@@ -57,18 +55,35 @@ export default function GroupForm({ user }) {
         Authorization: `Bearer ${token}`,
       },
     };
-    fetch(url, fetchConfig)
-      .then((response) => {
-        if (response.ok) {
-          setName("");
-          setCreatedBy("");
-          setImgUrl("");
-          setIsPublic(true);
-        }
-      })
-      .catch((error) => {
-        console.error("Error submitting data:", error.message);
-      });
+
+    try {
+      const response = await fetch(url, fetchConfig);
+
+      console.log("Response Status:", response.status);
+
+      if (response.ok) {
+        // Access the form and reset it
+        const form = e.target;
+        form.reset();
+
+        // Reset the state variables
+        setName("");
+        setCreatedBy("");
+        setImgUrl("");
+        setIsPublic(true);
+
+        console.log("Form Reset Successful");
+      } else {
+        const errorMessage = await response.text(); // Get the error message from the response
+        console.error(
+          "Error submitting data:",
+          response.statusText,
+          errorMessage
+        );
+      }
+    } catch (error) {
+      console.error("Error submitting data:", error.message);
+    }
   };
 
   return (
@@ -164,11 +179,11 @@ export default function GroupForm({ user }) {
                 </Button>
               </Box>
             ) : (
-              // If user is not logged in, show a login link
+              // If user is not signed in, show a sign in link
               <Typography variant="body1" sx={{ mt: 3 }}>
                 Please{" "}
-                <Link to="/login" style={{ color: "#1976D2" }}>
-                  log in
+                <Link to="/signin" style={{ color: "#1976D2" }}>
+                  sign in
                 </Link>{" "}
                 to create a group.
               </Typography>
