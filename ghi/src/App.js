@@ -6,10 +6,11 @@ import ExplorePage from "./ExplorePage";
 import SignIn from "./SignIn";
 import Logout from "./Logout";
 import Posts from "./Posts";
+import SelfProfile from "./SelfProfile";
 // import Profile from "./ExProfile";
 import Search from "./Search";
 import SpotifyProfile from "./SpotifyProfile";
-import UserProfile from "./UserProfile";
+import SpotifyPlaylistProfile from "./SpotifyPlaylistProfile";
 import SignupForm from "./SignupForm";
 import Settings from "./Settings";
 // import SpotifyAuthHandler from "./SpotifyAuthHandler";
@@ -39,8 +40,8 @@ function App() {
           <Route exact path="/home" element={<Homepage baseUrl={baseUrl}/>}></Route>
           {/* <Route exact path="/profile" element={<Profile />}></Route> */}
           <Route exact path="/search" element={<Search baseUrl={baseUrl}/>}></Route>
-          <Route exact path="/profile" element={<UserProfile baseUrl={baseUrl}/>}></Route>
-          <Route exact path="/user-profile/:user_id" element={<Profile baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/spotifyplaylist" element={<SpotifyPlaylistProfile baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/profile/:user_id" element={<Profile baseUrl={baseUrl}/>}></Route>
           <Route
             exact
             path="/spotify-profile"
@@ -49,6 +50,7 @@ function App() {
           <Route exact path="/settings" element={<Settings baseUrl={baseUrl}/>}></Route>
           <Route exact path="/player" element={<SpotifyPlayer baseUrl={baseUrl}/>}></Route>
           <Route exact path="/groups" element={<Groups baseUrl={baseUrl}/>}></Route>
+          <Route exact path="/selfprofile" element={<SelfProfile baseUrl={baseUrl}/>}></Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>

@@ -245,7 +245,7 @@ return (
                                     <Typography variant="h5" component="div">
                                         {user.username}
                                     </Typography>
-                                    <Link to={`/user-profile/${user.id}`}>
+                                    <Link to={`/profile/${user.id}`}>
                                     <Button size="small">
                                       View
                                     </Button>

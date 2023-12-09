@@ -5,7 +5,7 @@ import useUserDetails from './useUserDetails';
 import usePlaylists from './usePlaylists';
 
 
-export default function UserProfile() {
+export default function SpotifyPlaylistProfile() {
     const userDetails = useUserDetails();
     const playlists = usePlaylists();
     // const [searchResults, setSearchResults] = useState([]);

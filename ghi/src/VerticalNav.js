@@ -6,9 +6,10 @@ import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import PublicIcon from '@mui/icons-material/Public';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import MessageIcon from '@mui/icons-material/Message';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import TuneIcon from '@mui/icons-material/Tune';
+import GroupsIcon from '@mui/icons-material/Groups';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 
 import ListSubheader from '@mui/material/ListSubheader';
 
@@ -40,11 +41,17 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Create" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to ="/groups">
       <ListItemIcon>
-        <MessageIcon />
+        <GroupsIcon />
       </ListItemIcon>
-      <ListItemText primary="Messages" />
+      <ListItemText primary="Groups" />
+    </ListItemButton>
+    <ListItemButton component={Link} to ="/spotifyplaylist">
+      <ListItemIcon>
+        <PlaylistAddIcon />
+      </ListItemIcon>
+      <ListItemText primary="Playlists" />
     </ListItemButton>
   </React.Fragment>
 );
@@ -60,7 +67,7 @@ export const secondaryListItems = (
       </ListItemIcon>
       <ListItemText primary="Settings" />
     </ListItemButton>
-    <ListItemButton component={Link} to ="/profile">
+    <ListItemButton component={Link} to="/selfprofile">
       <ListItemIcon>
         <AccountCircleIcon />
       </ListItemIcon>

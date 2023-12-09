@@ -106,6 +106,7 @@ const Profile = () => {
                 <Grid container spacing={3} justifyContent="center">
                     {/* User Profile Section */}
                     <Grid item xs={12} sm={6} md={4}>
+                        {/* Top Profile Card*/}
                         <Card>
                             <CardContent>
                                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
