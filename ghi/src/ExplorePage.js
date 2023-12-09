@@ -1,7 +1,5 @@
-import React from 'react';
-
 //actually useful react imports
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 //navbar buttons
@@ -170,10 +168,6 @@ export default function ExplorePage() {
         console.error('Error while checking if the post is liked:', error);
       }
     };
-
-  useEffect(() => {
-    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
-  }, [likedPosts]);
 
   const handleView = (post) => {
     setSelectedPost(post);

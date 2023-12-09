@@ -36,6 +36,9 @@ import CardMedia from '@mui/material/CardMedia';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import Avatar from '@mui/material/Avatar';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
+import {handleLike, handleUnlike} from './likeFunction';
 
 const defaultTheme = createTheme({
   palette: {
@@ -104,37 +107,7 @@ export default function Homepage() {
 
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
-  // const [loggedInUser, setLoggedInUser] = useState(null);
-
-
-
-  // useEffect(() => {
-  //     const fetchUserData = async () => {
-
-  //       try{
-  //         const response = await fetch(`${process.env.REACT_APP_API_HOST}/token/`, {
-  //             credentials: "include",
-  //         });
-  //         if (response.ok) {
-  //             const data = await response.json();
-  //             setLoggedInUser(data.account);
-  //             console.log(loggedInUser)
-  //         }
-  //         else {
-  //           console.error('Failed to fetch user data:', response.statusText);
-  //           window.location.replace('/');
-  //         }
-  //       }
-  //       catch(error){
-  //         console.error('Error fetching user data:', error);
-  //         window.location.replace('/');
-  //       }
-  //     };
-  //     fetchUserData();
-
-  // }, [loggedInUser]);
-
-
+  const [likedPosts, setLikedPosts] = useState([]);
 
   useEffect(() => {
   const fetchData = async () => {
@@ -151,28 +124,49 @@ export default function Homepage() {
       const data = await userResponse.json();
       setUsers(data);
     }
+    const likedPostsUrl = `${process.env.REACT_APP_API_HOST}/api/post`;
+      const likedPostsResponse = await fetch(likedPostsUrl, {
+        credentials: 'include',
+      });
+
+      if (likedPostsResponse.ok) {
+        const likedPostsData = await likedPostsResponse.json();
+        //this will essentially take likedPostsData and only return the id of the posts that are liked
+        const likedPostIds = likedPostsData.map((post) => post.id);
+        setLikedPosts(likedPostIds);
+      }
   };
 
   fetchData();
 }, []);
 
-  const handleLike = async (postId) => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}/like`, {
-        credentials: 'include',
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-      } else {
-        const errorData = await response.json();
-        console.error('Failed to like the post:', errorData.message);
+  const handleLikePost = async (postId) => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}/check_like`, {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (!data) {
+            handleLike(postId);
+            setLikedPosts((prevLikedPosts) => [...prevLikedPosts, postId]);
+          }
+          else {
+            handleUnlike(postId);
+            setLikedPosts((prevLikedPosts) =>
+              prevLikedPosts.filter((id) => id !== postId)
+            );
+          }
+        }
+        else {
+          const errorData = await response.json();
+          console.error('Failed to check if the post is liked:', errorData.message);
+          }
       }
-    } catch (error) {
-      console.error('Error while liking the post:', error);
-    }
-  };
+      catch (error) {
+        console.error('Error while checking if the post is liked:', error);
+      }
+    };
 
 
 return (
@@ -300,8 +294,12 @@ return (
                   />
                 )}
                 <CardActions>
-                  <Button size="small">
-                    <FavoriteBorderIcon onClick={() => handleLike(post.id)}/>
+                  <Button size="small" onClick={() => handleLikePost(post.id)}>
+                      {likedPosts.includes(post.id) ? (
+                        <FavoriteIcon color="primary" />
+                      ) : (
+                        <FavoriteBorderIcon />
+                      )}
                   </Button>
                   <Button size="small">
                     <AddCommentIcon />
