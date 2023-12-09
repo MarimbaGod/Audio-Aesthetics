@@ -20,7 +20,7 @@ def get_all_groups(repo: GroupsRepo = Depends()):
     return repo.get_all()
 
 
-@router.post("/api/groups", response_model=Union[GroupOut, Error])
+@router.post("/api/groups/", response_model=Union[GroupOut, Error])
 async def create_group(
     group_data: GroupIn,
     account_data: dict = Depends(authenticator.get_current_account_data),

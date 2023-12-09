@@ -18,6 +18,7 @@ import Profile from "./Profile";
 import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
 import Groups from "./Groups";
 import SpotifyPlayer from "./SpotifyPlayer";
+import CreateGroup from "./CreateGroup";
 
 function App() {
   const domain = /https:\/\/[^/]+/;
@@ -28,29 +29,82 @@ function App() {
     <BrowserRouter basename={basename}>
       <AuthProvider baseUrl={baseUrl}>
         <Routes>
-          <Route exact path="/" element={<ExplorePage baseUrl={baseUrl}/>}></Route>
-          <Route exact path="/signin" element={<SignIn baseUrl={baseUrl}/>}></Route>
-          <Route exact path="/logout" element={<Logout baseUrl={baseUrl}/>}></Route>
-          <Route exact path="/posts" element={<Posts baseUrl={baseUrl}/>}></Route>
+          <Route
+            exact
+            path="/"
+            element={<ExplorePage baseUrl={baseUrl} />}
+          ></Route>
+          <Route
+            exact
+            path="/signin"
+            element={<SignIn baseUrl={baseUrl} />}
+          ></Route>
+          <Route
+            exact
+            path="/logout"
+            element={<Logout baseUrl={baseUrl} />}
+          ></Route>
+          <Route
+            exact
+            path="/posts"
+            element={<Posts baseUrl={baseUrl} />}
+          ></Route>
           <Route
             exact
             path="/signup"
             element={<SignupForm baseUrl={baseUrl} />}
           />
-          <Route exact path="/home" element={<Homepage baseUrl={baseUrl}/>}></Route>
+          <Route
+            exact
+            path="/home"
+            element={<Homepage baseUrl={baseUrl} />}
+          ></Route>
           {/* <Route exact path="/profile" element={<Profile />}></Route> */}
-          <Route exact path="/search" element={<Search baseUrl={baseUrl}/>}></Route>
-          <Route exact path="/spotifyplaylist" element={<SpotifyPlaylistProfile baseUrl={baseUrl}/>}></Route>
-          <Route exact path="/profile/:user_id" element={<Profile baseUrl={baseUrl}/>}></Route>
+          <Route
+            exact
+            path="/search"
+            element={<Search baseUrl={baseUrl} />}
+          ></Route>
+          <Route
+            exact
+            path="/spotifyplaylist"
+            element={<SpotifyPlaylistProfile baseUrl={baseUrl} />}
+          ></Route>
+          <Route
+            exact
+            path="/profile/:user_id"
+            element={<Profile baseUrl={baseUrl} />}
+          ></Route>
           <Route
             exact
             path="/spotify-profile"
-            element={<SpotifyProfile baseUrl={baseUrl}/>}
+            element={<SpotifyProfile baseUrl={baseUrl} />}
           ></Route>
-          <Route exact path="/settings" element={<Settings baseUrl={baseUrl}/>}></Route>
-          <Route exact path="/player" element={<SpotifyPlayer baseUrl={baseUrl}/>}></Route>
-          <Route exact path="/groups" element={<Groups baseUrl={baseUrl}/>}></Route>
-          <Route exact path="/selfprofile" element={<SelfProfile baseUrl={baseUrl}/>}></Route>
+          <Route
+            exact
+            path="/settings"
+            element={<Settings baseUrl={baseUrl} />}
+          ></Route>
+          <Route
+            exact
+            path="/player"
+            element={<SpotifyPlayer baseUrl={baseUrl} />}
+          ></Route>
+          <Route
+            exact
+            path="/groups"
+            element={<Groups baseUrl={baseUrl} />}
+          ></Route>
+          <Route
+            exact
+            path="/groups/create"
+            element={<CreateGroup baseUrl={baseUrl} />}
+          ></Route>
+          <Route
+            exact
+            path="/selfprofile"
+            element={<SelfProfile baseUrl={baseUrl} />}
+          ></Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
