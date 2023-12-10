@@ -98,41 +98,45 @@ export default function Homepage() {
 
     const [users, setUsers] = useState([]);
     const [groups, setGroups] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [filteredGroups, setFilteredGroups] = useState([]);
-    const handleSearch = async (event) => {
+    const [loggedInUser, setLoggedInUser] = useState(null);
+
+    useEffect(() => {
+    const fetchData = async () => {
+      const credentialsResponse = await fetch(`${process.env.REACT_APP_API_HOST}/token`, {
+          credentials: 'include',
+        });
+      const userUrl = `${process.env.REACT_APP_API_HOST}/api/users/`
+      const groupUrl = `${process.env.REACT_APP_API_HOST}/api/groups/`
+      const userResponse = await fetch(userUrl);
+      const groupResponse = await fetch(groupUrl);
+      if (userResponse.ok) {
+        const data = await userResponse.json();
+        setUsers(data);
+      }
+      if (groupResponse.ok) {
+        const data = await groupResponse.json();
+        setGroups(data);
+      }
+      if (credentialsResponse.ok) {
+          const credentialsData = await credentialsResponse.json();
+          setLoggedInUser(credentialsData.account);
+
+      }
+    };
+
+    fetchData();
+  }, []);
+
+const handleSearch = async (event) => {
             const value = event.target.value;
-            setSearchQuery(value)
-            console.log(searchQuery)
-            const filteredUsers = value.length > 0 ? users.filter(user => user.username.toLowerCase().startsWith(value.toLowerCase())) : [];
+            const filteredUsers = value.length > 0 ? users.filter(user => user.username.toLowerCase().startsWith(value.toLowerCase())&& user.id !== loggedInUser.id) : [];
             setFilteredUsers(filteredUsers);
             const filteredGroups = value.length > 0 ? groups.filter(group => group.name.toLowerCase().startsWith(value.toLowerCase()) || group.created_by.toLowerCase().startsWith(value.toLowerCase())) : [];
             setFilteredGroups(filteredGroups);
         };
 
-  useEffect(() => {
-  const fetchData = async () => {
-    const userUrl = `${process.env.REACT_APP_API_HOST}/api/users/`
-    const groupUrl = `${process.env.REACT_APP_API_HOST}/api/groups/`
-    const userResponse = await fetch(userUrl);
-    const groupResponse = await fetch(groupUrl);
-    if (userResponse.ok) {
-      const data = await userResponse.json();
-      setUsers(data);
-    }
-    if (groupResponse.ok) {
-      const data = await groupResponse.json();
-      setGroups(data);
-    }
-  };
-
-  fetchData();
-}, []);
-
-// const handleSearchUser = (user_id) => {
-//     <Link></Link>;
-//   };
 
 return (
     <ThemeProvider theme={defaultTheme}>
@@ -164,7 +168,7 @@ return (
               sx={{
                 flexGrow: 1,
                 display: 'flex',
-                alightItems: 'center',
+                alignItems: 'center',
                 justifyContent:'center',
               }}
             >

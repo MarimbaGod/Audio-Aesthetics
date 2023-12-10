@@ -4,10 +4,7 @@ export const handleFollow = async (userId, updateFollowerCount) => {
         method: 'POST',
         credentials: 'include',
     });
-    console.log(response)
     if (response.ok) {
-      const data = await response.json();
-      console.log(data);
       updateFollowerCount()
     }
     else {
@@ -25,10 +22,7 @@ export const handleUnfollow = async (userId, updateFollowerCount) => {
         method: 'POST',
         credentials: 'include',
     });
-    console.log(response)
     if (response.ok) {
-      const data = await response.json();
-      console.log(data);
       updateFollowerCount()
     } else {
       const errorData = await response.json();
