@@ -10,7 +10,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import TuneIcon from "@mui/icons-material/Tune";
 import GroupsIcon from "@mui/icons-material/Groups";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-
+import DiscFullIcon from '@mui/icons-material/DiscFull';
 import ListSubheader from "@mui/material/ListSubheader";
 
 import { Link } from "react-router-dom";
@@ -58,6 +58,12 @@ export const mainListItems = (
         <PlaylistAddIcon />
       </ListItemIcon>
       <ListItemText primary="Playlists" />
+    </ListItemButton>
+    <ListItemButton component={Link} to ="/player">
+      <ListItemIcon>
+        <DiscFullIcon />
+      </ListItemIcon>
+      <ListItemText primary="Player" />
     </ListItemButton>
   </React.Fragment>
 );

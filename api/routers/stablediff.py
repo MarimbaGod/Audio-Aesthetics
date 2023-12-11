@@ -4,7 +4,9 @@ from queries.stablediff import (
     StableDiffusionPrompt,
     AdvancedStableDiffusionPrompt,
 )
+from dotenv import load_dotenv
 import requests
+load_dotenv()
 
 api_key = os.getenv("STABLE_DIFFUSION_API_KEY")
 

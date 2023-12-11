@@ -217,6 +217,30 @@ async def update_playlist_details(
     return {"detail": "Playlist details updated successfully"}
 
 
+@router.get("/spotify/search/track")
+async def search_spotify_track(
+    query: str,
+    type: str = "track",
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized >:("
+        )
+
+    url = f"https://api.spotify.com/v1/search?q={query}&type={type}"
+    response = spotify_api_request_with_refresh(user_details, url, user_repo)
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Error searching on Spotify",
+        )
+    return response.json()["tracks"]["items"][0]["uri"]
+
+
 @router.get("/spotify/search")
 async def search_spotify(
     query: str,
@@ -238,7 +262,7 @@ async def search_spotify(
             status_code=response.status_code,
             detail="Error searching on Spotify",
         )
-    return response.json()["tracks"]["items"][0]["uri"]
+    return response.json()
 
 
 @router.get("/spotify/track/{track_id}/features")

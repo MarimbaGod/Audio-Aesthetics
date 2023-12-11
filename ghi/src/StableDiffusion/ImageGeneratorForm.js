@@ -12,7 +12,7 @@ const ImageGeneratorForm = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [isImageProcessing, setIsImageProcessing] = useState(false);
-    const [imageFetchUrl, setImageFetchUrl] = useState('');
+    // const [imageFetchUrl, setImageFetchUrl] = useState('');
     const [fetchedImageUrl, setFetchedImageUrl] = useState('');
     const [selectedPlaylist, setSelectedPlaylist] = useState('');
     const playlists = usePlaylists();
@@ -21,6 +21,9 @@ const ImageGeneratorForm = () => {
     const handleSubmit = async () => {
         setLoading(true);
         setError('');
+        setImageUrl(null);
+        setFetchedImageUrl(null);
+
         const promptData = {
             track_titles: selectedSongs.map(song => song.title),
             user_input: userInput,
@@ -44,18 +47,15 @@ const ImageGeneratorForm = () => {
             }
 
             const data = await response.json();
-            if (data.status === "processing" && data.fetch_result && data.eta) {
+            if (data.status === "processing" && data.future_links && data.future_links.length > 0 && data.eta) {
+                const futureImageUrl = data.future_links[0];
                 setIsImageProcessing(true);
-                setImageFetchUrl(data.fetch_result);
-                // setTimeout(() => fetchImage(data.fetch_result), data.eta * 1000);
+                // setImageFetchUrl(data.future_links[0]);
+                setTimeout(() => fetchImage(futureImageUrl), data.eta * 1000);
             } else if (data.output && data.output.length > 0) {
                 setImageUrl(data.output[0]);
             }
             console.log(data);
-            // if (data && data.output && data.output.length > 0) {
-            //     setImageUrl(data.output[0]);
-            // }
-            // console.log(data)
         } catch (error) {
             console.error('Error in API call', error);
             setLoading(false);
@@ -63,14 +63,40 @@ const ImageGeneratorForm = () => {
         }
     };
 
-    // const fetchImage = async (url) => {
-    //     try {
-    //         const response = await fetch(url);
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP Error! Status: ${response.status}`);
-    //         }
-    //     }
-    // }
+    const fetchImage = async (url, retries = 3, delay = 2000) => {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                if (response.status === 404 && retries > 0) {
+                    console.log(`Waiting for image, attempts left: ${retries}`);
+                    setTimeout(() => fetchImage(url, retries -1, delay), delay);
+                    return;
+                }
+                throw new Error(`HTTP Error! Status: ${response.status}`)
+            }
+            // const imageData = await response.json();
+            // setFetchedImageUrl(imageData.imageUrl);
+            setFetchedImageUrl(url)
+            setIsImageProcessing(false);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error Fetching image', error);
+            setIsImageProcessing(false);
+            setLoading(false);
+            setError('Error fetching Final image');
+        }
+    };
+
+    const renderImage = () => {
+        const imgUrl = fetchedImageUrl || imageUrl;
+        const imageKey = new Date().getTime(); // Unique Key
+        console.log("Image URL: ", imgUrl)
+
+        if (imgUrl) {
+            return <img src={imgUrl} alt="Generated for real" key={imageKey} />;
+        }
+        return null;
+    };
 
     return (
         <div>
@@ -107,6 +133,10 @@ const ImageGeneratorForm = () => {
             <button onClick={handleSubmit}>Generate Image</button>
 
             {imageUrl && <img src={imageUrl} alt="Generated :D" />}
+            {loading && <p>Loading, Please Wait...</p>}
+            {error && <p>{error}</p>}
+            {isImageProcessing ? <p>Processing Image...</p> : renderImage()}
+            {/* {isImageProcessing ? <p>Processing Image...</p> : <img src={fetchedImageUrl || imageUrl} alt="Generated" />} */}
         </div>
     );
 };
