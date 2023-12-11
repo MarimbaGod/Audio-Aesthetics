@@ -8,7 +8,7 @@ const SpotifyAuthHandler = () => {
 
     useEffect(() => {
         if (isAuthorized) {
-            navigate('/spotifyauth');
+            navigate('/spotifyplaylist');
         }
     }, [isAuthorized, navigate]);
 
