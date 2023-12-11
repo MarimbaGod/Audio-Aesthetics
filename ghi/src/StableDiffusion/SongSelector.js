@@ -19,7 +19,6 @@ const SongSelector = ({ playlistId, selectedSongs, setSelectedSongs }) => {
             })
             .then(response => response.json())
             .then(data => {
-                console.log("Response Data:", data);
                 // Assuming data is an array of song titles
                 setSongOptions(data.items || data);
             })

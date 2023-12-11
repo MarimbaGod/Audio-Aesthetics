@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { Container, Grid, Card, CardContent, Box, Avatar, Typography, Divider } from '@mui/material'
-import NavBar from './NavBar';
-import useUserDetails from './useUserDetails';
+import NavBar from '../Navbar/NavBar';
+import useUserDetails from '../Profile/useUserDetails';
 import usePlaylists from './usePlaylists';
 
 

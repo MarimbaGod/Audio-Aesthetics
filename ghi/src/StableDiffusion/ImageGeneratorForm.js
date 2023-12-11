@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SongSelector from './SongSelector'
-import usePlaylists from '../usePlaylists'
+import usePlaylists from '../Spotify/usePlaylists'
 
 const ImageGeneratorForm = () => {
     const [userInput, setUserInput] = useState('');
@@ -55,7 +55,9 @@ const ImageGeneratorForm = () => {
             } else if (data.output && data.output.length > 0) {
                 setImageUrl(data.output[0]);
             }
-            console.log(data);
+            // if (data && data.output && data.output.length > 0) {
+            //     setImageUrl(data.output[0]);
+            // }
         } catch (error) {
             console.error('Error in API call', error);
             setLoading(false);

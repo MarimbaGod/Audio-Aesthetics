@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { mainListItems, secondaryListItems } from './VerticalNav';
+import { mainListItems, secondaryListItems } from '../Navbar/VerticalNav';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import Divider from '@mui/material/Divider';

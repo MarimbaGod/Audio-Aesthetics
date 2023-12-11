@@ -10,7 +10,7 @@ import DialogContent from '@mui/material/DialogContent';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutIcon from '@mui/icons-material/Logout';
-import {mainListItems, secondaryListItems} from './VerticalNav';
+import {mainListItems, secondaryListItems} from '../Navbar/VerticalNav';
 
 //page organizers
 import CssBaseline from '@mui/material/CssBaseline';
@@ -37,7 +37,7 @@ import Avatar from '@mui/material/Avatar';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
 //other js imports
-import {handleLike, handleUnlike} from './likeFunction';
+import {handleLike, handleUnlike} from '../HelpingFunctions/likeFunction';
 import { DialogActions } from '@mui/material';
 
 const defaultTheme = createTheme({

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import NavBar from './NavBar';
+import NavBar from '../Navbar/NavBar';
 import { Container, Typography, Button, Box } from '@mui/material';
 
 
