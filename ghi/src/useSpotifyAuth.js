@@ -19,7 +19,7 @@ const useSpotifyAuth = () => {
             .then(response => {
                 if (response.ok) {
                     setIsAuthorized(true);
-                    navigate('/spotifyplaylist');
+                    // navigate('/spotifyplaylist');
                 } else {
                     console.error('Failed to exchange Spotify Authorization Code')
                 }
