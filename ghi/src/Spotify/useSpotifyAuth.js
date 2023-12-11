@@ -1,9 +1,9 @@
 import {useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 const useSpotifyAuth = () => {
     const [isAuthorized, setIsAuthorized] = useState(false);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     useEffect(() => {
         const code = new URLSearchParams(window.location.search).get('code');
@@ -19,14 +19,14 @@ const useSpotifyAuth = () => {
             .then(response => {
                 if (response.ok) {
                     setIsAuthorized(true);
-                    navigate('/spotifyplaylist');
+                    // navigate('/spotifyplaylist');
                 } else {
                     console.error('Failed to exchange Spotify Authorization Code')
                 }
             })
             .catch(error => console.error('Error:', error));
         }
-    }, [navigate]);
+    }, []);
 
 
     return isAuthorized;
