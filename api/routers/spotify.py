@@ -67,8 +67,11 @@ async def get_spotify_token(
     response = requests.post(spotify_url, data=payload, headers=headers)
 
     if response.status_code != 200:
+        error_info = response.json()
+        print("Spotify error response:", error_info)
         raise HTTPException(
-            status_code=400, detail="Error fetching Spotify token"
+            status_code=response.status_code,
+            detail=f"Spotify error: {error_info.get('error_description', 'Unknown error')}",
         )
 
     token_data = response.json()
