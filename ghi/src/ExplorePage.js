@@ -1,6 +1,10 @@
+import React from 'react';
+
 //actually useful react imports
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 
 //navbar buttons
 import MenuIcon from '@mui/icons-material/Menu';
@@ -17,7 +21,6 @@ import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import IconButton from '@mui/material/IconButton';
@@ -26,7 +29,6 @@ import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 
 //card
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardMedia from '@mui/material/CardMedia';
 
 //card icons
@@ -35,8 +37,8 @@ import Avatar from '@mui/material/Avatar';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
 //other js imports
-import PostDetails from './PostDetails';
 import {handleLike, handleUnlike} from './likeFunction';
+import { DialogActions } from '@mui/material';
 
 const defaultTheme = createTheme({
   palette: {
@@ -50,6 +52,14 @@ const defaultTheme = createTheme({
     ].join(',')
   },
 });
+
+const styles = {
+  popupImage: {
+    maxWidth: '100%',
+    height: 'auto',
+    width: '100%',
+  },
+};
 
 const drawerWidth = 240;
 
@@ -169,12 +179,121 @@ export default function ExplorePage() {
       }
     };
 
+  useEffect(() => {
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+  }, [likedPosts]);
+
   const handleView = (post) => {
     setSelectedPost(post);
+    if (!post.img_url) {
+      post.img_url = `https://source.unsplash.com/random?music&${post.id}`;
+    }
   };
-  const handleCloseModal = () => {
-    setSelectedPost(null);
-  };
+
+
+  const postsItems = posts.map((post) => (
+    <Grid item key={post.id} xs={12} sm={6} md={4}>
+      <Card
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          cursor: 'pointer',
+        }}
+        onClick={() => handleView(post)}
+      >
+        {users.find((user) => user.id === post.created_by) && (
+          <Box sx={{ display: 'flex', alignItems: 'center', p: .2 }}>
+              <Avatar
+                src={users.find((user) => user.id === post.created_by).img_url}
+                alt="Profile"
+              />
+            <Link to={`/profile/${users.find((user) => user.id === post.created_by).id}`}
+              style={{ textDecoration: 'none', color: 'blue' }}
+            >
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 'bold',
+                  ml: 1,
+                }}
+              >
+                {users.find((user) => user.id === post.created_by).username}
+              </Typography>
+            </Link>
+          </Box>
+        )}
+        <CardMedia
+          component="div"
+          sx={{
+            pt: '100%',
+            position: 'relative',
+            overflow: 'hidden',
+            '& img': {
+              objectFit: 'cover',
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+            },
+          }}
+          image={post.img_url || `https://source.unsplash.com/random?music&${post.id}`}
+        />
+      </Card>
+    </Grid>
+  ));
+
+  const postDetailsDialog = (
+    <Dialog
+      open={selectedPost !== null}
+      onClose={() => setSelectedPost(null)}
+      sx={{
+        '& .MuiDialog-paper': {
+          backgroundColor: '#47b4d2',
+        },
+      }}
+    >
+      <DialogContent
+        sx={{
+          backgroundColor: '#47b4d2',
+          color: '#11111e',
+        }}
+      >
+        <Grid item xs={12} sm={6}>
+          <img
+            src={selectedPost?.img_url}
+            alt="Post"
+            style={styles.popupImage}
+          />
+          <Typography gutterBottom variant="subtitle2" color="#11111e">
+            {new Date(selectedPost?.created_datetime).toLocaleString('en-US', {
+              timeZone: 'America/Los_Angeles',
+            })}
+          </Typography>
+          <Typography color="#11111e">{selectedPost?.caption}</Typography>
+        </Grid>
+      </DialogContent>
+      {selectedPost && (
+        <DialogActions>
+          <Button
+            size="small"
+            onClick={() => {
+              handleLikePost(selectedPost["id"]);
+            }}
+          >
+            {likedPosts.includes(selectedPost["id"]) ? (
+              <FavoriteIcon style={{ color: '#fc00d2' }} />
+            ) : (
+              <FavoriteBorderIcon style={{ color: '#fc00d2' }} />
+            )}
+          </Button>
+        </DialogActions>
+      )}
+    </Dialog>
+  );
+
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -263,66 +382,13 @@ export default function ExplorePage() {
           }}
         >
         <Toolbar />
-        {/* This holds the grid system  */}
         <Container sx={{ py: 8, mt: 4}} maxWidth="md">
           <Grid container spacing={3}>
-            {posts.map((post) => (
-            <Grid item key={post.id} xs={12} sm={6} md={4}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  maxWidth: '500px',
-                  margin: 'auto',
-                }}
-              >
-                {users.find((user) => user.id === post.created_by) && (
-                  <Stack direction="row" alignItems="center" spacing={1} >
-                    <Avatar
-                      src={users.find((user) => user.id === post.created_by).img_url}
-                      alt="Profile"
-                      />
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 'bold',
-                        fontSize: '1.2rem',
-                      }}
-                    >
-                      {users.find((user) => user.id === post.created_by).username}
-                    </Typography>
-                  </Stack>
-                )}
-                {post.img_url && (
-                  <CardMedia
-                    component="div"
-                    sx={{
-                      // 16:9
-                      pt: '100%',
-                    }}
-                    image={post.img_url}
-                  />
-                )}
-                <CardActions>
-                  <Button size="small" onClick={() => handleLikePost(post.id)}>
-                      {likedPosts.includes(post.id) ? (
-                        <FavoriteIcon color="primary" />
-                      ) : (
-                        <FavoriteBorderIcon />
-                      )}
-                  </Button>
-                  <Button size="small" onClick={() => handleView(post)}>
-                    View
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
+            {postsItems}
           </Grid>
         </Container>
-        <PostDetails post={selectedPost} users={users} open={selectedPost !== null} onClose={handleCloseModal} />
         </Box>
+        {postDetailsDialog}
       </Box>
     </ThemeProvider>
 

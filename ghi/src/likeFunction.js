@@ -5,8 +5,6 @@ export const handleLike = async (postId) => {
     });
 
     if (response.ok) {
-      const data = await response.json();
-      console.log(data);
     } else {
       const errorData = await response.json();
       console.error('Failed to like the post:', errorData.message);
@@ -23,8 +21,6 @@ export const handleUnlike = async (postId) => {
     });
 
     if (response.ok) {
-      const data = await response.json();
-      console.log(data);
     } else {
       const errorData = await response.json();
       console.error('Failed to like the post:', errorData.message);

@@ -126,23 +126,12 @@ export default function Posts() {
   };
 
   const handlePost = async () => {
+    if (!caption.trim()) {
+      alert('A caption is required. Please try again.');
+      return;
+    }
+
     try {
-
-      let songOrPlaylistData = "";
-      if (songOrPlaylist) {
-        const spotifyResponse = await fetch(
-          `http://localhost:8000/spotify/search?query=${encodeURIComponent(songOrPlaylist)}`,{
-            credentials: "include",
-          }
-        );
-
-        if (spotifyResponse.ok) {
-          songOrPlaylistData = await spotifyResponse.json();
-        } else {
-          console.error('Error searching on Spotify:', spotifyResponse.statusText);
-        }
-      }
-
       const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts`, {
         method: 'POST',
         headers: {
@@ -154,7 +143,7 @@ export default function Posts() {
           caption,
           created_by: loggedInUser,
           img_url: imgUrl,
-          song_or_playlist: songOrPlaylistData,
+          song_or_playlist: songOrPlaylist,
         }),
       });
 
@@ -252,18 +241,31 @@ export default function Posts() {
   ));
 
   const postDetailsDialog = (
-    <Dialog open={selectedPost !== null} onClose={() => setSelectedPost(null)}>
-      <DialogContent>
+    <Dialog
+      open={selectedPost !== null}
+      onClose={() => setSelectedPost(null)}
+      sx={{
+        '& .MuiDialog-paper': {
+          backgroundColor: '#47b4d2',
+        },
+      }}
+    >
+      <DialogContent
+        sx={{
+          backgroundColor: '#47b4d2',
+          color: '#11111e',
+        }}
+      >
         <Grid item xs={12} sm={6}>
           <img
             src={selectedPost?.img_url}
             alt="Post"
             style={styles.popupImage}
           />
-          <Typography gutterBottom variant="subtitle2">
+          <Typography gutterBottom variant="subtitle2" color="#11111e">
             {new Date(selectedPost?.created_datetime).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}
           </Typography>
-          <Typography>{selectedPost?.caption}</Typography>
+          <Typography color="#11111e">{selectedPost?.caption}</Typography>
         </Grid>
       </DialogContent>
       <DialogActions>
