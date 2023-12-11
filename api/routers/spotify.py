@@ -54,7 +54,6 @@ async def get_spotify_token(
     client_id = "4d6c7eae97cd480fb1088393ebd8f107"
     client_secret = "6f54d43f0d354899bb3c6fbfa44982e8"
 
-
     payload = {
         "grant_type": "authorization_code",
         "code": token_request.code,
