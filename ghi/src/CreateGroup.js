@@ -12,15 +12,21 @@ import { useState } from "react";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import Avatar from "@mui/material/Avatar";
 import GroupIcon from "@mui/icons-material/Group";
+import NavBar from "./NavBar";
 
 const defaultTheme = createTheme();
 
 export default function GroupForm({ user }) {
+  const [open, setOpen] = useState(true);
   const { token } = useToken();
   const [name, setName] = useState("");
   const [created_by, setCreatedBy] = useState("");
   const [img_url, setImgUrl] = useState("");
   const [is_public, setIsPublic] = useState(true);
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -88,6 +94,7 @@ export default function GroupForm({ user }) {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <NavBar open={open} toggleDrawer={toggleDrawer} />
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid

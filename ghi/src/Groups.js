@@ -14,14 +14,19 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useToken from "@galvanize-inc/jwtdown-for-react";
 import GroupIcon from "@mui/icons-material/Group";
-
+import NavBar from "./NavBar";
 const defaultTheme = createTheme();
 
 export default function Groups() {
+  const [open, setOpen] = useState(true);
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { token } = useToken();
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -56,6 +61,7 @@ export default function Groups() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <NavBar open={open} toggleDrawer={toggleDrawer} />
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid
