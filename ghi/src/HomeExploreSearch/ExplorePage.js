@@ -122,7 +122,6 @@ export default function ExplorePage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // const userUrl =`${process.env.REACT_APP_API_HOST}/api/users`;
       const userUrl = `${process.env.REACT_APP_API_HOST}/api/users/`
       const userResponse = await fetch(userUrl);
       if (userResponse.ok) {
@@ -191,7 +190,7 @@ export default function ExplorePage() {
   };
 
 
-  const postsItems = posts.map((post) => (
+  const postsItems = posts.sort((a, b) => new Date(b.created_datetime) - new Date(a.created_datetime)).map((post) => (
     <Grid item key={post.id} xs={12} sm={6} md={4}>
       <Card
         sx={{

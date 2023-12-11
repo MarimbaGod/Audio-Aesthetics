@@ -258,7 +258,7 @@ return (
           <Toolbar />
           <Container sx={{ py: 8 }} maxWidth="md">
           <Grid container spacing={4}>
-            {posts.map((post) => (
+            {posts.sort((a, b) => new Date(b.created_datetime) - new Date(a.created_datetime)).map((post) => (
             <Grid item key={post.id} xs={12} sm={12} md={12} lg={12}>
               <Card
                 sx={{
@@ -283,14 +283,14 @@ return (
                     </Typography>
                   </Stack>
                 )}
-                {post.img_url && (
+                {post.img_url || (
                   <CardMedia
                     component="div"
                     sx={{
                       // 16:9
                       pt: '100%',
                     }}
-                    image={post.img_url}
+                    image={post.img_url|| `https://source.unsplash.com/random?music&${post.id}`}
                   />
                 )}
                 <CardActions>

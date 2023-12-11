@@ -50,7 +50,7 @@ export default function SignIn() {
         if (!token) {
           setLoginError(true);
         }
-      }, 800)
+      }, 1100)
     };
 
     useEffect(() => {

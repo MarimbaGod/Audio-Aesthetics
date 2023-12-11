@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import NavBar from '../Navbar/NavBar';
 import { Container, Grid, Card, CardContent, Box, Avatar, Typography,Paper } from '@mui/material';
 
+
 export default function SelfProfile() {
     const [open, setOpen] = useState(true);
     const [selectedPost, setSelectedPost] = useState(null);
@@ -100,7 +101,7 @@ export default function SelfProfile() {
 
 
 
-    const postsItems = posts.map((post) => (
+    const postsItems = posts.sort((a, b) => new Date(b.created_datetime) - new Date(a.created_datetime)).map((post) => (
     <Grid item key={post.id} xs={12} sm={6} md={4}>
       <Card
         sx={{
