@@ -13,7 +13,7 @@ import SpotifyProfile from "./SpotifyProfile";
 import SpotifyPlaylistProfile from "./SpotifyPlaylistProfile";
 import SignupForm from "./SignupForm";
 import Settings from "./Settings";
-// import SpotifyAuthHandler from "./SpotifyAuthHandler";
+import SpotifyAuthHandler from "./SpotifyAuthHandler";
 import Profile from "./Profile";
 import { AuthProvider } from "@galvanize-inc/jwtdown-for-react";
 import Groups from "./Groups";
@@ -88,11 +88,11 @@ function App() {
             path="/settings"
             element={<Settings baseUrl={baseUrl} />}
           ></Route>
-          {/* <Route
+          <Route
             exact
-            path="/player"
-            element={<SpotifyPlayer baseUrl={baseUrl} />}
-          ></Route> */}
+            path="/spotifyauth"
+            element={<SpotifyAuthHandler baseUrl={baseUrl} />}
+          ></Route>
           <Route
             exact
             path="/groups"
