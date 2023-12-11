@@ -14,7 +14,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useToken from "@galvanize-inc/jwtdown-for-react";
 import GroupIcon from "@mui/icons-material/Group";
-import NavBar from "./NavBar";
+import NavBar from "../Navbar/NavBar";
 const defaultTheme = createTheme();
 
 export default function Groups() {

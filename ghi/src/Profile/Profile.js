@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Grid, Card, CardContent, Box, Avatar, Typography,Paper } from '@mui/material';
-import UserPosts from './UserPosts';
-import NavBar from './NavBar';
+import UserPosts from '../HelpingFunctions/UserPosts';
+import NavBar from '../Navbar/NavBar';
 import Button from '@mui/material/Button';
-import {handleFollow, handleUnfollow} from './followFunction';
+import {handleFollow, handleUnfollow} from '../HelpingFunctions/followFunction';
 
 const Profile = () => {
     const currentUrl = window.location.href;

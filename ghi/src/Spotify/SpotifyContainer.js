@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import SpotifyPlayer from './SpotifyPlayer';
 import SongSearch from './SongSearch';
-import useUserDetails from './useUserDetails';
+import useUserDetails from '../Profile/useUserDetails';
 import { Box, Grid, Card, CardContent, Typography, Container, useTheme } from '@mui/material';
-import NavBar from './NavBar';
+import NavBar from '../Navbar/NavBar';
 
 
 const SpotifyContainer = () => {

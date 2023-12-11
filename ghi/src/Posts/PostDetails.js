@@ -21,7 +21,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 
-import {handleLike, handleUnlike} from './likeFunction';
+import {handleLike, handleUnlike} from '../likeFunction';
 
 
 

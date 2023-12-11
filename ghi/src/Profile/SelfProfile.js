@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffect, useState } from 'react';
-import NavBar from './NavBar';
+import NavBar from '../Navbar/NavBar';
 import { Container, Grid, Card, CardContent, Box, Avatar, Typography,Paper } from '@mui/material';
 
 export default function SelfProfile() {

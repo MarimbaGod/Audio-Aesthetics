@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import Avatar from "@mui/material/Avatar";
 import GroupIcon from "@mui/icons-material/Group";
-import NavBar from "./NavBar";
+import NavBar from "../Navbar/NavBar";
 
 const defaultTheme = createTheme();
 

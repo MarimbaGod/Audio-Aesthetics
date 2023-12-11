@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutIcon from '@mui/icons-material/Logout';
-import {mainListItems, secondaryListItems} from './VerticalNav';
+import {mainListItems, secondaryListItems} from '../Navbar/VerticalNav';
 
 //page organizers
 import CssBaseline from '@mui/material/CssBaseline';
@@ -19,26 +19,17 @@ import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
+import { TextField } from '@mui/material';
 
 //card
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-
-//card icons
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import AddCommentIcon from '@mui/icons-material/AddComment';
-import Avatar from '@mui/material/Avatar';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-
-import {handleLike, handleUnlike} from './likeFunction';
+import Button from '@mui/material/Button';
 
 const defaultTheme = createTheme({
   palette: {
@@ -100,73 +91,51 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function Homepage() {
-  const [open, setOpen] = React.useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+    const [open, setOpen] = React.useState(true);
+    const toggleDrawer = () => {
+        setOpen(!open);
+    };
 
-  const [posts, setPosts] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [likedPosts, setLikedPosts] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [groups, setGroups] = useState([]);
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [filteredGroups, setFilteredGroups] = useState([]);
+    const [loggedInUser, setLoggedInUser] = useState(null);
 
-  useEffect(() => {
-  const fetchData = async () => {
-    const userUrl = `${process.env.REACT_APP_API_HOST}/api/users/`
-    const userResponse = await fetch(userUrl);
-    const homepageResponse = await fetch(`${process.env.REACT_APP_API_HOST}/api/homepage/`,{
-      credentials: "include",
-    });
-    if (homepageResponse.ok) {
-      const data = await homepageResponse.json();
-      setPosts(data);
-    }
-    if (userResponse.ok) {
-      const data = await userResponse.json();
-      setUsers(data);
-    }
-    const likedPostsUrl = `${process.env.REACT_APP_API_HOST}/api/post`;
-      const likedPostsResponse = await fetch(likedPostsUrl, {
-        credentials: 'include',
-      });
-
-      if (likedPostsResponse.ok) {
-        const likedPostsData = await likedPostsResponse.json();
-        //this will essentially take likedPostsData and only return the id of the posts that are liked
-        const likedPostIds = likedPostsData.map((post) => post.id);
-        setLikedPosts(likedPostIds);
-      }
-  };
-
-  fetchData();
-}, []);
-
-  const handleLikePost = async (postId) => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/posts/${postId}/check_like`, {
+    useEffect(() => {
+    const fetchData = async () => {
+      const credentialsResponse = await fetch(`${process.env.REACT_APP_API_HOST}/token`, {
           credentials: 'include',
         });
-        if (response.ok) {
-          const data = await response.json();
-          if (!data) {
-            handleLike(postId);
-            setLikedPosts((prevLikedPosts) => [...prevLikedPosts, postId]);
-          }
-          else {
-            handleUnlike(postId);
-            setLikedPosts((prevLikedPosts) =>
-              prevLikedPosts.filter((id) => id !== postId)
-            );
-          }
-        }
-        else {
-          const errorData = await response.json();
-          console.error('Failed to check if the post is liked:', errorData.message);
-          }
+      const userUrl = `${process.env.REACT_APP_API_HOST}/api/users/`
+      const groupUrl = `${process.env.REACT_APP_API_HOST}/api/groups/`
+      const userResponse = await fetch(userUrl);
+      const groupResponse = await fetch(groupUrl);
+      if (userResponse.ok) {
+        const data = await userResponse.json();
+        setUsers(data);
       }
-      catch (error) {
-        console.error('Error while checking if the post is liked:', error);
+      if (groupResponse.ok) {
+        const data = await groupResponse.json();
+        setGroups(data);
+      }
+      if (credentialsResponse.ok) {
+          const credentialsData = await credentialsResponse.json();
+          setLoggedInUser(credentialsData.account);
+
       }
     };
+
+    fetchData();
+  }, []);
+
+const handleSearch = async (event) => {
+            const value = event.target.value;
+            const filteredUsers = value.length > 0 ? users.filter(user => user.username.toLowerCase().startsWith(value.toLowerCase())&& user.id !== loggedInUser.id) : [];
+            setFilteredUsers(filteredUsers);
+            const filteredGroups = value.length > 0 ? groups.filter(group => group.name.toLowerCase().startsWith(value.toLowerCase()) || group.created_by.toLowerCase().startsWith(value.toLowerCase())) : [];
+            setFilteredGroups(filteredGroups);
+        };
 
 
 return (
@@ -199,7 +168,7 @@ return (
               sx={{
                 flexGrow: 1,
                 display: 'flex',
-                alightItems: 'center',
+                alignItems: 'center',
                 justifyContent:'center',
               }}
             >
@@ -227,8 +196,8 @@ return (
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  height: '20px', // Adjust the height as needed
-                  fontWeight: 'bold', // You can adjust the styling as needed
+                  height: '20px',
+                  fontWeight: 'bold',
                 }}
               >
                 Audio Aesthetics
@@ -256,69 +225,75 @@ return (
           }}
         >
           <Toolbar />
-          <Container sx={{ py: 8 }} maxWidth="md">
-          <Grid container spacing={4}>
-            {posts.map((post) => (
-            <Grid item key={post.id} xs={12} sm={12} md={12} lg={12}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  maxWidth: '500px',
-                  margin: 'auto',
-                }}
-              >
-                {users.find((user) => user.id === post.created_by) && (
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Avatar src={users.find((user) => user.id === post.created_by).img_url} alt="Profile" />
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 'bold',
-                        fontSize: '1.2rem',
-                      }}
-                    >
-                      {users.find((user) => user.id === post.created_by).username}
+            <Container sx={{ py: 8 }} maxWidth="md">
+                <TextField id="standard-basic" label="Search for users, groups, songs" variant="standard" onChange={handleSearch} sx={{ width: '890px' }} />
+            <Grid container spacing={4}>
+            <Grid container spacing={4} sx={{py: 10}}>
+            {/* Users code */}
+            {filteredUsers.length > 0 && (
+                <>
+                    <Typography variant="h4" gutterBottom>
+                        Users
                     </Typography>
-                  </Stack>
-                )}
-                {post.img_url && (
-                  <CardMedia
-                    component="div"
-                    sx={{
-                      // 16:9
-                      pt: '100%',
-                    }}
-                    image={post.img_url}
-                  />
-                )}
-                <CardActions>
-                  <Button size="small" onClick={() => handleLikePost(post.id)}>
-                      {likedPosts.includes(post.id) ? (
-                        <FavoriteIcon color="primary" />
-                      ) : (
-                        <FavoriteBorderIcon />
-                      )}
-                  </Button>
-                  <Button size="small">
-                    <AddCommentIcon />
-                  </Button>
-                </CardActions>
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {post.caption}
-                  </Typography>
-
-                  {post.created_datetime && (
-                    <Typography>
-                      {new Date(post.created_datetime).toLocaleString('default', { month: 'long' }) + " " + new Date(post.created_datetime).getDate()}
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
+                    <Grid container spacing={4}>
+                    {filteredUsers.map((user) => (
+                        <Grid item key={user.id} xs={12} sm={6} md={4} lg={3}>
+                            <Card>
+                                <CardMedia
+                                    component="img"
+                                    alt={user.username}
+                                    height="200"
+                                    image={user.img_url}
+                                />
+                                <CardContent>
+                                    <Typography variant="h5" component="div">
+                                        {user.username}
+                                    </Typography>
+                                    <Link to={`/profile/${user.id}`}>
+                                    <Button size="small">
+                                      View
+                                    </Button>
+                                    </Link>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                    </Grid>
+                </>
+            )}
             </Grid>
-          ))}
+            {/* Groups code */}
+            <Grid container spacing={4} sx={{ py: 8 }}>
+            {filteredGroups.length > 0 &&(
+                <>
+                <Typography variant="h4" gutterBottom>
+                    Groups
+                </Typography>
+                <Grid container spacing={4}>
+                {filteredGroups.map((group) => (
+                    <Grid item key={group.id} xs={12} sm={6} md={4} lg={3}>
+                        <Card>
+                            <CardMedia
+                                component="img"
+                                alt={group.name}
+                                height="200"
+                                image={group.img_url}
+                            />
+                            <CardContent>
+                                    <Typography variant="h5" component="div">
+                                    {group.name}
+                                    </Typography>
+                                <Typography variant="h6" component="div">
+                                Created by: {group.created_by}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    ))}
+                    </Grid>
+                </>
+            )}
+            </Grid>
           </Grid>
         </Container>
         </Box>
