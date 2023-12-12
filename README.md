@@ -1,141 +1,76 @@
-# Module3 Project Gamma
+# Audio Aesthetics by Tunity
 
-## Getting started
+[Click here to visit our deployed site right now!](https://team-tunity.gitlab.io/audio-aesthetics/signup)
 
-You have a project repository, now what? The next section
-lists all of the deliverables that are due at the end of the
-week. Below is some guidance for getting started on the
-tasks for this week.
+...Or you can actually read the README first if you like. Choose your own adventure. :)
 
-## Install Extensions
+[Pssst...Here's the link to see our deployed FastAPI Swagger UI Docs as well if you'd like.](https://aug-2023-1-et-api3.mod3projects.com/docs)
 
-- Prettier: <https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode>
-- Black Formatter: <https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter>
+## Audio Aesthetics is brought to you by the incredible engineers at Tunity:
 
-## Deliverables
+- Kyle Bossert [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/kyle-bossert/) [![GitLab](https://img.shields.io/badge/GitLab-FCA121?style=flat-square&logo=gitlab&logoColor=white)](https://gitlab.com/marimbagod)
+- Gordon Tran [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/gordontran/) [![GitLab](https://img.shields.io/badge/GitLab-FCA121?style=flat-square&logo=gitlab&logoColor=white)](https://gitlab.com/ItsNotGordon)
+- Andrew Cadena [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/andrew-cadena-ponce/) [![GitLab](https://img.shields.io/badge/GitLab-FCA121?style=flat-square&logo=gitlab&logoColor=white)](https://gitlab.com/itscadena123)
+- Angel Lawler Skye [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/angel-lawler-skye/) [![GitLab](https://img.shields.io/badge/GitLab-FCA121?style=flat-square&logo=gitlab&logoColor=white)](https://gitlab.com/angellawlerskye)
 
-- [ ] Wire-frame diagrams
-- [ ] API documentation
-- [ ] Project is deployed to Caprover (BE, DB) & GitLab-pages (FE)
-- [ ] GitLab issue board is setup and in use (or project management tool of choice)
-- [ ] Journals
+## Audio Aesthetics was created, tested, and deployed with:
 
-## Project layout
+[![Docker](https://img.shields.io/badge/Docker-6C757D?style=for-the-badge&logo=docker)](https://www.docker.com/)
+[![Python](https://img.shields.io/badge/Python-6C757D?style=for-the-badge&logo=python)](https://www.python.org/)
+[![Git](https://img.shields.io/badge/Git-6C757D?style=for-the-badge&logo=git)](https://git-scm.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-6C757D?style=for-the-badge&logo=node.js)](https://nodejs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-6C757D?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-6C757D?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
+[![Beekeeper Studio](https://img.shields.io/badge/Beekeeper_Studio-6C757D?style=for-the-badge&logo=beekeeper)](https://www.beekeeperstudio.io/)
+[![pgAdmin](https://img.shields.io/badge/pgAdmin-6C757D?style=for-the-badge&logo=postgresql)](https://www.pgadmin.org/)
+[![React](https://img.shields.io/badge/React-6C757D?style=for-the-badge&logo=react)](https://reactjs.org/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-6C757D?style=for-the-badge&logo=javascript)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![JSON](https://img.shields.io/badge/JSON-6C757D?style=for-the-badge&logo=json)](https://www.json.org/)
+[![JSX](https://img.shields.io/badge/JSX-6C757D?style=for-the-badge&logo=react)](https://reactjs.org/docs/introducing-jsx.html)
+[![HTML](https://img.shields.io/badge/HTML-6C757D?style=for-the-badge&logo=html5)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS](https://img.shields.io/badge/CSS-6C757D?style=for-the-badge&logo=css3)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![Material-UI](https://img.shields.io/badge/Material--UI-6C757D?style=for-the-badge&logo=material-ui&logoColor=white)](https://material-ui.com/)
+[![JWT.io](https://img.shields.io/badge/JWT.io-6C757D?style=for-the-badge)](https://jwt.io/)
+[![Galvanize Cloud CLI](https://img.shields.io/badge/Galvanize_Cloud_CLI-6C757D?style=for-the-badge)](https://gitlab.com/galvanize-inc/foss/glv-cloud-cli)
+[![GitLab Pages](https://img.shields.io/badge/GitLab_Pages-6C757D?style=for-the-badge&logo=gitlab)](https://pages.gitlab.io/)
 
-The layout of the project is just like all of the projects
-you did with `docker-compose` in module #2. You will create
-a directory in the root of the repository for each service
-that you add to your project just like those previous
-projects were setup.
+## Design
 
-### Directories
+- [API design](docs/apidocsnonotes.md)
+- [Database Model](docs/data-model-diagram.png)
+- [Front-End Layout](docs/front-end-layout.md)
+- [Third-Party Integrations](docs/thirdpartyinfo.md)
 
-Several directories have been added to your project. The
-directories `docs` and `journals` are places for you and
-your team-mates to, respectively, put any documentation
-about your project that you create and to put your
-project-journal entries. See the _README.md_ file in each
-directory for more info.
+## Our Users
 
-The other directories, `ghi` and `api`, are services, that
-you can start building off of.
+Our Users are people who value connecting with others over shared musical tastes and experiences.
 
-Inside of `ghi` is a minimal React app that has an "under
-construction" page. It is setup similarly to all of the
-other React projects that you have worked on.
+## Current Functionality
 
-Inside of `api` is a minimal FastAPI application.
-"Where are all the files?" you might ask? Well, the
-`main.py` file is the whole thing, and go take look inside
-of it... There's not even much in there..., hmm? That is
-FastAPI, we'll learn more about it in the coming days. Can
-you figure out what this little web-application does even
-though you haven't learned about FastAPI yet?
+As a User, I can:
 
-Also in `api` is a directory for your migrations.
-If you choose to use PostgreSQL, then you'll want to use
-migrations to control your database. Unlike Django, where
-migrations were automatically created for you, you'll write
-yours by hand using DDL. Don't worry about not knowing what
-DDL means; we have you covered. There's a sample migration
-in there that creates two tables so you can see what they
-look like.
+- Create an Account.
+- Make Posts about the music I love.
+- Like Posts by other Users who share things relevant to my musical interests.
+- Follow other Users who share a similar Audio Aesthetic as me.
 
-The Dockerfile and Dockerfile.dev run your migrations
-for you automatically.
+## The Future of Audio Aesthetics
 
-### Other files
+- Color-based "Audio Aesthetic" data curated from a User's Spotify history that is displayed on their profile and used to match them to other Users who share similar tastes.
 
-The following project files have been created as a minimal
-starting point. Please follow the guidance for each one for
-a most successful project.
+- Public Groups where Users can share posts just among their group.
+- Private Groups where Users can share posts privately only among other Users who are in the same group.
+- Spotify Integration for Users to create and share their own playlists based on their Audio Aesthetic.
 
-- `docker-compose.yaml`: there isn't much in here, just a
-  **really** simple UI and FastAPI service. Add services
-  (like a database) to this file as you did with previous
-  projects in module #2.
-- `.gitlab-ci.yml`: This is your "ci/cd" file where you will
-  configure automated unit tests, code quality checks, and
-  the building and deployment of your production system.
-  Currently, all it does is deploy an "under construction"
-  page to your production UI on GitLab and a sample backend
-  to CapRover. We will learn much more about this file.
-- `.gitignore`: This is a file that prevents unwanted files
-  from getting added to your repository, files like
-  `pyc` files, `__pycache__`, etc. We've set it up so that
-  it has a good default configuration for Python projects.
-- `.env.sample`: This file is a template to copy when
-  creating environment variables for your team. Create a
-  copy called `.env` and put your own passwords in here
-  without fear of it being committed to git (see `.env`
-  listed in `.gitignore`). You can also put team related
-  environment variables in here, things like api and signing
-  keys that shouldn't be committed; these should be
-  duplicated in your deployed environments.
+## How to run Audio Aesthetics locally:
 
-## How to complete the initial deploy
+1. Clone our repo.
+2. CD into the root directory of the project.
+3. RUN docker volume create postgres-data
+4. RUN docker compose build
+5. RUN docker compose up
+6. Navigate to localhost:3000 in your browser to see our Front-End and localhost:8000/docs to see the FastAPI Swagger UI.
 
-There will be further guidance on completing the initial
-deployment, but it just consists of these steps:
+## Special Thanks
 
-### Setup GitLab repo/project
-
-- make sure this project is in a group. If it isn't, stop
-  now and move it to a GitLab group
-- remove the fork relationship: In GitLab go to:
-
-  Settings -> General -> Advanced -> Remove fork relationship
-
-- add these GitLab CI/CD variables:
-  - PUBLIC_URL : this is your gitlab pages URL
-  - REACT_APP_API_HOST: enter "blank" for now
-
-#### Your GitLab pages URL
-
-You can't find this in GitLab until after you've done a deploy
-but you can figure it out yourself from your GitLab project URL.
-
-If this is your project URL
-
-https://gitlab.com/GROUP_NAME/PROJECT_NAME
-
-then your GitLab pages URL will be
-
-https://GROUP_NAME.gitlab.io/PROJECT_NAME
-
-### Initialize CapRover
-
-1. Attain IP address and domain from an instructor
-1. Follow the steps in the CD Cookbook in Learn.
-
-### Update GitLab CI/CD variables
-
-Copy the service URL for your CapRover service and then paste
-that into the value for the REACT_APP_API_HOST CI/CD variable
-in GitLab.
-
-### Deploy it
-
-Merge a change into main to kick off the initial deploy. Once the build pipeline
-finishes you should be able to see an "under construction" page on your GitLab
-pages site.
+Thank you to our Instructors, SEIRS, and hard-working Cohort at Hack Reactor for their contributions through this entire project. It has truly been a pleasure learning and working with you all.
