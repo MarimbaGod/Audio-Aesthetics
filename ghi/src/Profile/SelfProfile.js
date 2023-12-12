@@ -73,7 +73,7 @@ export default function SelfProfile() {
       }
       }
       catch{
-        window.location.replace('/signin');
+        window.location.replace('/audio-aesthetics/signin');
       }
     };
     fetchUserData();
