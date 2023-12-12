@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import SongSelector from './SongSelector'
-import usePlaylists from '../Spotify/usePlaylists'
+import SongSelector from './SongSelector';
+import usePlaylists from '../Spotify/usePlaylists';
+// import NavBar from '../Navbar/NavBar';
+
 
 const ImageGeneratorForm = () => {
     const [userInput, setUserInput] = useState('');
@@ -8,6 +10,9 @@ const ImageGeneratorForm = () => {
     const [selectedModel, setSelectedModel] = useState('ae-sdxl-v1');
     const [upscale, setUpscale] = useState(false);
     const [selectedSongs, setSelectedSongs] = useState([]);
+    const [negativePrompt, setNegativePrompt] = useState('');
+    const [numInferenceSteps, setNumInferenceSteps] = useState(25);
+    const [guidanceScale, setGuidanceScale] = useState(7);
     const [imageUrl, setImageUrl] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -29,7 +34,10 @@ const ImageGeneratorForm = () => {
             user_input: userInput,
             style_guide: styleGuide,
             model_id: selectedModel,
-            upscale: upscale
+            upscale: upscale,
+            negative_prompt: negativePrompt,
+            num_inference_steps: numInferenceSteps,
+            guidance_scale: guidanceScale
         };
         const url = `${process.env.REACT_APP_API_HOST}/adv-generate-image`;
 
@@ -120,6 +128,7 @@ const ImageGeneratorForm = () => {
                 type="text"
                 value={styleGuide}
                 onChange={(e) => setStyleGuide(e.target.value)}
+                placeholder="Style ie: Painting"
             />
             <select value={selectedModel} onChange={(e) => setSelectedModel(e.target.value)}>
                 <option value="ae-sdxl-v1">AE-SDXL-V1</option>
@@ -132,6 +141,27 @@ const ImageGeneratorForm = () => {
                 Upscale Image:
                 <input type="checkbox" checked={upscale} onChange={() => setUpscale(!upscale)} />
             </label>
+            {/* Negative Prompt */}
+            <input
+                type="text"
+                value={negativePrompt}
+                onChange={(e) => setNegativePrompt(e.target.value)}
+                placeholder="Exclude elements (e.g., 'no people')"
+            />
+            {/* Number of Inference Steps */}
+            <input
+                type="number"
+                value={numInferenceSteps}
+                onChange={(e) => setNumInferenceSteps(parseInt(e.target.value))}
+                placeholder="Number of Inference Steps"
+            />
+            {/* Guidance Scale */}
+            <input
+                type="number"
+                value={guidanceScale}
+                onChange={(e) => setGuidanceScale(parseFloat(e.target.value))}
+                placeholder="Guidance Scale"
+            />
             <button onClick={handleSubmit}>Generate Image</button>
 
             {imageUrl && <img src={imageUrl} alt="Generated :D" />}

@@ -65,7 +65,14 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Player" />
     </ListItemButton>
+    <ListItemButton component={Link} to ="/aesthetics">
+      <ListItemIcon>
+        <DiscFullIcon />
+      </ListItemIcon>
+      <ListItemText primary="Stable Diffusion" />
+    </ListItemButton>
   </React.Fragment>
+
 );
 
 export const secondaryListItems = (
