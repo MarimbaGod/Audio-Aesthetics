@@ -42,7 +42,7 @@ export default function SelfProfile() {
       const userResponse = await fetch(`${process.env.REACT_APP_API_HOST}/token`, {
         credentials: 'include',
       });
-
+      try{
       if (userResponse.ok) {
         const userData = await userResponse.json();
         setLoggedInUser(userData.account);
@@ -70,6 +70,10 @@ export default function SelfProfile() {
                     const data = await followerResponse.json()
                     setFollowers(data.length)
                 }
+      }
+      }
+      catch{
+        window.location.replace('/signin');
       }
     };
     fetchUserData();
