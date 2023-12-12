@@ -27,6 +27,7 @@ import MuiAppBar from '@mui/material/AppBar';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import IconButton from '@mui/material/IconButton';
+import useToken from "@galvanize-inc/jwtdown-for-react";
 
 const defaultTheme = createTheme({
   palette: {
@@ -102,6 +103,7 @@ export default function Posts() {
   const [caption, setCaption] = useState('');
   const [imgUrl, setImgUrl] = useState('');
   const [songOrPlaylist, setSongOrPlaylist] = useState('');
+  const {token} = useToken();
 
   const toggleDrawer = () => {
     setOpenDrawer(!openDrawer);
@@ -136,6 +138,7 @@ export default function Posts() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         credentials: 'include',
         body: JSON.stringify({
@@ -273,11 +276,11 @@ export default function Posts() {
           color='error'
           sx={{
             '&:hover': {
-              color: 'darkred', // Change color on hover
+              color: 'darkred',
               cursor: 'pointer',
             },
             '&:active': {
-              transform: 'scale(0.9)', // Add a slight scale down effect on click
+              transform: 'scale(0.9)',
             },
           }}
           onClick={() => handleDelete(selectedPost.id)}
@@ -285,6 +288,23 @@ export default function Posts() {
       </DialogActions>
     </Dialog>
   );
+
+  if (!token) {
+    return (
+      <ThemeProvider theme={defaultTheme}>
+        <Box sx={{ display: 'flex' }}>
+          <CssBaseline />
+          <Typography variant="h6" align="center" sx={{ flexGrow: 1, marginTop: 4 }}>
+            Please{" "}
+            <Link to="/signin" style={{ color: "#1976D2" }}>
+              sign in
+            </Link>{" "}
+            to view your posts.
+          </Typography>
+        </Box>
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
