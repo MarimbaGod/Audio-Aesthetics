@@ -30,6 +30,22 @@
 
 ![Create Group Page](CreateGroup.png)
 
+## User Settings - Link your Spotify!
+
+![User Settings Page](Settings.png)
+
+## Player - Search Spotify
+
+![Player](Player.png)
+
+## Playlists
+
+![Playlists](Playlist.png)
+
 ## Account
 
 ![Account Page](Account.png)
+
+## Stable Diffusion - Pick a playlist, add additional parameters, generate an image based on your playlist. Create your own Audio Aesthetic!
+
+![Stable Diffusion Page](StableDiffusion.png)

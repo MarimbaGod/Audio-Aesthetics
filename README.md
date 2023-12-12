@@ -43,7 +43,7 @@
 
 ## Our Users
 
-Our Users are people who value connecting with others over shared musical tastes and experiences.
+Our Users are people who value music, art, and connecting with others over shared artistic taste and experiences.
 
 ## Current Functionality
 
@@ -53,6 +53,10 @@ As a User, I can:
 - Make Posts about the music I love.
 - Like Posts by other Users who share things relevant to my musical interests.
 - Follow other Users who share a similar Audio Aesthetic as me.
+- Link my Spotify Account
+- See my Playlists
+- Search through Spotify
+- Use Stable Diffusion's Dreambooth V4 Text to Image Endpoint to generate a text-based image of any song I select from any of my playlists.
 
 ## The Future of Audio Aesthetics
 
@@ -60,7 +64,8 @@ As a User, I can:
 
 - Public Groups where Users can share posts just among their group.
 - Private Groups where Users can share posts privately only among other Users who are in the same group.
-- Spotify Integration for Users to create and share their own playlists based on their Audio Aesthetic.
+- Further Spotify Integration for Users to create and share their own playlists based on their Audio Aesthetic.
+- Further Stable Diffusion integration to allow users to create images based on their Spotify history.
 
 ## How to run Audio Aesthetics locally:
 
