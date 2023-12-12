@@ -283,14 +283,14 @@ return (
                     </Typography>
                   </Stack>
                 )}
-                {post.img_url || (
+                {(
                   <CardMedia
                     component="div"
                     sx={{
                       // 16:9
                       pt: '100%',
                     }}
-                    image={post.img_url|| `https://source.unsplash.com/random?music&${post.id}`}
+                    image={post.img_url || `https://source.unsplash.com/random?music&${post.id}`}
                   />
                 )}
                 <CardActions>
