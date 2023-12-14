@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Homepage from "./HomeExploreSearch/Homepage";
@@ -7,7 +7,7 @@ import SignIn from "./Auth/SignIn";
 import Logout from "./Auth/Logout";
 import Posts from "./Posts/Posts";
 import SelfProfile from "./Profile/SelfProfile";
-// import Profile from "./ExProfile";
+import SpotifyPlayer from "./Spotify/SpotifyPlayer";
 import Search from "./HomeExploreSearch/Search";
 import SpotifyProfile from "./Spotify/SpotifyProfile";
 import SpotifyPlaylistProfile from "./Spotify/SpotifyPlaylistProfile";
@@ -20,18 +20,30 @@ import Groups from "./Groups/Groups";
 import CreateGroup from "./Groups/CreateGroup";
 import SpotifyContainer from "./Spotify/SpotifyContainer";
 import ImageGeneratorForm from "./StableDiffusion/ImageGeneratorForm";
+import useUserDetails from "./Profile/useUserDetails";
+import PlaylistDetails from "./Spotify/PlaylistDetails";
+
 
 function App() {
   const domain = /https:\/\/[^/]+/;
   const baseUrl = process.env.REACT_APP_API_HOST;
   const basename = process.env.PUBLIC_URL.replace(domain, "");
 
+  const userDetails = useUserDetails();
+  const accessToken = userDetails?.spotify_access_token;
+  const [trackUri, setTrackUri] = useState('');
+
+  const handleSelectTrack = (uri) => {
+    setTrackUri(uri)
+  };
+
   return (
     <BrowserRouter basename={basename}>
       <AuthProvider baseUrl={baseUrl}>
         <Routes>
           <Route exact path="/aesthetics" element={<ImageGeneratorForm baseUrl={baseUrl} />}></Route>
-          <Route exact path="/player" element={<SpotifyContainer baseUrl={baseUrl} />}></Route>
+          <Route exact path="/player" element={<SpotifyContainer handleSelectTrack={handleSelectTrack} baseUrl={baseUrl} />}></Route>
+          <Route exact path="/playlist/:playlistId" element={<PlaylistDetails handleSelectTrack={handleSelectTrack} />} />
           <Route
             exact
             path="/"
@@ -60,7 +72,7 @@ function App() {
           <Route
             exact
             path="/home"
-            element={<Homepage baseUrl={baseUrl} />}
+            element={<Homepage baseUrl={baseUrl} token={accessToken} />}
           ></Route>
           {/* <Route exact path="/profile" element={<Profile />}></Route> */}
           <Route
@@ -109,6 +121,7 @@ function App() {
             element={<SelfProfile baseUrl={baseUrl} />}
           ></Route>
         </Routes>
+        {accessToken && <SpotifyPlayer token={accessToken} trackUri={trackUri} />}
       </AuthProvider>
     </BrowserRouter>
   );

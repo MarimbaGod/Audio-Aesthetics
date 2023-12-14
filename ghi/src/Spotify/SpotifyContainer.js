@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import SpotifyPlayer from './SpotifyPlayer';
+// import SpotifyPlayer from './SpotifyPlayer';
 import SongSearch from './SongSearch';
-import useUserDetails from '../Profile/useUserDetails';
+// import useUserDetails from '../Profile/useUserDetails';
 import { Box, Grid, Card, CardContent, Typography, Container, useTheme } from '@mui/material';
 import NavBar from '../Navbar/NavBar';
 
 
-const SpotifyContainer = () => {
-    const [trackUri, setTrackUri] = useState('');
+const SpotifyContainer = ({ handleSelectTrack }) => {
+    // const [trackUri, setTrackUri] = useState('');
     const [searchResults, setSearchResults] = useState([]);
-    const userDetails = useUserDetails();
-    const token = userDetails?.spotify_access_token;
+    // const userDetails = useUserDetails();
+    // const token = userDetails?.spotify_access_token;
     const theme = useTheme();
     const [open, setOpen] = useState(true);
 
@@ -22,9 +22,9 @@ const SpotifyContainer = () => {
         setSearchResults(tracks)
     };
 
-    const handleSelectTrack = (uri) => {
-        setTrackUri(uri);
-    };
+    // const handleSelectTrack = (uri) => {
+    //     setTrackUri(uri);
+    // };
 
     return (
         <Box sx={{ display: 'flex', pt: '64px' }}>
@@ -45,9 +45,9 @@ const SpotifyContainer = () => {
                     ))}
                 </Grid>
             </Container>
-            <Box sx={{ position: 'fixed', botom: 0, left: 0, right: 0, zIndex: 1000}}>
+            {/* <Box sx={{ position: 'fixed', botom: 0, left: 0, right: 0, zIndex: 1000}}>
                 <SpotifyPlayer token={token} trackUri={trackUri} />
-            </Box>
+            </Box> */}
         </Box>
     )
 };

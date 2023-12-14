@@ -4,16 +4,26 @@ import NavBar from '../Navbar/NavBar';
 import useUserDetails from '../Profile/useUserDetails';
 import usePlaylists from './usePlaylists';
 
+import { useNavigate } from 'react-router-dom';
+
 
 export default function SpotifyPlaylistProfile() {
     const userDetails = useUserDetails();
     const playlists = usePlaylists();
-    // const [searchResults, setSearchResults] = useState([]);
     const [open, setOpen] = useState(true);
+
+    // New Content
+    const navigate = useNavigate();
+
+    const openPlaylistDetails = (playlistId) => {
+        navigate(`/playlist/${playlistId}`);
+    };
+
 
     const toggleDrawer = () => {
         setOpen(!open);
     };
+    //
 
     if (!userDetails) {
         return <div>Loading...</div>; // Handle loading state
@@ -47,7 +57,7 @@ export default function SpotifyPlaylistProfile() {
                     {/* Playlist Render */}
                     {playlists.map((playlist, index) => (
                         <Grid item xs={12} sm={6} md={4} key={index}>
-                            <Card>
+                            <Card onClick={() => openPlaylistDetails(playlist.id)}>
                                 <CardContent>
                                     <Typography variant="h6">{playlist.name}</Typography>
                                     {playlist.images && playlist.images.length > 0 ? (
