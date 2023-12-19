@@ -24,6 +24,7 @@ import useUserDetails from "./Profile/useUserDetails";
 import PlaylistDetails from "./Spotify/PlaylistDetails";
 
 
+
 function App() {
   const domain = /https:\/\/[^/]+/;
   const baseUrl = process.env.REACT_APP_API_HOST;
