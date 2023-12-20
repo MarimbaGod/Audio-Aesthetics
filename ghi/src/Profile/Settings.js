@@ -17,6 +17,31 @@ const Settings = () => {
         window.location.href = AUTH_URL;
     };
 
+    const handleDeleteAccount = async () =>{
+        const confirm = window.confirm("Are you sure you want to delete your account? There's no going back.")
+        if(confirm){
+            try {
+            const response = await fetch(`${process.env.REACT_APP_API_HOST}/api/users/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+            console.log(response)
+            if (response.ok) {
+                console.log('Account deleted successfully');
+                window.location.replace('/signup')
+            } else {
+                // Account deletion failed
+                console.error('Failed to delete account');
+            }
+        } catch (error) {
+            console.error('Error deleting account', error);
+        }
+    }}
+
+
     return (
         <Box sx={{ display: 'flex' }}>
             <NavBar open={open} toggleDrawer={toggleDrawer} />
@@ -31,6 +56,16 @@ const Settings = () => {
                     </Typography>
                     <Button variant="contained" color="primary" onClick={handleLinkSpotify}>
                         Link Spotify Account
+                    </Button>
+                    <Typography variant="h6" gutterBottom>
+                        Account
+                    </Typography>
+                    <Button variant="contained" color="primary">
+                        Update Account (Doesn't work yet)
+                    </Button>
+                    <p></p>
+                    <Button variant="contained" color="error" onClick={handleDeleteAccount}>
+                        Delete
                     </Button>
                 </Box>
             </Container>

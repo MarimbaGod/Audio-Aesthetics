@@ -76,7 +76,7 @@ steps = [
             id SERIAL PRIMARY KEY NOT NULL,
             created_datetime TIMESTAMP NOT NULL,
             caption TEXT NOT NULL,
-            created_by INT REFERENCES users(id)
+            created_by INT REFERENCES users(id) ON DELETE CASCADE
         );
         """,
         """
