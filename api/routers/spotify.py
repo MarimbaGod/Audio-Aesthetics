@@ -9,7 +9,9 @@ from queries.spotify import (
     refresh_spotify_access_token,
     spotify_api_request_with_refresh,
 )
+from dotenv import load_dotenv
 
+load_dotenv()
 router = APIRouter()
 
 
@@ -49,10 +51,11 @@ async def get_spotify_token(
 ):
     spotify_url = "https://accounts.spotify.com/api/token"
     redirect_uri = "https://team-tunity.gitlab.io/audio-aesthetics/spotifyauth"
-    # client_id = os.getenv("SPOTIFY_CLIENT_ID")
-    # client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
-    client_id = "4d6c7eae97cd480fb1088393ebd8f107"
-    client_secret = "6f54d43f0d354899bb3c6fbfa44982e8"
+    client_id = os.getenv("SPOTIFY_CLIENT_ID")
+    client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
+    # client_id = "4d6c7eae97cd480fb1088393ebd8f107"
+
+    print("client_secret", client_secret)
 
     payload = {
         "grant_type": "authorization_code",
