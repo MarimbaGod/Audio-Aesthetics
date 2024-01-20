@@ -7,10 +7,7 @@ import NavBar from '../Navbar/NavBar';
 
 
 const SpotifyContainer = ({ handleSelectTrack }) => {
-    // const [trackUri, setTrackUri] = useState('');
     const [searchResults, setSearchResults] = useState([]);
-    // const userDetails = useUserDetails();
-    // const token = userDetails?.spotify_access_token;
     const theme = useTheme();
     const [open, setOpen] = useState(true);
 
@@ -21,10 +18,6 @@ const SpotifyContainer = ({ handleSelectTrack }) => {
     const handleSearchResult = (tracks) => {
         setSearchResults(tracks)
     };
-
-    // const handleSelectTrack = (uri) => {
-    //     setTrackUri(uri);
-    // };
 
     return (
         <Box sx={{ display: 'flex', pt: '64px' }}>
@@ -45,9 +38,6 @@ const SpotifyContainer = ({ handleSelectTrack }) => {
                     ))}
                 </Grid>
             </Container>
-            {/* <Box sx={{ position: 'fixed', botom: 0, left: 0, right: 0, zIndex: 1000}}>
-                <SpotifyPlayer token={token} trackUri={trackUri} />
-            </Box> */}
         </Box>
     )
 };

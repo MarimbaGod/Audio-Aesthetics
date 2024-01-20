@@ -74,7 +74,7 @@ const ImageGeneratorForm = () => {
         }
     };
 
-    const fetchImage = async (url, retries = 10, delay = 2000) => {
+    const fetchImage = async (url, retries = 50, delay = 2000) => {
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -85,8 +85,7 @@ const ImageGeneratorForm = () => {
                 }
                 throw new Error(`HTTP Error! Status: ${response.status}`)
             }
-            // const imageData = await response.json();
-            // setFetchedImageUrl(imageData.imageUrl);
+
             setFetchedImageUrl(url)
             setIsImageProcessing(false);
             setLoading(false);
@@ -159,6 +158,7 @@ const ImageGeneratorForm = () => {
                     <MenuItem value="midjourney">MidJourney</MenuItem>
                     <MenuItem value="crystal-clear-xlv1">Crystal Clear XL v1</MenuItem>
                     <MenuItem value="ae-sdxl-v1">Realistic Cinematic</MenuItem>
+                    <MenuItem value="sdxlceshi">SDXL Ceshi</MenuItem>
                 </Select>
             </FormControl>
 
@@ -207,73 +207,3 @@ const ImageGeneratorForm = () => {
 };
 
 export default ImageGeneratorForm;
-
-
-
-
-//    return (
-//         <div>
-//             <select value={selectedPlaylist} onChange={(e) => setSelectedPlaylist(e.target.value)}>
-//                 <option value="">Select a Playlist</option>
-//                 {playlists.map(playlist => (
-//                     <option key={playlist.id} value={playlist.id}>{playlist.name}</option>
-//                 ))}
-//             </select>
-
-//             <SongSelector setSelectedSongs={setSelectedSongs} selectedSongs={selectedSongs} playlistId={selectedPlaylist} />
-//             <input
-//                 type="text"
-//                 value={userInput}
-//                 onChange={(e) => setUserInput(e.target.value)}
-//                 placeholder="Additional Input"
-//             />
-//             <input
-//                 type="text"
-//                 value={styleGuide}
-//                 onChange={(e) => setStyleGuide(e.target.value)}
-//                 placeholder="Style ie: Painting"
-//             />
-//             <select value={selectedModel} onChange={(e) => setSelectedModel(e.target.value)}>
-//                 <option value="ae-sdxl-v1">AE-SDXL-V1</option>
-//                 <option value="sdxlceshi">SDXL Ceshi</option>
-//                 <option value="sdxl">SDXL</option>
-//                 <option value="crystal-clear-xlv1">Crystal Clear XL v1</option>
-//             {/* Add other model options */}
-//             </select>
-//             <label>
-//                 Upscale Image:
-//                 <input type="checkbox" checked={upscale} onChange={() => setUpscale(!upscale)} />
-//             </label>
-//             {/* Negative Prompt */}
-//             <input
-//                 type="text"
-//                 value={negativePrompt}
-//                 onChange={(e) => setNegativePrompt(e.target.value)}
-//                 placeholder="Exclude elements (e.g., 'no people')"
-//             />
-//             {/* Number of Inference Steps */}
-//             <input
-//                 type="number"
-//                 value={numInferenceSteps}
-//                 onChange={(e) => setNumInferenceSteps(parseInt(e.target.value))}
-//                 placeholder="Number of Inference Steps"
-//             />
-//             {/* Guidance Scale */}
-//             <input
-//                 type="number"
-//                 value={guidanceScale}
-//                 onChange={(e) => setGuidanceScale(parseFloat(e.target.value))}
-//                 placeholder="Guidance Scale"
-//             />
-//             <button onClick={handleSubmit}>Generate Image</button>
-
-//             {imageUrl && <img src={imageUrl} alt="Generated :D" />}
-//             {loading && <p>Loading, Please Wait...</p>}
-//             {error && <p>{error}</p>}
-//             {isImageProcessing ? <p>Processing Image...</p> : renderImage()}
-//             {/* {isImageProcessing ? <p>Processing Image...</p> : <img src={fetchedImageUrl || imageUrl} alt="Generated" />} */}
-//         </div>
-//     );
-// };
-
-// export default ImageGeneratorForm;
