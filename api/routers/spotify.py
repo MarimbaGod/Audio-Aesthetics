@@ -50,7 +50,7 @@ async def get_spotify_token(
     user_repo: UserRepository = Depends(),
 ):
     spotify_url = "https://accounts.spotify.com/api/token"
-    redirect_uri = "https://team-tunity.gitlab.io/audio-aesthetics/spotifyauth"
+    redirect_uri = "http://localhost:3000/spotifyauth"
     client_id = os.getenv("SPOTIFY_CLIENT_ID")
     client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
     # client_id = "4d6c7eae97cd480fb1088393ebd8f107"

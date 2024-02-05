@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Grid, Card, CardContent, Box, Avatar, Typography,Paper } from '@mui/material';
+import { Container, Grid, Card, CardContent, Box, Avatar, Typography, Paper, useTheme } from '@mui/material';
 import UserPosts from '../HelpingFunctions/UserPosts';
 import NavBar from '../Navbar/NavBar';
 import Button from '@mui/material/Button';
@@ -9,7 +9,7 @@ const Profile = () => {
     const currentUrl = window.location.href;
     const userIdAsString = Number(currentUrl.match(/\/(\d+)$/)[1])
     const userId = userIdAsString
-
+    const theme = useTheme();
     const [profileData, setProfileData] = useState(null);
     const [open, setOpen] = useState(true);
     const [isFollowed, setIsFollowed] = useState(false)
@@ -102,7 +102,7 @@ const Profile = () => {
     return (
         <Box sx={{ dsiplay: 'flex' }}>
             <NavBar open={open} toggleDrawer={toggleDrawer} />
-            <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+            <Container maxWidth="lg" sx={{ mt: 3, mb: 3, flexGrow: 1, transition: 'margin-left 0.3s', marginLeft: open ? `240px` : `${theme.spacing(9)}` }}>
                 <Grid container spacing={3} justifyContent="center">
                     {/* User Profile Section */}
                     <Grid item xs={12} sm={6} md={4}>

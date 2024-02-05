@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import NavBar from '../Navbar/NavBar';
-import { Container, Typography, Button, Box } from '@mui/material';
+import { Box, Typography, Container, useTheme, Button } from '@mui/material';
 
 
 const AUTH_URL =
-    "https://accounts.spotify.com/authorize?client_id=4d6c7eae97cd480fb1088393ebd8f107&response_type=code&redirect_uri=https://team-tunity.gitlab.io/audio-aesthetics/spotifyauth&scope=streaming%20user-read-email%20user-read-private%20user-library-read%20user-library-modify%20user-read-playback-state%20user-modify-playback-state%20playlist-read-private%20playlist-modify-private%20playlist-modify-public"
+    "https://accounts.spotify.com/authorize?client_id=4d6c7eae97cd480fb1088393ebd8f107&response_type=code&redirect_uri=http://localhost:3000/spotifyauth&scope=streaming%20user-read-email%20user-read-private%20user-library-read%20user-library-modify%20user-read-playback-state%20user-modify-playback-state%20playlist-read-private%20playlist-modify-private%20playlist-modify-public"
 
 
 const Settings = () => {
@@ -12,7 +12,7 @@ const Settings = () => {
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
+    const theme = useTheme();
     const handleLinkSpotify = () => {
         window.location.href = AUTH_URL;
     };
@@ -43,9 +43,9 @@ const Settings = () => {
 
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', pt: '64px' }}>
             <NavBar open={open} toggleDrawer={toggleDrawer} />
-            <Container maxWidth="md" sx={{ mt: 8, mb: 4 }}>
+            <Container maxWidth="lg" sx={{ mt: 3, mb: 3, flexGrow: 1, transition: 'margin-left 0.3s', marginLeft: open ? `240px` : `${theme.spacing(9)}` }}>
                 <Typography variant="h4" gutterBottom>
                     User Settings
                 </Typography>

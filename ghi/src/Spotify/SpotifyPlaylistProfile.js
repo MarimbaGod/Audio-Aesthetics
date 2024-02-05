@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Container, Grid, Card, CardContent, Box, Avatar, Typography, Divider } from '@mui/material'
+import { Container, Grid, Card, CardContent, Box, Avatar, Typography, Divider, useTheme } from '@mui/material'
 import NavBar from '../Navbar/NavBar';
 import useUserDetails from '../Profile/useUserDetails';
 import usePlaylists from './usePlaylists';
@@ -18,7 +18,7 @@ export default function SpotifyPlaylistProfile() {
     const openPlaylistDetails = (playlistId) => {
         navigate(`/playlist/${playlistId}`);
     };
-
+    const theme = useTheme();
 
     const toggleDrawer = () => {
         setOpen(!open);
@@ -32,7 +32,7 @@ export default function SpotifyPlaylistProfile() {
     return (
         <Box sx={{ display: 'flex' }}>
             <NavBar open={open} toggleDrawer={toggleDrawer} />
-            <Container maxWidth="md" sx={{ mt: 10, mb: 4 }}>
+            <Container maxWidth="lg" sx={{ mt: 3, mb: 3, flexGrow: 1, transition: 'margin-left 0.3s', marginLeft: open ? `240px` : `${theme.spacing(9)}` }}>
                 <Grid container spacing={3} justifyContent="center">
                     {/* User Profile */}
                     <Grid item xs={12}>
