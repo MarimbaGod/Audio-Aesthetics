@@ -77,8 +77,6 @@ class UserRepository:
         self, user: UserIn, hashed_password: str
     ) -> UserOutWithPassword:
         try:
-            print("USER", user)
-            print("HASHED", hashed_password)
             with pool.connection() as conn:
                 with conn.cursor() as db:
                     result = db.execute(
@@ -104,7 +102,6 @@ class UserRepository:
                         ],
                     )
                     id = result.fetchone()[0]
-                    print("ID GOTTEN", id)
                     return UserOutWithPassword(
                         id=id,
                         username=user.username,
