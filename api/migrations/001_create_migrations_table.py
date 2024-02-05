@@ -12,7 +12,9 @@ steps = [
             img_url VARCHAR(255) DEFAULT 'https://tinyurl.com/Dimg-url',
             spotify_access_token VARCHAR(512),
             spotify_refresh_token VARCHAR(512),
-            spotify_device_id VARCHAR(255)
+            spotify_device_id VARCHAR(255),
+            openai_api_key VARCHAR(512),
+            stable_diffusion_api_key VARCHAR(512)
         );
         """,
         # "Down" SQL statement
