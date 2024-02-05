@@ -1,11 +1,5 @@
 # Audio Aesthetics by Tunity
 
-[Click here to visit our deployed site right now!](https://team-tunity.gitlab.io/audio-aesthetics/signup)
-
-...Or you can actually read the README first if you like. Choose your own adventure. :)
-
-[Pssst...Here's the link to see our deployed FastAPI Swagger UI Docs as well if you'd like.](https://aug-2023-1-et-api3.mod3projects.com/docs)
-
 ## Audio Aesthetics is brought to you by the incredible engineers at Tunity:
 
 - Kyle Bossert [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/kyle-bossert/) [![GitLab](https://img.shields.io/badge/GitLab-FCA121?style=flat-square&logo=gitlab&logoColor=white)](https://gitlab.com/marimbagod)
