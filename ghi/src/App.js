@@ -44,7 +44,7 @@ function App() {
         <Routes>
           <Route exact path="/aesthetics" element={<ImageGeneratorForm baseUrl={baseUrl} />}></Route>
           <Route exact path="/player" element={<SpotifyContainer handleSelectTrack={handleSelectTrack} baseUrl={baseUrl} />}></Route>
-          <Route exact path="/playlist/:playlistId" element={<PlaylistDetails handleSelectTrack={handleSelectTrack} />} />
+          <Route exact path="/playlist/:playlistId" element={<PlaylistDetails handleSelectTrack={handleSelectTrack} baseUrl={baseUrl} />} />
           <Route
             exact
             path="/"

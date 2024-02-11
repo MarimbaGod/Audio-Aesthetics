@@ -18,8 +18,9 @@ export default function SpotifyPlaylistProfile() {
     const openPlaylistDetails = (playlistId) => {
         navigate(`/playlist/${playlistId}`);
     };
-    const theme = useTheme();
 
+
+    const theme = useTheme();
     const toggleDrawer = () => {
         setOpen(!open);
     };
