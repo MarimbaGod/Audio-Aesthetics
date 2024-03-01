@@ -1,4 +1,7 @@
-from fastapi import HTTPException, APIRouter, Depends, status
+from fastapi import HTTPException, APIRouter, Depends, status, File, UploadFile
+from PIL import Image
+import io
+import base64
 from authenticator import authenticator
 from typing import Optional, List
 import requests
@@ -226,6 +229,53 @@ async def update_playlist_details(
             detail="Error updating playlist details",
         )
     return {"detail": "Playlist details updated successfully"}
+
+
+@router.post("/add_cover_photo/{playlist_id}")
+async def add_cover_photo(
+    playlist_id: str,
+    file: UploadFile = File(...),
+    current_user: dict = Depends(authenticator.get_current_account_data),
+    user_repo: UserRepository = Depends(),
+):
+    user_details = user_repo.get_user_details(current_user["id"])
+    if not user_details or "spotify_access_token" not in user_details:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            details = "Unathorized Access"
+        )
+
+    if file.content_type not in ["image/jpeg", "image/png"]:
+        raise HTTPException(status_code=400, detail="Invalid File Format")
+
+    image_data = await file.read()
+    image = Image.open(io.BytesIO(image_data))
+    # resize to fit spotify requirements
+    image.thumbnail((300, 300), Image.Resampling.LANCZOS)
+
+    buffered = io.BytesIO()
+    image.save(buffered, format="JPEG")
+    encoded_string = base64.b64encode(buffered.getvalue()).decode()
+
+    # send to spotify
+
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/images"
+
+    response = spotify_api_request_with_refresh(
+        user_details,
+        url,
+        user_repo,
+        method="PUT",
+        data=encoded_string.encode(),
+    )
+
+    if response.status_code not in [200, 202]:
+        raise HTTPException(
+            status_code = response.status_code,
+            detail=f"Error uploading photo to Spotify: {response.json().get('error', {}).get('message', '')}"
+        )
+
+    return {"detail": "Playlist Cover updated successfully"}
 
 
 @router.get("/spotify/search/track")

@@ -5,36 +5,72 @@ import NavBar from '../Navbar/NavBar';
 const PlaylistDetails = ({ handleSelectTrack }) => {
     const { playlistId } = useParams();
     const [playlist, setPlaylist] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+
     const [open, setOpen] = useState(true);
+
     const toggleDrawer = () => {
         setOpen(!open);
     };
     const theme = useTheme();
 
-    useEffect(() => {
-        const fetchPlaylistDetails = async () => {
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_HOST}/spotify/playlist/${playlistId}`, {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error. Status: ${response.status}`);
+    const fetchPlaylistDetails = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_HOST}/spotify/playlist/${playlistId}`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
                 }
-
-                const data = await response.json();
-                setPlaylist(data);
-            } catch (error) {
-                console.error("Error fetching playlist details:", error);
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error. Status: ${response.status}`);
             }
-        };
 
+            const data = await response.json();
+            setPlaylist(data);
+        } catch (error) {
+            console.error("Error fetching playlist details:", error);
+        }
+    };
+
+    useEffect(() => {
         fetchPlaylistDetails();
     }, [playlistId]);
 
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
+
+    const handleUpload = async () => {
+        if (!selectedFile) {
+            alert('Please select a file');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_HOST}/add_cover_photo/${playlistId}`, {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            });
+            console.log(response);
+
+            if (!response.ok) throw new Error('Failed to upload photo');
+
+            const result = await response.json();
+            alert('Upload Successful');
+            console.log(result);
+            // Update state to reflect new photo
+            await fetchPlaylistDetails();
+        } catch (error) {
+            console.error('Error uploading photo:', error);
+            alert('Error uploading photo');
+        }
+    };
 
     const onSongClick = (trackUri) => {
         handleSelectTrack(trackUri);
@@ -58,9 +94,16 @@ const PlaylistDetails = ({ handleSelectTrack }) => {
                                 sx={{ width: 1, height: 1, maxWidth: 524, maxHeight: 524 }}
                             />
                         </Card>
-                        <Button variant="contained" component="label" sx={{mt: 2}}>
+                        <Button variant="contained" component="label" sx={{ mt: 2 }}>
                             Upload Photo
-                            <input type="file" hidden />
+                            <input
+                                type="file"
+                                hidden
+                                onChange={handleFileChange}
+                            />
+                        </Button>
+                        <Button variant="contained" onClick={handleUpload} sx={{ mt: 2, ml: 2 }}>
+                            Submit Photo
                         </Button>
                     </Grid>
                     <Grid item xs={12} md={9}>
