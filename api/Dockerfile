@@ -1,4 +1,4 @@
-FROM python:3.10-bullseye
+FROM python:3.11-bullseye
 
 # Upgrades pip to the latest version
 RUN python -m pip install --upgrade pip
