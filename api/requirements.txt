@@ -1,9 +1,10 @@
-fastapi[all]==0.92.0 # Unsafe version
-#fastapi[all]==0.109.1  # IMPORTANT UPDATE: Incompatible with jwtdown-fastapi
+# fastapi[all]==0.92.0 # Unsafe version
+fastapi[all]==0.109.0 #patched in 109.1
+# python-multipart>=0.0.7 another fix for ReDos bug.
 uvicorn[standard]==0.17.6
 pytest==7.1.2
 psycopg[binary,pool]
-jwtdown-fastapi==0.5.0
+jwtdown-fastapi==0.6.0
 requests==2.26.0
 python-dotenv==1.0.0
 Pillow==10.1.0
